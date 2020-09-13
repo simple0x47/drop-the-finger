@@ -1,1 +1,2 @@
-include 'desktop', 'android', 'core'
+include ':elementalg-api', 'desktop', 'android', 'core'
+project(':elementalg-api').projectDir = new File('../elementalg-api')

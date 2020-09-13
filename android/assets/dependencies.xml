@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<dependencies>
+    <dependency id="MAIN_SCREEN" path="screens/Main/" forceLoad="true">
+        <asset id="MainScreenAtlas" class="com.badlogic.gdx.graphics.g2d.TextureAtlas">
+            MainScreen.atlas
+        </asset>
+        <asset id="MainScreenTheme" class="com.badlogic.gdx.audio.Music">
+            main.mp3
+        </asset>
+    </dependency>
+</dependencies>

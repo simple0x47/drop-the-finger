@@ -10,9 +10,8 @@ buildscript {
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.4.1'
-        
-
+        classpath 'com.android.tools.build:gradle:4.0.1'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.4.10"
     }
 }
 
@@ -40,7 +39,7 @@ allprojects {
 }
 
 project(":desktop") {
-    apply plugin: "java-library"
+    apply plugin: "kotlin"
 
 
     dependencies {
@@ -90,10 +89,11 @@ project(":android") {
 }
 
 project(":core") {
-    apply plugin: "java-library"
+    apply plugin: "kotlin"
 
 
     dependencies {
+        implementation project(':elementalg-api')
         api "com.badlogicgames.gdx:gdx:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-controllers:$gdxVersion"

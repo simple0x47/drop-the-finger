@@ -1,16 +1,19 @@
-package com.elementalg.minigame;
+package com.elementalg.minigame
 
-import android.os.Bundle;
+import com.badlogic.gdx.backends.android.AndroidApplication
+import android.os.Bundle
+import android.util.DisplayMetrics
+import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration
+import java.util.*
 
-import com.badlogic.gdx.backends.android.AndroidApplication;
-import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
-import com.elementalg.minigame.Game;
+class AndroidLauncher : AndroidApplication() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
 
-public class AndroidLauncher extends AndroidApplication {
-	@Override
-	protected void onCreate (Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
-		initialize(new Game(), config);
-	}
+        val displayMetrics: DisplayMetrics = DisplayMetrics()
+        windowManager.defaultDisplay.getRealMetrics(displayMetrics)
+
+        val config = AndroidApplicationConfiguration()
+        initialize(Game(Locale.getDefault(), displayMetrics.xdpi, displayMetrics.ydpi), config)
+    }
 }
