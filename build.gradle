@@ -58,6 +58,7 @@ project(":desktop") {
 
 project(":android") {
     apply plugin: "android"
+    apply plugin: "org.jetbrains.kotlin.android"
 
     configurations { natives }
 
