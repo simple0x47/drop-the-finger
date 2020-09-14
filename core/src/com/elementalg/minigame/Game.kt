@@ -11,6 +11,7 @@ import kotlin.jvm.Throws
 
 class Game(private val systemLocale: Locale, private val displayXDPI: Float, private val displayYDPI: Float)
     : ApplicationAdapter() {
+
     private val eventManager: EventManager = EventManager()
 
     private lateinit var dependencyManager: DependencyManager
@@ -23,6 +24,7 @@ class Game(private val systemLocale: Locale, private val displayXDPI: Float, pri
      * @return instance of [EventManager].
      */
     fun getEventManager(): EventManager {
+
         return eventManager
     }
 

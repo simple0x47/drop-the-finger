@@ -19,14 +19,21 @@ filter: Nearest,Nearest
 repeat: none
 HighScoreButton
   rotate: false
-  xy: 2, 2
+  xy: 2, 416
   size: 681, 590
   orig: 681, 590
   offset: 0, 0
   index: -1
+Logo
+  rotate: false
+  xy: 2, 2
+  size: 450, 412
+  orig: 450, 412
+  offset: 0, 0
+  index: -1
 PlayButton
   rotate: false
-  xy: 685, 2
+  xy: 685, 416
   size: 681, 590
   orig: 681, 590
   offset: 0, 0

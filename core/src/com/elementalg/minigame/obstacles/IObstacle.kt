@@ -1,7 +1,7 @@
 package com.elementalg.minigame.obstacles
 
-import com.badlogic.gdx.math.Vector2
+import com.elementalg.minigame.Finger
 
 interface IObstacle {
-    fun isWithinObstacle(point: Vector2): Boolean
+    fun isWithinObstacle(finger: Finger): Boolean
 }
