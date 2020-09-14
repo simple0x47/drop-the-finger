@@ -7,11 +7,14 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Button
+import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
 import com.badlogic.gdx.utils.Align
+import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.badlogic.gdx.utils.viewport.FillViewport
 import com.badlogic.gdx.utils.viewport.FitViewport
+import com.badlogic.gdx.utils.viewport.StretchViewport
 import com.elementalg.client.managers.DependencyManager
 import com.elementalg.client.managers.Screen
 
@@ -34,11 +37,13 @@ class MainScreen(private val displayXDPI: Float, private val displayYDPI: Float)
 
     private val backgroundViewport: FillViewport = FillViewport(1f, 1f)
     private val actorsViewport: FitViewport = FitViewport(1f, 1f)
+    private val logoViewport: FillViewport = FillViewport(1f, 1f)
     private val stage: Stage = Stage(actorsViewport)
 
     private lateinit var background: TextureRegion
     private lateinit var playButton: Button
     private lateinit var highScoreButton: Button
+    private lateinit var logo: TextureRegion
 
     private lateinit var theme: Music
 
@@ -63,6 +68,8 @@ class MainScreen(private val displayXDPI: Float, private val displayYDPI: Float)
         highScoreButton.setSize(0.333823529f, 0.28921569f)
         highScoreButton.setPosition(0.5f, 0.355392155f, Align.center)
 
+        logo = atlas.findRegion("Logo")
+
         theme = assets["MainScreenTheme"] as Music
     }
 
@@ -85,6 +92,7 @@ class MainScreen(private val displayXDPI: Float, private val displayYDPI: Float)
     override fun resize(width: Int, height: Int) {
         backgroundViewport.update(width, height, true)
         actorsViewport.update(width, height, true)
+        logoViewport.update(width, height, true)
 
         super.resize(width, height)
     }
@@ -98,6 +106,11 @@ class MainScreen(private val displayXDPI: Float, private val displayYDPI: Float)
         actorsViewport.apply(true)
         stage.act()
         stage.draw()
+
+        logoViewport.apply(true)
+        stage.batch.begin()
+        stage.batch.draw(logo, 0.45f, 0.05f, 0.1f, 0.091556f)
+        stage.batch.end()
 
         super.render(delta)
     }
