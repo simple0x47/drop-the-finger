@@ -15,7 +15,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport
 import com.elementalg.client.managers.DependencyManager
 import com.elementalg.client.managers.Screen
 
-class MainScreen(private val displayXDPI: Float, private val displayYDPI: Float) : Screen() {
+class MainScreen(private val displayXDPI: Float, private val displayYDPI: Float) : Screen(){
     private class PlayButtonListener : ClickListener() {
         override fun clicked(event: InputEvent?, x: Float, y: Float) {
 
@@ -77,7 +77,7 @@ class MainScreen(private val displayXDPI: Float, private val displayYDPI: Float)
 
         theme.isLooping = true
         theme.play()
-        theme.volume = 0.1f
+        theme.volume = 0.2f
 
         super.show()
     }

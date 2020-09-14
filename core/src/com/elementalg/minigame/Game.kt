@@ -79,6 +79,7 @@ class Game(private val systemLocale: Locale, private val displayXDPI: Float, pri
 
         dependencyManager.loadDependencyID("MAIN_SCREEN")
 
+
         val mainScreen: MainScreen = MainScreen(displayXDPI, displayYDPI)
         mainScreen.create(dependencyManager)
         screenManager.setActiveScreen(mainScreen)
