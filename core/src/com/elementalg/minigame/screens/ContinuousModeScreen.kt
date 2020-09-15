@@ -5,6 +5,7 @@ import com.badlogic.gdx.utils.viewport.FillViewport
 import com.badlogic.gdx.utils.viewport.StretchViewport
 import com.elementalg.client.managers.DependencyManager
 import com.elementalg.client.managers.Screen
+import com.elementalg.minigame.Finger
 
 import kotlin.math.min
 
@@ -13,12 +14,12 @@ class ContinuousModeScreen(private val displayXDPI: Float, private val displayYD
     private val actorsViewport: StretchViewport = StretchViewport(20f, 20f)
     private val stage: Stage = Stage(actorsViewport)
 
-    private var fingerDiameter: Float = 0f
+    private lateinit var finger: Finger
 
     override fun create(dependencyManager: DependencyManager) {
-        fingerDiameter = 0.590551f * min(displayXDPI, displayYDPI)
+        val fingerRadius: Float = (0.590551f * min(displayXDPI, displayYDPI)) / 2f
 
-
+        finger = Finger(fingerRadius)
     }
 
     override fun show() {

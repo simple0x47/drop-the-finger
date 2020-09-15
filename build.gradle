@@ -1,6 +1,4 @@
 buildscript {
-    
-
     repositories {
         mavenLocal()
         mavenCentral()
@@ -20,7 +18,7 @@ allprojects {
 
     version = '1.0'
     ext {
-        appName = "MiniGame"
+        appName = "Drop The Finger"
         gdxVersion = '1.9.11'
         roboVMVersion = '2.3.10-SNAPSHOT'
         box2DLightsVersion = '1.4'
@@ -52,7 +50,6 @@ project(":desktop") {
         api "com.badlogicgames.gdx:gdx-controllers-platform:$gdxVersion:natives-desktop"
         api "com.badlogicgames.gdx:gdx-tools:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"
-        
     }
 }
 
