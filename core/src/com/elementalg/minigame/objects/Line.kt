@@ -1,10 +1,10 @@
-package com.elementalg.minigame.obstacles
+package com.elementalg.minigame.objects
 
 import com.badlogic.gdx.math.Vector2
 import com.elementalg.minigame.Finger
 import kotlin.math.abs
 
-class Line(private val thickness: Float) : IObstacle {
+class Line(private val thickness: Float) : Obstacle() {
     private val topLeft: Vector2 = Vector2(0f, 0.5f + (thickness / 2f))
     private val topRight: Vector2 = Vector2(1f, 0.5f + (thickness / 2f))
     private val bottomLeft: Vector2 = Vector2(0f, 0.5f - (thickness / 2f))
