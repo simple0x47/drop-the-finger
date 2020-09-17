@@ -1,5 +1,6 @@
 package com.elementalg.minigame
 
+import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.math.Vector2
 import kotlin.math.floor
 
@@ -65,6 +66,12 @@ class CellHolder : Cell() {
 
             cell.getPosition().set(holderPosition.x + (signX * (cell.getSize() / 2)), holderPosition.y +
                     (signY * (cell.getSize() / 2)))
+        }
+    }
+
+    override fun draw(batch: Batch) {
+        for (cell: Cell in cells) {
+            cell.draw(batch)
         }
     }
 

@@ -1,10 +1,12 @@
 package com.elementalg.minigame.objects
 
+import com.badlogic.gdx.graphics.g2d.Batch
+import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.math.Vector2
 import com.elementalg.minigame.Finger
 import kotlin.math.abs
 
-class Line(private val thickness: Float) : Obstacle() {
+class Line(private val textureRegion: TextureRegion, private val thickness: Float) : Obstacle() {
     private val topLeft: Vector2 = Vector2(0f, 0.5f + (thickness / 2f))
     private val topRight: Vector2 = Vector2(1f, 0.5f + (thickness / 2f))
     private val bottomLeft: Vector2 = Vector2(0f, 0.5f - (thickness / 2f))
@@ -45,5 +47,10 @@ class Line(private val thickness: Float) : Obstacle() {
                 translatedFinger.y + pointB.x * pointA.y - pointB.y * pointA.x) / pointA.dst(pointB)
 
         return distance <= finger.getRadius()
+    }
+
+    override fun draw(batch: Batch) {
+        batch.draw(textureRegion, getPosition().x, getPosition().y, 0.5f, 0.5f, getSize(), getSize(),
+                1f, 1f, angle, false)
     }
 }

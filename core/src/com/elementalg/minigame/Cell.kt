@@ -1,5 +1,6 @@
 package com.elementalg.minigame
 
+import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.math.Vector2
 import kotlin.math.floor
 import kotlin.math.sqrt
@@ -41,6 +42,8 @@ abstract class Cell {
 
         return (floor(root) - root) == 0.0f
     }
+
+    abstract fun draw(batch: Batch)
 
     companion object {
         const val MAX_SIDE_SIZE: Float = 2f

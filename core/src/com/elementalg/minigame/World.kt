@@ -3,6 +3,9 @@ package com.elementalg.minigame
 import kotlin.jvm.Throws
 
 class World {
+    private val topCellHolder: CellHolder = CellHolder()
+    private val bottomCellHolder: CellHolder = CellHolder()
+
     private lateinit var finger: Finger
 
     /**
@@ -21,8 +24,6 @@ class World {
 
     fun create(fingerRadius: Float) {
         addFinger(fingerRadius)
-
-        
     }
 
     fun render() {
