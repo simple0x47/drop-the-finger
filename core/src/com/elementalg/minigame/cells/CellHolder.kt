@@ -1,4 +1,4 @@
-package com.elementalg.minigame
+package com.elementalg.minigame.cells
 
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.math.Vector2
@@ -67,6 +67,10 @@ class CellHolder : Cell() {
             cell.getPosition().set(holderPosition.x + (signX * (cell.getSize() / 2)), holderPosition.y +
                     (signY * (cell.getSize() / 2)))
         }
+    }
+
+    fun getCells(): ArrayList<Cell> {
+        return cells
     }
 
     override fun draw(batch: Batch) {

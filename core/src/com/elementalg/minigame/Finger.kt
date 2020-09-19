@@ -10,10 +10,6 @@ class Finger(private val radius: Float) {
         return radius
     }
 
-    fun setPosition(position: Vector2) {
-        this.position.set(position)
-    }
-
     fun getPosition(): Vector2 {
         return position
     }

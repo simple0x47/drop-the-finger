@@ -1,6 +1,5 @@
-package com.elementalg.minigame.objects
+package com.elementalg.minigame.cells
 
-import com.elementalg.minigame.Cell
 import com.elementalg.minigame.Finger
 
 abstract class Obstacle : Cell() {

@@ -1,6 +1,7 @@
 package com.elementalg.minigame
 
 import com.badlogic.gdx.ApplicationAdapter
+import com.badlogic.gdx.Gdx
 import com.elementalg.client.managers.DependencyManager
 import com.elementalg.client.managers.LocaleManager
 import com.elementalg.client.managers.ScreenManager
@@ -8,6 +9,7 @@ import com.elementalg.managers.EventManager
 import com.elementalg.minigame.screens.MainScreen
 import java.util.*
 import kotlin.jvm.Throws
+import kotlin.math.min
 
 class Game(private val systemLocale: Locale, private val displayXDPI: Float, private val displayYDPI: Float)
     : ApplicationAdapter() {
@@ -80,7 +82,6 @@ class Game(private val systemLocale: Locale, private val displayXDPI: Float, pri
         screenManager.create()
 
         dependencyManager.loadDependencyID("MAIN_SCREEN")
-
 
         val mainScreen: MainScreen = MainScreen(displayXDPI, displayYDPI)
         mainScreen.create(dependencyManager)

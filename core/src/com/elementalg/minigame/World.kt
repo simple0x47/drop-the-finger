@@ -1,10 +1,10 @@
 package com.elementalg.minigame
 
+import com.elementalg.minigame.cells.CellHolder
 import kotlin.jvm.Throws
 
 class World {
-    private val topCellHolder: CellHolder = CellHolder()
-    private val bottomCellHolder: CellHolder = CellHolder()
+    private val cellHolders: Array<CellHolder> = Array(CELL_HOLDERS) { CellHolder() }
 
     private lateinit var finger: Finger
 
@@ -35,6 +35,7 @@ class World {
     }
 
     companion object {
+        const val CELL_HOLDERS: Int = 3
         const val UNIT_TO_PIXELS: Int = 100
         const val WIDTH: Float = 16f
         const val HEIGHT: Float = 16f

@@ -1,11 +1,19 @@
-package com.elementalg.minigame
+package com.elementalg.minigame.cells
 
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.math.Vector2
+import kotlin.math.abs
 import kotlin.math.floor
 import kotlin.math.sqrt
 
 abstract class Cell {
+    enum class Type {
+        HOLDER,
+        EMPTY,
+        LINE,
+        CUBE,
+    }
+
     private val position: Vector2 = Vector2(0f, 0f)
 
     private var size: Float = MAX_SIDE_SIZE
@@ -38,12 +46,13 @@ abstract class Cell {
     }
 
     private fun isNumberAPowerOfTwo(number: Int): Boolean {
-        val root: Float = sqrt(number.toFloat())
+        val root: Float = sqrt(abs(number.toFloat()))
 
         return (floor(root) - root) == 0.0f
     }
 
     abstract fun draw(batch: Batch)
+
 
     companion object {
         const val MAX_SIDE_SIZE: Float = 2f
