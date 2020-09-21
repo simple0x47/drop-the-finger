@@ -6,8 +6,6 @@ import kotlin.jvm.Throws
 class CellGenerator(private val worldCellHolders: Array<CellHolder>, private val finger: Finger) {
 
     fun generateInitialCells() {
-        worldCellHolders[0].setCells(EmptyCell(), CubeObstacle(), EmptyCell(), CubeObstacle())
-
 
     }
 

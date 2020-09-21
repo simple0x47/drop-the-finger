@@ -1,10 +1,12 @@
 package com.elementalg.minigame
 
+import com.elementalg.client.managers.DependencyManager
+import com.elementalg.minigame.cells.Cell
 import com.elementalg.minigame.cells.CellHolder
 import kotlin.jvm.Throws
 
 class World {
-    private val cellHolders: Array<CellHolder> = Array(CELL_HOLDERS) { CellHolder() }
+    private val cellHolders: ArrayList<CellHolder> = ArrayList(CELL_HOLDERS)
 
     private lateinit var finger: Finger
 
@@ -13,17 +15,17 @@ class World {
      *
      * @param fingerRadius radius of the finger in pixels.
      *
-     * @throws IllegalStateException if [finger] has already been added once.
+     * @throws IllegalStateException if [finger] has been initialized already.
      */
     @Throws(IllegalStateException::class)
-    private fun addFinger(fingerRadius: Float) {
+    private fun initializeFinger(fingerRadius: Float) {
         check(!this::finger.isInitialized) {"'finger' has already been added once."}
 
         finger = Finger(fingerRadius / UNIT_TO_PIXELS)
     }
 
-    fun create(fingerRadius: Float) {
-        addFinger(fingerRadius)
+    fun create(dependencyManager: DependencyManager, fingerRadius: Float) {
+        initializeFinger(fingerRadius)
     }
 
     fun render() {

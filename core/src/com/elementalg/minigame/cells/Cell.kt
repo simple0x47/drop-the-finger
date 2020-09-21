@@ -6,7 +6,7 @@ import kotlin.math.abs
 import kotlin.math.floor
 import kotlin.math.sqrt
 
-abstract class Cell {
+abstract class Cell(private val size: Float) {
     enum class Type {
         HOLDER,
         EMPTY,
@@ -15,8 +15,6 @@ abstract class Cell {
     }
 
     private val position: Vector2 = Vector2(0f, 0f)
-
-    private var size: Float = MAX_SIDE_SIZE
 
     /**
      * Gets the position.
@@ -34,15 +32,6 @@ abstract class Cell {
      */
     fun getSize(): Float {
         return size
-    }
-
-    /**
-     * Sets the size of the sides of the cell.
-     *
-     * @param size size of the sides.
-     */
-    fun setSize(size: Float) {
-        this.size = size
     }
 
     private fun isNumberAPowerOfTwo(number: Int): Boolean {

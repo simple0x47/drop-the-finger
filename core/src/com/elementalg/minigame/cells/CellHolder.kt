@@ -1,56 +1,110 @@
 package com.elementalg.minigame.cells
 
 import com.badlogic.gdx.graphics.g2d.Batch
+import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.math.Vector2
+import kotlin.jvm.Throws
 import kotlin.math.floor
 
-class CellHolder : Cell() {
+class CellHolder(size: Float, private val cellsAtlas: TextureAtlas) : Cell(size) {
     private val cells: ArrayList<Cell> = ArrayList(HELD_CELLS)
 
+    init {
+        cells.ensureCapacity(HELD_CELLS)
+    }
+
     /**
-     * Sets the 4 cells of the [CellHolder].
+     * Gets a defined cell.
      *
-     * @param cell0 lower left cell.
-     * @param cell1 lower right cell.
-     * @param cell2 upper left cell.
-     * @param cell3 upper right cell.
+     * @param position position of the cell to be retrieved. (0 - bottom left) (1 - bottom right) (2 - top left)
+     * (3 - top right).
+     *
+     * @throws IllegalArgumentException if [position] is smaller than 0 and not smaller than [HELD_CELLS].
      */
-    fun setCells(cell0: Cell, cell1: Cell, cell2: Cell, cell3: Cell) {
-        cells.clear()
+    @Throws(IllegalArgumentException::class)
+    fun getCell(position: Int): Cell {
+        require(position in 0 until HELD_CELLS) {"'position' is out of the limits."}
 
-        cells.add(cell0)
-        cells.add(cell1)
-        cells.add(cell2)
-        cells.add(cell3)
+        return cells[position]
+    }
 
-        val childSize: Float = getSize() / 4f
+    override fun draw(batch: Batch) {
+        for (cell: Cell in cells) {
+            cell.draw(batch)
+        }
+    }
 
-        cell0.setSize(childSize)
-        cell1.setSize(childSize)
-        cell2.setSize(childSize)
-        cell3.setSize(childSize)
+    /**
+     *
+     * Adds a [Cell] to the [CellHolder]. A total of 4 cells must be added.
+     *
+     * @param cellType [Cell.Type] of [Cell].
+     *
+     * @throws IllegalStateException if [cells] has already reached it's capacity.
+     */
+    @Throws(IllegalStateException::class)
+    fun addCell(cellType: Type) {
+        check(cells.size < HELD_CELLS) {"'cells' is full."}
+        val innerSize: Float = getSize() / HELD_CELLS
+        val cell: Cell
+
+        cell = when (cellType) {
+            Type.HOLDER -> {
+                CellHolder(innerSize, cellsAtlas)
+            }
+            Type.EMPTY -> {
+                EmptyCell(innerSize)
+            }
+            Type.CUBE -> {
+                CubeObstacle(innerSize)
+            }
+            Type.LINE -> {
+                LineObstacle(innerSize, cellsAtlas.findRegion(LineObstacle.TEXTURE_REGION),
+                        LineObstacle.DEFAULT_THICKNESS)
+            }
+        }
+
+        cells.add(cell)
 
         updateCellsPosition()
     }
 
     /**
-     * Adds a [Cell] to the [CellHolder]. A total of 4 cells must be added.
+     * Adds a [Cell] of the passed [Cell.Type] to the [CellHolder] at desired position.
+     * A total of 4 cells must be added.
      *
-     * @param cell object which extends [Cell].
+     * @param cellType [Cell.Type] of [Cell].
+     * @param position location of the cell into the [CellHolder]. (0 - bottom left) (1 - bottom right) (2 - top left)
+     * (3 - top right).
      *
-     * @throws IllegalArgumentException if [cell] has already been added once to this [CellHolder].
+     * @throws IllegalArgumentException if [position] is less than 0 or not smaller than [HELD_CELLS].
      * @throws IllegalStateException if [cells] has already reached it's capacity.
      */
     @Throws(IllegalArgumentException::class, IllegalStateException::class)
-    fun addCell(cell: Cell) {
-        require(!cells.contains(cell)) {"'cell' has already been added once."}
-        check(cells.size < HELD_CELLS) {"'cells' has already reached it's capacity."}
+    fun addCell(cellType: Type, position: Int) {
+        require(position in 0 until HELD_CELLS) {"'position' is out of the limits."}
+        check(cells.size < HELD_CELLS) {"'cells' is full."}
 
-        cells.add(cell)
+        val innerSize: Float = getSize() / HELD_CELLS
+        val cell: Cell
 
-        val childSize: Float = getSize() / 4f
+        cell = when (cellType) {
+            Type.HOLDER -> {
+                CellHolder(innerSize, cellsAtlas)
+            }
+            Type.EMPTY -> {
+                EmptyCell(innerSize)
+            }
+            Type.CUBE -> {
+                CubeObstacle(innerSize)
+            }
+            Type.LINE -> {
+                LineObstacle(innerSize, cellsAtlas.findRegion(LineObstacle.TEXTURE_REGION),
+                        LineObstacle.DEFAULT_THICKNESS)
+            }
+        }
 
-        cell.setSize(childSize)
+        cells.add(position, cell)
 
         updateCellsPosition()
     }
@@ -66,16 +120,6 @@ class CellHolder : Cell() {
 
             cell.getPosition().set(holderPosition.x + (signX * (cell.getSize() / 2)), holderPosition.y +
                     (signY * (cell.getSize() / 2)))
-        }
-    }
-
-    fun getCells(): ArrayList<Cell> {
-        return cells
-    }
-
-    override fun draw(batch: Batch) {
-        for (cell: Cell in cells) {
-            cell.draw(batch)
         }
     }
 

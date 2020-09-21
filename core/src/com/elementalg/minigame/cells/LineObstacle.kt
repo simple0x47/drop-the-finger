@@ -6,41 +6,63 @@ import com.badlogic.gdx.math.Vector2
 import com.elementalg.minigame.Finger
 import kotlin.math.abs
 
-class LineObstacle(private val textureRegion: TextureRegion, private val thickness: Float) : Obstacle() {
-    private val topLeft: Vector2 = Vector2(0f, 0.5f + (thickness / 2f))
-    private val topRight: Vector2 = Vector2(1f, 0.5f + (thickness / 2f))
-    private val bottomLeft: Vector2 = Vector2(0f, 0.5f - (thickness / 2f))
-    private val bottomRight: Vector2 = Vector2(1f, 0.5f - (thickness / 2f))
+class LineObstacle(size: Float, private val textureRegion: TextureRegion, private val thickness: Float)
+    : Obstacle(size) {
+    private val relativeTopLeft: Vector2
+    private val relativeTopRight: Vector2
+    private val relativeBottomLeft: Vector2
+    private val relativeBottomRight: Vector2
 
+    private var angleIncrement: Float = 0f
     private var angle: Float = 0f
 
+    init {
+        val top: Float = thickness * size / 2f
+        val bottom: Float = top * -1f
+        val right: Float = 0.5f * size
+        val left: Float = right * -1f
+
+        relativeTopLeft = Vector2(top, left)
+        relativeTopRight = Vector2(top, right)
+        relativeBottomLeft = Vector2(bottom, left)
+        relativeBottomRight = Vector2(bottom, right)
+    }
+
+    fun setAngleIncrement(angleIncrement: Float) {
+        this.angleIncrement = angleIncrement
+    }
+
+    fun getAngleIncrement(): Float {
+        return angleIncrement
+    }
+
     override fun isWithinObstacle(finger: Finger): Boolean {
-        val center: Vector2 = Vector2(0.5f, 0.5f)
-        val translatedFinger: Vector2 = Vector2(finger.getPosition()).rotateAround(center, 360f - angle)
+        val translatedFinger: Vector2 = Vector2(finger.getPosition()).rotateAround(getPosition(), 360f - angle)
+        translatedFinger.sub(getPosition()) // use line's center as origin point.
 
         val pointA: Vector2
         val pointB: Vector2
 
-        if (topLeft.x <= translatedFinger.x) {
-            if (topLeft.y >= translatedFinger.y) {
-                if (bottomRight.x >= translatedFinger.x) {
-                    if (bottomRight.y <= translatedFinger.y) {
+        if (relativeTopLeft.x <= translatedFinger.x) {
+            if (relativeTopLeft.y >= translatedFinger.y) {
+                if (relativeBottomRight.x >= translatedFinger.x) {
+                    if (relativeBottomRight.y <= translatedFinger.y) {
                         return true
                     } else {
-                        pointA = bottomRight
-                        pointB = bottomLeft
+                        pointA = relativeBottomRight
+                        pointB = relativeBottomLeft
                     }
                 } else {
-                    pointA = topRight
-                    pointB = bottomRight
+                    pointA = relativeTopRight
+                    pointB = relativeBottomRight
                 }
             } else {
-                pointA = topLeft
-                pointB = topRight
+                pointA = relativeTopLeft
+                pointB = relativeTopRight
             }
         } else {
-            pointA = topLeft
-            pointB = bottomLeft
+            pointA = relativeTopLeft
+            pointB = relativeBottomLeft
         }
 
         val distance: Float = abs((pointB.y - pointA.y) * translatedFinger.x - (pointB.x - pointA.x) *
@@ -50,7 +72,16 @@ class LineObstacle(private val textureRegion: TextureRegion, private val thickne
     }
 
     override fun draw(batch: Batch) {
-        batch.draw(textureRegion, getPosition().x, getPosition().y, 0.5f, 0.5f, getSize(), getSize(),
-                1f, 1f, angle, false)
+        angle = if (angle + angleIncrement > 360f) ((angle + angleIncrement) - 360f) else (angle + angleIncrement)
+
+        batch.draw(textureRegion, getPosition().x, getPosition().y, 0.5f, 0.5f, getSize(),
+                getSize() * thickness, 1f, 1f, angle, false)
+    }
+
+    companion object {
+        const val DEFAULT_THICKNESS: Float = 0.1f
+        const val TEXTURE_REGION: String = "LineObstacle"
+
+        private val wallsDefinition: WallsDefinition = WallsDefinition() // no 'obstacles' since it rotates.
     }
 }
