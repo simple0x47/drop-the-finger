@@ -9,6 +9,10 @@ abstract class Screen : com.badlogic.gdx.Screen {
     private val viewport: FitViewport = FitViewport(UI_WORLD_WIDTH, UI_WORLD_HEIGHT)
     private val stage: Stage = Stage(viewport)
 
+    open fun show(screenManager: ScreenManager) {
+
+    }
+
     override fun show() {
 
     }

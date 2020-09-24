@@ -10,14 +10,14 @@ import com.elementalg.minigame.World
 import kotlin.math.min
 
 class ContinuousModeScreen(private val displayXDPI: Float, private val displayYDPI: Float) : Screen() {
-    private val backgroundViewport: FillViewport = FillViewport(World.WIDTH, World.HEIGHT)
-    private val actorsViewport: StretchViewport = StretchViewport(World.WIDTH, World.HEIGHT)
+    private val backgroundViewport: FillViewport = FillViewport(World.WORLD_SIZE, World.WORLD_SIZE)
+    private val actorsViewport: StretchViewport = StretchViewport(World.WORLD_SIZE, World.WORLD_SIZE)
     private val stage: Stage = Stage(actorsViewport)
 
     private lateinit var world: World
 
     override fun create(dependencyManager: DependencyManager) {
-        val fingerRadius: Float = 0.2952755f * min(displayXDPI, displayYDPI)
+        val fingerRadius: Float = FINGER_INCH_RADIUS * min(displayXDPI, displayYDPI)
 
         world = World()
         world.create(dependencyManager, fingerRadius)
@@ -28,10 +28,18 @@ class ContinuousModeScreen(private val displayXDPI: Float, private val displayYD
     }
 
     override fun resize(width: Int, height: Int) {
+        backgroundViewport.update(width, height)
+        actorsViewport.update(width, height)
+
         super.resize(width, height)
     }
 
     override fun render(delta: Float) {
+        actorsViewport.apply()
+        stage.batch.begin()
+        world.draw(stage.batch)
+        stage.batch.end()
+
         super.render(delta)
     }
 
@@ -48,6 +56,13 @@ class ContinuousModeScreen(private val displayXDPI: Float, private val displayYD
     }
 
     override fun dispose() {
+        stage.dispose()
+        world.dispose()
+
         super.dispose()
+    }
+
+    companion object {
+        const val FINGER_INCH_RADIUS: Float = 0.1968504f
     }
 }

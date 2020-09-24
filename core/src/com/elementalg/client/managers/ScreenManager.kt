@@ -11,7 +11,7 @@ class ScreenManager private constructor() : IUpdatableManager {
     fun setActiveScreen(screen: Screen) {
         activeScreen?.hide()
 
-        screen.show()
+        screen.show(this)
         this.activeScreen = screen
     }
 

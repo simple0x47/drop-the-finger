@@ -14,11 +14,14 @@ import com.badlogic.gdx.utils.viewport.FillViewport
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.elementalg.client.managers.DependencyManager
 import com.elementalg.client.managers.Screen
+import com.elementalg.client.managers.ScreenManager
 
 class MainScreen(private val displayXDPI: Float, private val displayYDPI: Float) : Screen(){
-    private class PlayButtonListener : ClickListener() {
+    private class PlayButtonListener(private val screenManager: ScreenManager,
+                                     private val modeScreen: ContinuousModeScreen)
+        : ClickListener() {
         override fun clicked(event: InputEvent?, x: Float, y: Float) {
-
+            screenManager.setActiveScreen(modeScreen)
 
             super.clicked(event, x, y)
         }
@@ -42,6 +45,8 @@ class MainScreen(private val displayXDPI: Float, private val displayYDPI: Float)
     private lateinit var logo: TextureRegion
 
     private lateinit var theme: Music
+
+    private lateinit var modeScreen: ContinuousModeScreen
 
     override fun create(dependencyManager: DependencyManager) {
         check(dependencyManager.isDependencyAvailable("MAIN_SCREEN")){"'MAIN_SCREEN' is not loaded yet."}
@@ -67,13 +72,16 @@ class MainScreen(private val displayXDPI: Float, private val displayYDPI: Float)
         logo = atlas.findRegion("Logo")
 
         theme = assets["MainScreenTheme"] as Music
+
+        modeScreen = ContinuousModeScreen(displayXDPI, displayYDPI)
+        modeScreen.create(dependencyManager)
     }
 
-    override fun show() {
+    override fun show(screenManager: ScreenManager) {
         stage.addActor(playButton)
         stage.addActor(highScoreButton)
 
-        playButton.addListener(PlayButtonListener())
+        playButton.addListener(PlayButtonListener(screenManager, modeScreen))
         highScoreButton.addListener(HighScoreButtonListener())
 
         Gdx.input.inputProcessor = stage

@@ -9,6 +9,8 @@ import kotlin.math.floor
 class CellHolder(size: Float, private val cellsAtlas: TextureAtlas) : Cell(size) {
     private val cells: ArrayList<Cell> = ArrayList(HELD_CELLS)
 
+    private var outputCell: Int = -1
+
     init {
         cells.ensureCapacity(HELD_CELLS)
     }
@@ -28,6 +30,25 @@ class CellHolder(size: Float, private val cellsAtlas: TextureAtlas) : Cell(size)
         return cells[position]
     }
 
+    /**
+     * Sets the output cell of the CellHolder.
+     *
+     * @param outputCell integer representing the cell which acts as output.
+     */
+    @Throws(IllegalArgumentException::class)
+    fun setOutputCell(outputCell: Int) {
+        require(outputCell in 0 until HELD_CELLS) {"'outputCell' is out of limits."}
+
+        this.outputCell = outputCell
+    }
+
+    /**
+     * @return integer representing the position of the output cell, -1 if there's no output.
+     */
+    fun getOutputCell(): Int {
+        return outputCell
+    }
+
     override fun draw(batch: Batch) {
         for (cell: Cell in cells) {
             cell.draw(batch)
@@ -43,7 +64,7 @@ class CellHolder(size: Float, private val cellsAtlas: TextureAtlas) : Cell(size)
      * @throws IllegalStateException if [cells] has already reached it's capacity.
      */
     @Throws(IllegalStateException::class)
-    fun addCell(cellType: Type) {
+    fun addCell(cellType: Type): Cell {
         check(cells.size < HELD_CELLS) {"'cells' is full."}
         val innerSize: Float = getSize() / HELD_CELLS
         val cell: Cell
@@ -67,6 +88,8 @@ class CellHolder(size: Float, private val cellsAtlas: TextureAtlas) : Cell(size)
         cells.add(cell)
 
         updateCellsPosition()
+
+        return cell
     }
 
     /**
@@ -81,7 +104,7 @@ class CellHolder(size: Float, private val cellsAtlas: TextureAtlas) : Cell(size)
      * @throws IllegalStateException if [cells] has already reached it's capacity.
      */
     @Throws(IllegalArgumentException::class, IllegalStateException::class)
-    fun addCell(cellType: Type, position: Int) {
+    fun addCell(cellType: Type, position: Int): Cell {
         require(position in 0 until HELD_CELLS) {"'position' is out of the limits."}
         check(cells.size < HELD_CELLS) {"'cells' is full."}
 
@@ -107,6 +130,8 @@ class CellHolder(size: Float, private val cellsAtlas: TextureAtlas) : Cell(size)
         cells.add(position, cell)
 
         updateCellsPosition()
+
+        return cell
     }
 
     private fun updateCellsPosition() {
@@ -121,6 +146,13 @@ class CellHolder(size: Float, private val cellsAtlas: TextureAtlas) : Cell(size)
             cell.getPosition().set(holderPosition.x + (signX * (cell.getSize() / 2)), holderPosition.y +
                     (signY * (cell.getSize() / 2)))
         }
+    }
+
+    /**
+     * Clears the contained cells.
+     */
+    fun clear() {
+        cells.clear()
     }
 
     companion object {
