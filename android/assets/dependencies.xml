@@ -8,4 +8,9 @@
             main.mp3
         </asset>
     </dependency>
+    <dependency id="WORLD" path="world/" forceLoad="true">
+        <asset id="WorldAtlas" class="com.badlogic.gdx.graphics.g2d.TextureAtlas">
+            World.atlas
+        </asset>
+    </dependency>
 </dependencies>

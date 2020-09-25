@@ -1,7 +1,10 @@
 package com.elementalg.minigame
 
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
+import com.badlogic.gdx.graphics.g2d.TextureRegion
+import com.badlogic.gdx.math.Vector2
 import com.elementalg.client.managers.DependencyManager
 import com.elementalg.minigame.cells.Cell
 import com.elementalg.minigame.cells.CellGenerator
@@ -12,10 +15,13 @@ import kotlin.random.Random
 class World {
     private val cellHolders: ArrayList<CellHolder> = ArrayList(CELL_HOLDERS)
 
+    private var speed: Float = 0.1f
     private var difficulty: Float = 0f
 
     private lateinit var finger: Finger
     private lateinit var cellGenerator: CellGenerator
+
+    private lateinit var textureRegion: TextureRegion
 
     /**
      * Adds a finger to the world with the passed [fingerRadius].
@@ -28,6 +34,7 @@ class World {
     private fun initializeFinger(fingerRadius: Float) {
         check(!this::finger.isInitialized) {"'finger' has already been added once."}
 
+        Gdx.app.log("RADIUS", "FingerRadius: ${fingerRadius / UNIT_TO_PIXELS}")
         finger = Finger(fingerRadius / UNIT_TO_PIXELS)
         cellGenerator = CellGenerator(finger.getRadius())
     }
@@ -66,23 +73,43 @@ class World {
     fun create(dependencyManager: DependencyManager, fingerRadius: Float) {
         val assets: HashMap<String, Any> = dependencyManager.retrieveAssets("WORLD")
 
-        check (assets.containsKey("CellsAtlas")) {"World dependency 'CellsAtlas' is not solved."}
+        check (assets.containsKey("WorldAtlas")) {"World dependency 'CellsAtlas' is not solved."}
 
-        val cellsAtlas: TextureAtlas = assets["CellsAtlas"] as TextureAtlas
+        val worldAtlas: TextureAtlas = assets["WorldAtlas"] as TextureAtlas
 
-        val worldCellHolderSize: Float = WORLD_SIZE / 2f;
+        val worldCellHolderSize: Float = WORLD_SIZE.x
 
         for (i: Int in 0 until CELL_HOLDERS) {
-            cellHolders.add(CellHolder(worldCellHolderSize, cellsAtlas))
+            val cellHolder: CellHolder = CellHolder(worldCellHolderSize, worldAtlas)
+
+            cellHolder.getPosition().set(0f, (i * worldCellHolderSize))
+
+            cellHolders.add(cellHolder)
         }
 
         initializeFinger(fingerRadius)
         initializeStartingCellHolders()
+
+        textureRegion = worldAtlas.findRegion("FingerPointerTest")
     }
 
     fun draw(batch: Batch) {
         for (cellHolder: CellHolder in cellHolders) {
             cellHolder.draw(batch)
+
+            displaceCellHolder(cellHolder)
+        }
+
+        batch.draw(textureRegion, 1f, 1f, finger.getRadius(), finger.getRadius())
+    }
+
+    private fun displaceCellHolder(cellHolder: CellHolder) {
+        cellHolder.setPosition(cellHolder.getPosition().sub(0f, speed))
+
+        if (cellHolder.getPosition().y <= ( -1 * WORLD_SIZE.x)) { // if it's under the screen
+            generateWorldCellHolder(cellHolders.indexOf(cellHolder))
+
+            cellHolder.setPosition(cellHolder.getPosition().x,  WORLD_SIZE.x * 2f)
         }
     }
 
@@ -93,7 +120,9 @@ class World {
     companion object {
         const val CELL_HOLDERS: Int = 3
         const val UNIT_TO_PIXELS: Int = 100
-        const val WORLD_SIZE: Float = 16f
         const val FINGER_RADIUS_MARGIN: Float = 1.25f // lower = harder *evil laugh*, but never lower than 1.
+        const val MAX_SPEED: Float = 0.2f
+
+        val WORLD_SIZE: Vector2 = Vector2(8f, 16f)
     }
 }

@@ -5,19 +5,20 @@ import com.badlogic.gdx.utils.viewport.FillViewport
 import com.badlogic.gdx.utils.viewport.StretchViewport
 import com.elementalg.client.managers.DependencyManager
 import com.elementalg.client.managers.Screen
+import com.elementalg.minigame.Finger
 import com.elementalg.minigame.World
 
 import kotlin.math.min
 
 class ContinuousModeScreen(private val displayXDPI: Float, private val displayYDPI: Float) : Screen() {
-    private val backgroundViewport: FillViewport = FillViewport(World.WORLD_SIZE, World.WORLD_SIZE)
-    private val actorsViewport: StretchViewport = StretchViewport(World.WORLD_SIZE, World.WORLD_SIZE)
+    private val backgroundViewport: FillViewport = FillViewport(World.WORLD_SIZE.x, World.WORLD_SIZE.y)
+    private val actorsViewport: StretchViewport = StretchViewport(World.WORLD_SIZE.x, World.WORLD_SIZE.y)
     private val stage: Stage = Stage(actorsViewport)
 
     private lateinit var world: World
 
     override fun create(dependencyManager: DependencyManager) {
-        val fingerRadius: Float = FINGER_INCH_RADIUS * min(displayXDPI, displayYDPI)
+        val fingerRadius: Float = Finger.FINGER_INCH_RADIUS * min(displayXDPI, displayYDPI)
 
         world = World()
         world.create(dependencyManager, fingerRadius)
@@ -36,6 +37,7 @@ class ContinuousModeScreen(private val displayXDPI: Float, private val displayYD
 
     override fun render(delta: Float) {
         actorsViewport.apply()
+        stage.batch.projectionMatrix = actorsViewport.camera.combined
         stage.batch.begin()
         world.draw(stage.batch)
         stage.batch.end()
@@ -60,9 +62,5 @@ class ContinuousModeScreen(private val displayXDPI: Float, private val displayYD
         world.dispose()
 
         super.dispose()
-    }
-
-    companion object {
-        const val FINGER_INCH_RADIUS: Float = 0.1968504f
     }
 }

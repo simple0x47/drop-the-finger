@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.math.Vector2
 import com.elementalg.minigame.Finger
 import kotlin.math.abs
+import kotlin.random.Random
 
 class LineObstacle(size: Float, private val textureRegion: TextureRegion, private val thickness: Float)
     : Obstacle(size) {
@@ -13,8 +14,11 @@ class LineObstacle(size: Float, private val textureRegion: TextureRegion, privat
     private val relativeBottomLeft: Vector2
     private val relativeBottomRight: Vector2
 
-    private var angleIncrement: Float = 0f
-    private var angle: Float = 0f
+    private val origin: Vector2 = Vector2(getSize() / 2f, getSize() * thickness / 2f)
+    private val heightOffset: Float = (getSize() / 2f) - (getSize() * thickness / 2f)
+
+    private var angleIncrement: Float = Random.nextFloat() * MAX_ANGLE_INCREMENT
+    private var angle: Float = Random.nextFloat() * MAX_ANGLE
 
     init {
         val top: Float = thickness * size / 2f
@@ -26,6 +30,14 @@ class LineObstacle(size: Float, private val textureRegion: TextureRegion, privat
         relativeTopRight = Vector2(top, right)
         relativeBottomLeft = Vector2(bottom, left)
         relativeBottomRight = Vector2(bottom, right)
+    }
+
+    override fun setPosition(position: Vector2) {
+        getPosition().set(position.add(0f, heightOffset))
+    }
+
+    override fun setPosition(x: Float, y: Float) {
+        getPosition().set(x, y + heightOffset)
     }
 
     fun setAngleIncrement(angleIncrement: Float) {
@@ -74,14 +86,15 @@ class LineObstacle(size: Float, private val textureRegion: TextureRegion, privat
     override fun draw(batch: Batch) {
         angle = if (angle + angleIncrement > 360f) ((angle + angleIncrement) - 360f) else (angle + angleIncrement)
 
-        batch.draw(textureRegion, getPosition().x, getPosition().y, 0.5f, 0.5f, getSize(),
+        batch.draw(textureRegion, getPosition().x, getPosition().y, origin.x, origin.y, getSize(),
                 getSize() * thickness, 1f, 1f, angle, false)
     }
 
     companion object {
-        const val DEFAULT_THICKNESS: Float = 0.1f
-        const val TEXTURE_REGION: String = "LineObstacle"
+        const val MAX_ANGLE_INCREMENT = 5f
+        const val MAX_ANGLE = 360f
 
-        private val wallsDefinition: WallsDefinition = WallsDefinition() // no 'obstacles' since it rotates.
+        const val DEFAULT_THICKNESS: Float = 0.025f
+        const val TEXTURE_REGION: String = "Line"
     }
 }

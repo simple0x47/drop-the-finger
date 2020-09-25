@@ -1,12 +1,13 @@
 package com.elementalg.minigame.cells
 
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.math.Vector2
 import kotlin.jvm.Throws
 import kotlin.math.floor
 
-class CellHolder(size: Float, private val cellsAtlas: TextureAtlas) : Cell(size) {
+class CellHolder(size: Float, private val worldAtlas: TextureAtlas) : Cell(size) {
     private val cells: ArrayList<Cell> = ArrayList(HELD_CELLS)
 
     private var outputCell: Int = -1
@@ -42,6 +43,18 @@ class CellHolder(size: Float, private val cellsAtlas: TextureAtlas) : Cell(size)
         this.outputCell = outputCell
     }
 
+    override fun setPosition(position: Vector2) {
+        getPosition().set(position)
+
+        updateCellsPosition()
+    }
+
+    override fun setPosition(x: Float, y: Float) {
+        getPosition().set(x, y)
+
+        updateCellsPosition()
+    }
+
     /**
      * @return integer representing the position of the output cell, -1 if there's no output.
      */
@@ -50,8 +63,25 @@ class CellHolder(size: Float, private val cellsAtlas: TextureAtlas) : Cell(size)
     }
 
     override fun draw(batch: Batch) {
+        batch.draw(worldAtlas.findRegion("CellHolderTest"), getPosition().x, getPosition().y, getSize(), getSize())
+
         for (cell: Cell in cells) {
             cell.draw(batch)
+        }
+    }
+
+    private fun updateCellsPosition() {
+        val holderPosition: Vector2 = getPosition()
+
+        for (cell: Cell in cells) {
+            val index: Int = cells.indexOf(cell)
+
+            val multiplierX: Int = if (index % 2 == 0) 0 else 1
+            val multiplierY: Int = if (floor(index / 2f) > 0) 1 else 0
+
+
+            cell.setPosition(holderPosition.x + (multiplierX * cell.getSize()),
+                    holderPosition.y + (multiplierY * cell.getSize()))
         }
     }
 
@@ -66,26 +96,20 @@ class CellHolder(size: Float, private val cellsAtlas: TextureAtlas) : Cell(size)
     @Throws(IllegalStateException::class)
     fun addCell(cellType: Type): Cell {
         check(cells.size < HELD_CELLS) {"'cells' is full."}
-        val innerSize: Float = getSize() / HELD_CELLS
-        val cell: Cell
-
-        cell = when (cellType) {
-            Type.HOLDER -> {
-                CellHolder(innerSize, cellsAtlas)
-            }
-            Type.EMPTY -> {
-                EmptyCell(innerSize)
-            }
-            Type.CUBE -> {
-                CubeObstacle(innerSize)
-            }
-            Type.LINE -> {
-                LineObstacle(innerSize, cellsAtlas.findRegion(LineObstacle.TEXTURE_REGION),
-                        LineObstacle.DEFAULT_THICKNESS)
-            }
-        }
+        val innerSize: Float = getSize() / 2f
+        val cell: Cell = createCell(cellType, innerSize, worldAtlas)
 
         cells.add(cell)
+
+        for (i: Int in 0 until cells.size) {
+            if (!(cell is EmptyCell)) {
+                break
+            }
+
+            if (i == cells.size - 1) {
+                Gdx.app.log("EMPTY", "Empty cell holder")
+            }
+        }
 
         updateCellsPosition()
 
@@ -108,44 +132,14 @@ class CellHolder(size: Float, private val cellsAtlas: TextureAtlas) : Cell(size)
         require(position in 0 until HELD_CELLS) {"'position' is out of the limits."}
         check(cells.size < HELD_CELLS) {"'cells' is full."}
 
-        val innerSize: Float = getSize() / HELD_CELLS
-        val cell: Cell
-
-        cell = when (cellType) {
-            Type.HOLDER -> {
-                CellHolder(innerSize, cellsAtlas)
-            }
-            Type.EMPTY -> {
-                EmptyCell(innerSize)
-            }
-            Type.CUBE -> {
-                CubeObstacle(innerSize)
-            }
-            Type.LINE -> {
-                LineObstacle(innerSize, cellsAtlas.findRegion(LineObstacle.TEXTURE_REGION),
-                        LineObstacle.DEFAULT_THICKNESS)
-            }
-        }
+        val innerSize: Float = getSize() / 2f
+        val cell: Cell = createCell(cellType, innerSize, worldAtlas)
 
         cells.add(position, cell)
 
         updateCellsPosition()
 
         return cell
-    }
-
-    private fun updateCellsPosition() {
-        val holderPosition: Vector2 = getPosition()
-
-        for (cell: Cell in cells) {
-            val index: Int = cells.indexOf(cell)
-
-            val signX: Int = if (index % 2 == 0) -1 else 1
-            val signY: Int = if (floor(index / 2f) > 0) 1 else -1
-
-            cell.getPosition().set(holderPosition.x + (signX * (cell.getSize() / 2)), holderPosition.y +
-                    (signY * (cell.getSize() / 2)))
-        }
     }
 
     /**

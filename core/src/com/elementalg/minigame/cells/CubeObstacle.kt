@@ -1,11 +1,22 @@
 package com.elementalg.minigame.cells
 
 import com.badlogic.gdx.graphics.g2d.Batch
+import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.math.Vector2
 import com.elementalg.minigame.Finger
 import kotlin.math.abs
 
-class CubeObstacle(size: Float) : Obstacle(size) {
+class CubeObstacle(size: Float, private val textureRegion: TextureRegion) : Obstacle(size) {
+    private val origin: Float = getSize() / 2f
+
+    override fun setPosition(position: Vector2) {
+        getPosition().set(position)
+    }
+
+    override fun setPosition(x: Float, y: Float) {
+        getPosition().set(x, y)
+    }
+
     override fun isWithinObstacle(finger: Finger): Boolean {
         val fingerPosition: Vector2 = Vector2(finger.getPosition()).sub(getPosition())
 
@@ -44,21 +55,11 @@ class CubeObstacle(size: Float) : Obstacle(size) {
     }
 
     override fun draw(batch: Batch) {
-
+        batch.draw(textureRegion, getPosition().x, getPosition().y, origin, origin, getSize(), getSize(), 1f,
+                1f, 0f)
     }
 
     companion object {
-        const val TEXTURE_REGION: String = "CubeObstacle"
-
-        val wallsDefinition: WallsDefinition = WallsDefinition()
-
-        init {
-            val fullObstructionRange: Vector2 = Vector2(0f, 1f)
-
-            wallsDefinition.addObstruction(WallsDefinition.Position.BOTTOM, fullObstructionRange)
-            wallsDefinition.addObstruction(WallsDefinition.Position.RIGHT, fullObstructionRange)
-            wallsDefinition.addObstruction(WallsDefinition.Position.TOP, fullObstructionRange)
-            wallsDefinition.addObstruction(WallsDefinition.Position.LEFT, fullObstructionRange)
-        }
+        const val TEXTURE_REGION: String = "Cube"
     }
 }

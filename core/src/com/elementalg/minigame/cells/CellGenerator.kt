@@ -1,7 +1,10 @@
 package com.elementalg.minigame.cells
 
+import com.badlogic.gdx.Gdx
 import com.elementalg.minigame.World
 import kotlin.jvm.Throws
+import kotlin.math.abs
+import kotlin.math.min
 import kotlin.random.Random
 
 class CellGenerator(private val fingerRadius: Float) {
@@ -15,25 +18,30 @@ class CellGenerator(private val fingerRadius: Float) {
         return Cell.Type.CUBE
     }
 
-    private fun randomPassableCellType(isWorldCellHolder: Boolean, canBeCellHolder: Boolean, difficulty: Float):
+    private fun randomPassableCellType(isWorldCellHolder: Boolean, canBeCellHolder: Int, difficulty: Float):
             Cell.Type {
-        val cell: Cell.Type
+        val cellHolderChance: Float = min(1, canBeCellHolder) * (CELL_HOLDER_CHANCE +
+                (difficulty / 2f * EMPTY_CELL_CHANCE))
 
-        val cellHolderChance: Float = if (!canBeCellHolder) 0f else (CELL_HOLDER_CHANCE) + (difficulty * 0.125f)
-        val lineObstacleChance: Float = OBSTACLE_CHANCE - cellHolderChance + (difficulty * 0.25f)
-        val emptyCellChance: Float = EMPTY_CELL_CHANCE - (difficulty * 0.25f)
+        val noCellHolder: Int = abs(min(1, canBeCellHolder) - 1)
+
+        val lineObstacleChance: Float = OBSTACLE_CHANCE + (difficulty / 2f * EMPTY_CELL_CHANCE) +
+                (noCellHolder * (CELL_HOLDER_CHANCE + (difficulty / 2f * EMPTY_CELL_CHANCE)))
+
+        val emptyCellChance: Float = EMPTY_CELL_CHANCE - (difficulty * EMPTY_CELL_CHANCE) +
+                (noCellHolder * (CELL_HOLDER_CHANCE + (difficulty / 2f * EMPTY_CELL_CHANCE)))
 
         val randomValue: Float = Random.nextFloat()
 
-        if (randomValue <= emptyCellChance) {
-            cell = Cell.Type.EMPTY
-        } else if (randomValue <= (emptyCellChance + lineObstacleChance)) {
-            cell = Cell.Type.LINE
+        return if (randomValue <= cellHolderChance) {
+            Cell.Type.HOLDER
+        } else if (randomValue <= (cellHolderChance + lineObstacleChance)) {
+            Cell.Type.LINE
+        } else if (randomValue <= (cellHolderChance + lineObstacleChance + emptyCellChance)) {
+            Cell.Type.EMPTY
         } else {
-            cell = Cell.Type.HOLDER
+            Cell.Type.EMPTY
         }
-
-        return cell
     }
 
     private fun mustCellBePassable(cellPosition: Int, route: Route, inputPosition: Int, outputPosition: Int): Boolean {
@@ -78,7 +86,7 @@ class CellGenerator(private val fingerRadius: Float) {
         cellHolder.clear()
 
         val route: Route = if ((((inputPosition == 0) && (outputPosition == 3)) ||
-                        ((inputPosition == 1) && (outputPosition == 2))) && worldCellHolder) {
+                        ((inputPosition == 1) && (outputPosition == 2)))) {
                 Route.L_SHAPE
             } else {
             val randomForRoute: Float = Random.nextFloat()
@@ -90,8 +98,8 @@ class CellGenerator(private val fingerRadius: Float) {
             }
         }
 
-        val hypotheticalInnerCellHolderSize: Float = cellHolder.getSize() / 4f
-        val doesInnerCellHolderSizeComply: Boolean = ((fingerRadius * 2f * World.FINGER_RADIUS_MARGIN) >=
+        val hypotheticalInnerCellHolderSize: Float = cellHolder.getSize() / 2f
+        val doesInnerCellHolderSizeComply: Boolean = ((fingerRadius * 2f * World.FINGER_RADIUS_MARGIN) <
                 hypotheticalInnerCellHolderSize)
 
         for (i: Int in 0 until CellHolder.HELD_CELLS) {
@@ -106,8 +114,8 @@ class CellGenerator(private val fingerRadius: Float) {
                     false
                 }
 
-                val canBeInnerCellHolder: Boolean = (doesInnerCellHolderSizeComply && (!hasACellHolderNextTo) &&
-                        (i != inputPosition))
+                val canBeInnerCellHolder: Int = if (doesInnerCellHolderSizeComply && (!hasACellHolderNextTo) &&
+                        (i != inputPosition)) 1 else 0
 
                 randomPassableCellType(worldCellHolder, canBeInnerCellHolder, difficulty)
             } else {
@@ -123,9 +131,9 @@ class CellGenerator(private val fingerRadius: Float) {
     }
 
     companion object {
-        const val CELL_HOLDER_CHANCE: Float = 0.25f
-        const val OBSTACLE_CHANCE: Float = 0.5f
-        const val EMPTY_CELL_CHANCE: Float = 0.5f
+        const val CELL_HOLDER_CHANCE: Float = 0.5f
+        const val OBSTACLE_CHANCE: Float = 0.25f
+        const val EMPTY_CELL_CHANCE: Float = 0.25f
 
         const val C_SHAPE_CHANCE: Float = 0.2f
     }

@@ -13,4 +13,8 @@ class Finger(private val radius: Float) {
     fun getPosition(): Vector2 {
         return position
     }
+
+    companion object {
+        const val FINGER_INCH_RADIUS: Float = 0.1968504f
+    }
 }

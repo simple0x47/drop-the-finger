@@ -29,8 +29,6 @@ class MainScreen(private val displayXDPI: Float, private val displayYDPI: Float)
 
     private class HighScoreButtonListener : ClickListener() {
         override fun clicked(event: InputEvent?, x: Float, y: Float) {
-
-
             super.clicked(event, x, y)
         }
     }
