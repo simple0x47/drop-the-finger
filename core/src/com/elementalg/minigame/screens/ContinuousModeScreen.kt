@@ -1,12 +1,15 @@
 package com.elementalg.minigame.screens
 
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.viewport.FillViewport
 import com.badlogic.gdx.utils.viewport.StretchViewport
 import com.elementalg.client.managers.DependencyManager
 import com.elementalg.client.managers.Screen
-import com.elementalg.minigame.Finger
-import com.elementalg.minigame.World
+import com.elementalg.client.managers.ScreenManager
+import com.elementalg.minigame.world.Finger
+import com.elementalg.minigame.world.World
+import kotlin.math.max
 
 import kotlin.math.min
 
@@ -20,12 +23,15 @@ class ContinuousModeScreen(private val displayXDPI: Float, private val displayYD
     override fun create(dependencyManager: DependencyManager) {
         val fingerRadius: Float = Finger.FINGER_INCH_RADIUS * min(displayXDPI, displayYDPI)
 
-        world = World()
+        world = World(stage, actorsViewport)
         world.create(dependencyManager, fingerRadius)
     }
 
-    override fun show() {
+    override fun show(screenManager: ScreenManager) {
         super.show()
+
+        Gdx.input.inputProcessor = stage
+        world.show()
     }
 
     override fun resize(width: Int, height: Int) {
@@ -39,7 +45,7 @@ class ContinuousModeScreen(private val displayXDPI: Float, private val displayYD
         actorsViewport.apply()
         stage.batch.projectionMatrix = actorsViewport.camera.combined
         stage.batch.begin()
-        world.draw(stage.batch)
+        world.render(stage.batch)
         stage.batch.end()
 
         super.render(delta)

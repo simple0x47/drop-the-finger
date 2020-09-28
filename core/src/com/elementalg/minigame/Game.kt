@@ -10,7 +10,6 @@ import com.elementalg.managers.EventManager
 import com.elementalg.minigame.screens.MainScreen
 import java.util.*
 import kotlin.jvm.Throws
-import kotlin.math.min
 
 class Game(private val systemLocale: Locale, private val displayXDPI: Float, private val displayYDPI: Float)
     : ApplicationAdapter() {
@@ -87,13 +86,14 @@ class Game(private val systemLocale: Locale, private val displayXDPI: Float, pri
         dependencyManager.loadDependencyID("MAIN_SCREEN")
         dependencyManager.loadDependencyID("WORLD")
 
+        Gdx.app.log("DPI", "$displayXDPI | $displayYDPI")
         val mainScreen: MainScreen = MainScreen(displayXDPI, displayYDPI)
         mainScreen.create(dependencyManager)
         screenManager.setActiveScreen(mainScreen)
     }
 
     override fun render() {
-        fpsLogger.log()
+        //fpsLogger.log()
         eventManager.update()
 
         dependencyManager.update()

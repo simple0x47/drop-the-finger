@@ -1,9 +1,9 @@
-package com.elementalg.minigame.cells
+package com.elementalg.minigame.world.cells
 
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.math.Vector2
 
-class EmptyCell(size: Float) : Cell(size) {
+class EmptyCell(size: Float) : Cell(Type.EMPTY, size) {
     override fun setPosition(position: Vector2) {
         getPosition().set(position)
     }

@@ -1,19 +1,19 @@
 
 World.png
-size: 2048,2048
+size: 2048,1024
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-CellHolderTest
+Cube
   rotate: false
-  xy: 2, 84
-  size: 1600, 1600
-  orig: 1600, 1600
+  xy: 804, 84
+  size: 800, 800
+  orig: 800, 800
   offset: 0, 0
   index: -1
-FingerPointerTest
+Finger
   rotate: false
-  xy: 1604, 1464
+  xy: 1606, 664
   size: 220, 220
   orig: 220, 220
   offset: 0, 0
@@ -25,22 +25,9 @@ Line
   orig: 800, 80
   offset: 0, 0
   index: -1
-
-World2.png
-size: 2048,1024
-format: RGBA8888
-filter: Nearest,Nearest
-repeat: none
-Cube
-  rotate: false
-  xy: 804, 2
-  size: 800, 800
-  orig: 800, 800
-  offset: 0, 0
-  index: -1
 OutlineTriangle
   rotate: false
-  xy: 2, 2
+  xy: 2, 84
   size: 800, 800
   orig: 800, 800
   offset: 0, 0

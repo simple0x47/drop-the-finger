@@ -1,27 +1,29 @@
-package com.elementalg.minigame
+package com.elementalg.minigame.world
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
-import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.math.Vector2
+import com.badlogic.gdx.scenes.scene2d.Stage
+import com.badlogic.gdx.utils.viewport.Viewport
 import com.elementalg.client.managers.DependencyManager
-import com.elementalg.minigame.cells.Cell
-import com.elementalg.minigame.cells.CellGenerator
-import com.elementalg.minigame.cells.CellHolder
+import com.elementalg.minigame.world.cells.Cell
+import com.elementalg.minigame.world.cells.CellGenerator
+import com.elementalg.minigame.world.cells.CellHolder
+import com.elementalg.minigame.world.cells.Obstacle
 import kotlin.jvm.Throws
 import kotlin.random.Random
 
-class World {
+class World(private val stage: Stage, private val worldViewport: Viewport) {
     private val cellHolders: ArrayList<CellHolder> = ArrayList(CELL_HOLDERS)
 
-    private var speed: Float = 0.1f
+    private var speed: Float = 0.05f
     private var difficulty: Float = 0f
+    private var started: Boolean = false
 
     private lateinit var finger: Finger
+    private lateinit var fingerListener: FingerListener
     private lateinit var cellGenerator: CellGenerator
-
-    private lateinit var textureRegion: TextureRegion
 
     /**
      * Adds a finger to the world with the passed [fingerRadius].
@@ -31,11 +33,11 @@ class World {
      * @throws IllegalStateException if [finger] has been initialized already.
      */
     @Throws(IllegalStateException::class)
-    private fun initializeFinger(fingerRadius: Float) {
-        check(!this::finger.isInitialized) {"'finger' has already been added once."}
+    private fun initializeFinger(worldAtlas: TextureAtlas, fingerRadius: Float) {
+        check(!this::finger.isInitialized) {"'finger' has already been initialized once."}
 
-        Gdx.app.log("RADIUS", "FingerRadius: ${fingerRadius / UNIT_TO_PIXELS}")
-        finger = Finger(fingerRadius / UNIT_TO_PIXELS)
+        finger = Finger(this, worldViewport, worldAtlas.findRegion("Finger"),
+                fingerRadius / UNIT_TO_PIXELS)
         cellGenerator = CellGenerator(finger.getRadius())
     }
 
@@ -65,8 +67,8 @@ class World {
         check(inputPosition in 0..1){"'inputCellPosition' is not a bottom cell."}
 
         cellHolders[cellHolderIndex].setOutputCell(outputPosition)
-        cellGenerator.generateRoute(cellHolders[cellHolderIndex], true, inputPosition,
-                outputPosition, difficulty)
+        cellGenerator.generateRoute(cellHolders[cellHolderIndex], true, CellHolder.WORLD_CELL_HOLDER_LEVEL,
+                inputPosition, outputPosition, difficulty)
     }
 
     @Throws(IllegalStateException::class)
@@ -80,27 +82,58 @@ class World {
         val worldCellHolderSize: Float = WORLD_SIZE.x
 
         for (i: Int in 0 until CELL_HOLDERS) {
-            val cellHolder: CellHolder = CellHolder(worldCellHolderSize, worldAtlas)
+            val cellHolder: CellHolder = CellHolder(worldCellHolderSize, worldAtlas, CellHolder.WORLD_CELL_HOLDER_LEVEL)
 
             cellHolder.getPosition().set(0f, (i * worldCellHolderSize))
 
             cellHolders.add(cellHolder)
         }
 
-        initializeFinger(fingerRadius)
+        initializeFinger(worldAtlas, fingerRadius)
         initializeStartingCellHolders()
-
-        textureRegion = worldAtlas.findRegion("FingerPointerTest")
     }
 
-    fun draw(batch: Batch) {
+    fun render(batch: Batch) {
+        finger.draw(batch)
+
+        var count: Int = 0
         for (cellHolder: CellHolder in cellHolders) {
             cellHolder.draw(batch)
 
-            displaceCellHolder(cellHolder)
+            if (started) {
+                displaceCellHolder(cellHolder)
+
+                if (count < 2) {
+                    if (cellHolder.isFingerWithinCell(finger)) {
+                        if (isCollidingFingerWithCellHoldersInnerObstacles(cellHolder, finger)) {
+                            gameOver()
+                        } else {
+                            ++count
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun isCollidingFingerWithCellHoldersInnerObstacles(cellHolder: CellHolder, finger: Finger): Boolean {
+        for (cellIndex: Int in 0 until CellHolder.HELD_CELLS) {
+            val cell: Cell = cellHolder.getCell(cellIndex)
+
+            if (cell.getType() == Cell.Type.HOLDER) {
+                if (isCollidingFingerWithCellHoldersInnerObstacles(cell as CellHolder, finger)) {
+                    Gdx.app.log("COLLISION", "CELL HOLDER")
+                    return true
+                }
+            } else if (cell is Obstacle) {
+                if (cell.isFingerCollidingWithObstacle(finger)) {
+                    Gdx.app.log("COLLISION", "CellType: ${cell.getType()} | CellSize: ${cell.getSize()} | CellPosition: ${cell.getPosition()} | FingerPosition: ${finger.getPosition()} | FingerRadius: ${finger.getRadius()}")
+                    return true
+                }
+            }
         }
 
-        batch.draw(textureRegion, 1f, 1f, finger.getRadius(), finger.getRadius())
+        return false
     }
 
     private fun displaceCellHolder(cellHolder: CellHolder) {
@@ -113,6 +146,27 @@ class World {
         }
     }
 
+    fun show() {
+        fingerListener = FingerListener(finger, this)
+
+        stage.addListener(fingerListener)
+    }
+
+    fun start() {
+        started = true
+    }
+
+    fun isStarted(): Boolean {
+        return started
+    }
+
+    fun gameOver() {
+        Gdx.app.log("LISTENER", "REMOVED")
+        stage.removeListener(fingerListener)
+
+        started = false
+    }
+
     fun dispose() {
 
     }
@@ -120,8 +174,8 @@ class World {
     companion object {
         const val CELL_HOLDERS: Int = 3
         const val UNIT_TO_PIXELS: Int = 100
-        const val FINGER_RADIUS_MARGIN: Float = 1.25f // lower = harder *evil laugh*, but never lower than 1.
-        const val MAX_SPEED: Float = 0.2f
+        const val FINGER_RADIUS_MARGIN: Float = 1.5f // lower = harder *evil laugh*, but never lower than 1.
+        const val MAX_SPEED: Float = 0.05f
 
         val WORLD_SIZE: Vector2 = Vector2(8f, 16f)
     }

@@ -1,7 +1,6 @@
-package com.elementalg.minigame.cells
+package com.elementalg.minigame.world.cells
 
-import com.badlogic.gdx.Gdx
-import com.elementalg.minigame.World
+import com.elementalg.minigame.world.World
 import kotlin.jvm.Throws
 import kotlin.math.abs
 import kotlin.math.min
@@ -18,26 +17,29 @@ class CellGenerator(private val fingerRadius: Float) {
         return Cell.Type.CUBE
     }
 
-    private fun randomPassableCellType(isWorldCellHolder: Boolean, canBeCellHolder: Int, difficulty: Float):
+    private fun randomPassableCellType(canBeCellHolder: Int, canBeSweeper: Int, difficulty: Float):
             Cell.Type {
-        val cellHolderChance: Float = min(1, canBeCellHolder) * (CELL_HOLDER_CHANCE +
-                (difficulty / 2f * EMPTY_CELL_CHANCE))
-
         val noCellHolder: Int = abs(min(1, canBeCellHolder) - 1)
+        val noSweeperObstacle: Int = abs(min(1, canBeSweeper) - 1)
 
-        val lineObstacleChance: Float = OBSTACLE_CHANCE + (difficulty / 2f * EMPTY_CELL_CHANCE) +
-                (noCellHolder * (CELL_HOLDER_CHANCE + (difficulty / 2f * EMPTY_CELL_CHANCE)))
+        val cellHolderChance: Float = min(1, canBeCellHolder) * ((CELL_HOLDER_CHANCE +
+                (difficulty / 2f * EMPTY_CELL_CHANCE)) + (OBSTACLE_CHANCE * noSweeperObstacle / 2f))
+
+        val sweeperObstacleChance: Float = min(1, canBeSweeper) * (OBSTACLE_CHANCE +
+                (difficulty / 2f * EMPTY_CELL_CHANCE) + (noCellHolder * (CELL_HOLDER_CHANCE +
+                (difficulty / 2f * EMPTY_CELL_CHANCE))))
 
         val emptyCellChance: Float = EMPTY_CELL_CHANCE - (difficulty * EMPTY_CELL_CHANCE) +
-                (noCellHolder * (CELL_HOLDER_CHANCE + (difficulty / 2f * EMPTY_CELL_CHANCE)))
+                (noCellHolder * (CELL_HOLDER_CHANCE + (difficulty / 2f * EMPTY_CELL_CHANCE))) +
+                (OBSTACLE_CHANCE * noSweeperObstacle / 2f)
 
         val randomValue: Float = Random.nextFloat()
 
         return if (randomValue <= cellHolderChance) {
             Cell.Type.HOLDER
-        } else if (randomValue <= (cellHolderChance + lineObstacleChance)) {
-            Cell.Type.LINE
-        } else if (randomValue <= (cellHolderChance + lineObstacleChance + emptyCellChance)) {
+        } else if (randomValue <= (cellHolderChance + sweeperObstacleChance)) {
+            Cell.Type.SWEEPER
+        } else if (randomValue <= (cellHolderChance + sweeperObstacleChance + emptyCellChance)) {
             Cell.Type.EMPTY
         } else {
             Cell.Type.EMPTY
@@ -76,8 +78,8 @@ class CellGenerator(private val fingerRadius: Float) {
      * [worldCellHolder] is true.
      */
     @Throws(IllegalArgumentException::class)
-    fun generateRoute(cellHolder: CellHolder, worldCellHolder: Boolean, inputPosition: Int, outputPosition: Int,
-                 difficulty: Float) {
+    fun generateRoute(cellHolder: CellHolder, worldCellHolder: Boolean, inputLevel: Int, inputPosition: Int,
+                      outputPosition: Int, difficulty: Float) {
         if (worldCellHolder) {
             require(inputPosition in 0..1) {"'inputPosition' must be 0 or 1 if the cell holder is a world one."}
             require(outputPosition in 2..3) {"'outputPosition' must be 2 or 3 if the cell holder is a world one."}
@@ -87,8 +89,8 @@ class CellGenerator(private val fingerRadius: Float) {
 
         val route: Route = if ((((inputPosition == 0) && (outputPosition == 3)) ||
                         ((inputPosition == 1) && (outputPosition == 2)))) {
-                Route.L_SHAPE
-            } else {
+            Route.L_SHAPE
+        } else {
             val randomForRoute: Float = Random.nextFloat()
 
             if (randomForRoute <= C_SHAPE_CHANCE + (difficulty * C_SHAPE_CHANCE)) {
@@ -98,26 +100,23 @@ class CellGenerator(private val fingerRadius: Float) {
             }
         }
 
-        val hypotheticalInnerCellHolderSize: Float = cellHolder.getSize() / 2f
+        val hypotheticalInnerCellHolderSize: Float = cellHolder.getSize() / 4f
         val doesInnerCellHolderSizeComply: Boolean = ((fingerRadius * 2f * World.FINGER_RADIUS_MARGIN) <
                 hypotheticalInnerCellHolderSize)
 
+        val canBeInnerCellHolder: Int = if (doesInnerCellHolderSizeComply &&
+                ((CellHolder.getLevelFromSize(hypotheticalInnerCellHolderSize)) != inputLevel)) 1 else 0
+
+        val hypotheticalSweeperObstacleMargin: Float = (hypotheticalInnerCellHolderSize +
+                (hypotheticalInnerCellHolderSize * SweeperObstacle.DEFAULT_THICKNESS) +
+                (hypotheticalInnerCellHolderSize * SweeperObstacle.REQUIRED_SPACE_MARGIN))
+
+        val canBeSweeper: Int = if (hypotheticalSweeperObstacleMargin >= (fingerRadius * 2f)) 1 else 0
+
         for (i: Int in 0 until CellHolder.HELD_CELLS) {
             val cellType: Cell.Type = if (mustCellBePassable(i, route, inputPosition, outputPosition)) {
-                val hasACellHolderNextTo: Boolean = if (i > 0) {
-                    if (i == 1 || i == 2) {
-                        (cellHolder.getCell(0) is CellHolder)
-                    } else {
-                        ((cellHolder.getCell(1) is CellHolder) || (cellHolder.getCell(2) is CellHolder))
-                    }
-                } else {
-                    false
-                }
 
-                val canBeInnerCellHolder: Int = if (doesInnerCellHolderSizeComply && (!hasACellHolderNextTo) &&
-                        (i != inputPosition)) 1 else 0
-
-                randomPassableCellType(worldCellHolder, canBeInnerCellHolder, difficulty)
+                randomPassableCellType(canBeInnerCellHolder, canBeSweeper, difficulty)
             } else {
                 randomObstacleCellType(difficulty)
             }
@@ -125,7 +124,8 @@ class CellGenerator(private val fingerRadius: Float) {
             val cell: Cell = cellHolder.addCell(cellType, i)
 
             if (cellType == Cell.Type.HOLDER) {
-                generateRoute(cell as CellHolder, false, inputPosition, outputPosition, difficulty)
+                generateRoute(cell as CellHolder, false, inputLevel, inputPosition, outputPosition,
+                        difficulty)
             }
         }
     }

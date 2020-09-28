@@ -1,13 +1,14 @@
-package com.elementalg.minigame.cells
+package com.elementalg.minigame.world.cells
 
-import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.math.Vector2
+import com.elementalg.minigame.world.Finger
+import com.elementalg.minigame.world.World
 import kotlin.jvm.Throws
-import kotlin.math.floor
+import kotlin.math.*
 
-class CellHolder(size: Float, private val worldAtlas: TextureAtlas) : Cell(size) {
+class CellHolder(size: Float, private val worldAtlas: TextureAtlas, private val level: Int) : Cell(Type.HOLDER, size) {
     private val cells: ArrayList<Cell> = ArrayList(HELD_CELLS)
 
     private var outputCell: Int = -1
@@ -32,6 +33,13 @@ class CellHolder(size: Float, private val worldAtlas: TextureAtlas) : Cell(size)
     }
 
     /**
+     * Returns the level of nesting of the cell holder.
+     */
+    fun getLevel(): Int {
+        return level
+    }
+
+    /**
      * Sets the output cell of the CellHolder.
      *
      * @param outputCell integer representing the cell which acts as output.
@@ -41,6 +49,13 @@ class CellHolder(size: Float, private val worldAtlas: TextureAtlas) : Cell(size)
         require(outputCell in 0 until HELD_CELLS) {"'outputCell' is out of limits."}
 
         this.outputCell = outputCell
+    }
+
+    /**
+     * @return integer representing the position of the output cell, -1 if there's no output.
+     */
+    fun getOutputCell(): Int {
+        return outputCell
     }
 
     override fun setPosition(position: Vector2) {
@@ -55,16 +70,7 @@ class CellHolder(size: Float, private val worldAtlas: TextureAtlas) : Cell(size)
         updateCellsPosition()
     }
 
-    /**
-     * @return integer representing the position of the output cell, -1 if there's no output.
-     */
-    fun getOutputCell(): Int {
-        return outputCell
-    }
-
     override fun draw(batch: Batch) {
-        batch.draw(worldAtlas.findRegion("CellHolderTest"), getPosition().x, getPosition().y, getSize(), getSize())
-
         for (cell: Cell in cells) {
             cell.draw(batch)
         }
@@ -100,16 +106,6 @@ class CellHolder(size: Float, private val worldAtlas: TextureAtlas) : Cell(size)
         val cell: Cell = createCell(cellType, innerSize, worldAtlas)
 
         cells.add(cell)
-
-        for (i: Int in 0 until cells.size) {
-            if (!(cell is EmptyCell)) {
-                break
-            }
-
-            if (i == cells.size - 1) {
-                Gdx.app.log("EMPTY", "Empty cell holder")
-            }
-        }
 
         updateCellsPosition()
 
@@ -150,6 +146,11 @@ class CellHolder(size: Float, private val worldAtlas: TextureAtlas) : Cell(size)
     }
 
     companion object {
+        fun getLevelFromSize(size: Float): Int {
+            return ((min(World.WORLD_SIZE.x, World.WORLD_SIZE.y) / size) - 1).toInt()
+        }
+
+        const val WORLD_CELL_HOLDER_LEVEL: Int = 0
         const val HELD_CELLS: Int = 4
     }
 }
