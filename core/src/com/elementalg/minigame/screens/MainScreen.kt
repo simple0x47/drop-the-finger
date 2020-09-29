@@ -15,8 +15,25 @@ import com.badlogic.gdx.utils.viewport.FitViewport
 import com.elementalg.client.managers.DependencyManager
 import com.elementalg.client.managers.Screen
 import com.elementalg.client.managers.ScreenManager
+import kotlin.jvm.Throws
 
-class MainScreen(private val displayXDPI: Float, private val displayYDPI: Float) : Screen(){
+/**
+ * Screen containing the main menu of the game.
+ *
+ * @author Gabriel Amihalachioaie & Alberto Moreno Bonillo.
+ *
+ * @constructor initializes an instance with the passed parameters.
+ * @param displayXDPI density of pixels per inch on the x axis.
+ * @param displayYDPI density of pixels per inch on the y axis.
+ */
+class MainScreen(private val displayXDPI: Float, private val displayYDPI: Float) : Screen() {
+    /**
+     * Click listener for the play button.
+     *
+     * @param screenManager instance of [ScreenManager] used for this game's instance in order to change the screen to
+     * the passed instance of [ContinuousModeScreen].
+     * @param modeScreen instance of [ContinuousModeScreen] to be shown when the button is clicked.
+     */
     private class PlayButtonListener(private val screenManager: ScreenManager,
                                      private val modeScreen: ContinuousModeScreen)
         : ClickListener() {
@@ -27,6 +44,9 @@ class MainScreen(private val displayXDPI: Float, private val displayYDPI: Float)
         }
     }
 
+    /**
+     * Click listener for the high score button.
+     */
     private class HighScoreButtonListener : ClickListener() {
         override fun clicked(event: InputEvent?, x: Float, y: Float) {
             super.clicked(event, x, y)
@@ -46,6 +66,14 @@ class MainScreen(private val displayXDPI: Float, private val displayYDPI: Float)
 
     private lateinit var modeScreen: ContinuousModeScreen
 
+    /**
+     * Initializes the main menu's design and UI elements.
+     *
+     * @param dependencyManager instance of the game's [DependencyManager].
+     *
+     * @throws IllegalStateException if 'MAIN_SCREEN' dependency is not loaded yet or if an asset could not be solved.
+     */
+    @Throws(IllegalStateException::class)
     override fun create(dependencyManager: DependencyManager) {
         check(dependencyManager.isDependencyAvailable("MAIN_SCREEN")){"'MAIN_SCREEN' is not loaded yet."}
 
@@ -75,6 +103,11 @@ class MainScreen(private val displayXDPI: Float, private val displayYDPI: Float)
         modeScreen.create(dependencyManager)
     }
 
+    /**
+     * Shows the main menu's actors and starts playing the theme.
+     *
+     * @param screenManager instance of [ScreenManager] used for this game's instance.
+     */
     override fun show(screenManager: ScreenManager) {
         stage.addActor(playButton)
         stage.addActor(highScoreButton)
@@ -98,6 +131,9 @@ class MainScreen(private val displayXDPI: Float, private val displayYDPI: Float)
         super.resize(width, height)
     }
 
+    /**
+     * Draws the main menu's actors and background.
+     */
     override fun render(delta: Float) {
         stageViewport.apply(true)
         stage.batch.begin()
@@ -120,6 +156,9 @@ class MainScreen(private val displayXDPI: Float, private val displayYDPI: Float)
         super.resume()
     }
 
+    /**
+     * Hides the main menu.
+     */
     override fun hide() {
         playButton.clearListeners()
         playButton.remove()

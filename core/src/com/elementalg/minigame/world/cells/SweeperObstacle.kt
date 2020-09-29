@@ -4,9 +4,18 @@ import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.math.Vector2
 import com.elementalg.minigame.world.Finger
-import kotlin.math.*
 import kotlin.random.Random
 
+/**
+ * Line, with a percentage [thickness] relative to the cell's size, which can rotate at different angular speeds.
+ *
+ * @author Gabriel Amihalachioaie.
+ *
+ * @constructor initializes an instance whose thickness is a percentage of the cell's size.
+ * @param size cell's side size.
+ * @param textureRegion region where the sweeper's texture data is located.
+ * @param thickness percentage (0.0, 1.0) of the size of the cell.
+ */
 class SweeperObstacle(size: Float, private val textureRegion: TextureRegion, private val thickness: Float)
     : Obstacle(Type.SWEEPER, size) {
     private val origin: Vector2 = Vector2(getSize() / 2f, getSize() * thickness / 2f)
@@ -15,10 +24,23 @@ class SweeperObstacle(size: Float, private val textureRegion: TextureRegion, pri
     private var angleIncrement: Float = Random.nextFloat() * MAX_ANGLE_INCREMENT
     private var angle: Float = Random.nextFloat() * MAX_ANGLE
 
+    /**
+     * Sets the position of the sweeper accordingly, keeping in mind the existent height offset, which is relative
+     * to the sweeper's [thickness].
+     *
+     * @param position new position.
+     */
     override fun setPosition(position: Vector2) {
         getPosition().set(position.add(0f, heightOffset))
     }
 
+    /**
+     * Sets the position of the sweeper accordingly, keeping in mind the existent height offset, which is relative
+     * to the sweeper's [thickness].
+     *
+     * @param x new x position.
+     * @param y new y position.
+     */
     override fun setPosition(x: Float, y: Float) {
         getPosition().set(x, y + heightOffset)
     }
@@ -71,16 +93,6 @@ class SweeperObstacle(size: Float, private val textureRegion: TextureRegion, pri
 
         batch.draw(textureRegion, getPosition().x, getPosition().y, origin.x, origin.y, getSize(),
                 getSize() * thickness, 1f, 1f, angle, false)
-    }
-
-    private fun rotatePoint(anchor: Vector2, point: Vector2, angle: Float): Vector2 {
-        val angleSin: Float = sin(angle * Math.PI / 180f).toFloat()
-        val angleCos: Float = cos(angle * Math.PI / 180f).toFloat()
-
-        val relativePoint: Vector2 = Vector2(point).sub(anchor)
-
-        return point.set((relativePoint.x * angleCos - relativePoint.y * angleSin) + anchor.x,
-                (relativePoint.x * angleSin + relativePoint.y * angleCos) + anchor.y)
     }
 
     companion object {

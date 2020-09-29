@@ -7,6 +7,16 @@ import com.elementalg.minigame.world.World
 import kotlin.jvm.Throws
 import kotlin.math.*
 
+/**
+ * Holds 4 different instances of [Cell].
+ *
+ * @author Gabriel Amihalachioaie.
+ *
+ * @constructor initializes an empty CellHolder.
+ * @param size cell's side size.
+ * @param worldAtlas atlas containing the texture coordinates for the world related textures.
+ * @param level nesting level, starting at the level 0 with world's cell holders.
+ */
 class CellHolder(size: Float, private val worldAtlas: TextureAtlas, private val level: Int) : Cell(Type.HOLDER, size) {
     private val cells: ArrayList<Cell> = ArrayList(HELD_CELLS)
 
@@ -22,6 +32,8 @@ class CellHolder(size: Float, private val worldAtlas: TextureAtlas, private val 
      * @param position position of the cell to be retrieved. (0 - bottom left) (1 - bottom right) (2 - top left)
      * (3 - top right).
      *
+     * @return cell at the passed [position].
+     *
      * @throws IllegalArgumentException if [position] is smaller than 0 and not smaller than [HELD_CELLS].
      */
     @Throws(IllegalArgumentException::class)
@@ -33,6 +45,8 @@ class CellHolder(size: Float, private val worldAtlas: TextureAtlas, private val 
 
     /**
      * Returns the level of nesting of the cell holder.
+     *
+     * @return integer representing the level of nesting of this cell holder.
      */
     fun getLevel(): Int {
         return level
@@ -42,6 +56,8 @@ class CellHolder(size: Float, private val worldAtlas: TextureAtlas, private val 
      * Sets the output cell of the CellHolder.
      *
      * @param outputCell integer representing the cell which acts as output.
+     *
+     * @throws IllegalArgumentException if [outputCell] is out of limits.
      */
     @Throws(IllegalArgumentException::class)
     fun setOutputCell(outputCell: Int) {
@@ -57,25 +73,39 @@ class CellHolder(size: Float, private val worldAtlas: TextureAtlas, private val 
         return outputCell
     }
 
+    /**
+     * Sets the position of this cell holder and updates its inner cells' positions.
+     *
+     * @param position new position.
+     */
     override fun setPosition(position: Vector2) {
         getPosition().set(position)
 
-        updateCellsPosition()
+        updateInnerCellsPositions()
     }
 
+    /**
+     * Sets the position of this cell holder and updates its inner cells' positions.
+     *
+     * @param x new x position.
+     * @param y new y position.
+     */
     override fun setPosition(x: Float, y: Float) {
         getPosition().set(x, y)
 
-        updateCellsPosition()
+        updateInnerCellsPositions()
     }
 
+    /**
+     * Draws the inner cells.
+     */
     override fun draw(batch: Batch) {
         for (cell: Cell in cells) {
             cell.draw(batch)
         }
     }
 
-    private fun updateCellsPosition() {
+    private fun updateInnerCellsPositions() {
         val holderPosition: Vector2 = getPosition()
 
         for (cell: Cell in cells) {
@@ -96,7 +126,7 @@ class CellHolder(size: Float, private val worldAtlas: TextureAtlas, private val 
      *
      * @param cellType [Cell.Type] of [Cell].
      *
-     * @throws IllegalStateException if [cells] has already reached it's capacity.
+     * @throws IllegalStateException if [cells] has reached it's capacity already.
      */
     @Throws(IllegalStateException::class)
     fun addCell(cellType: Type): Cell {
@@ -106,7 +136,7 @@ class CellHolder(size: Float, private val worldAtlas: TextureAtlas, private val 
 
         cells.add(cell)
 
-        updateCellsPosition()
+        updateInnerCellsPositions()
 
         return cell
     }
@@ -132,13 +162,13 @@ class CellHolder(size: Float, private val worldAtlas: TextureAtlas, private val 
 
         cells.add(position, cell)
 
-        updateCellsPosition()
+        updateInnerCellsPositions()
 
         return cell
     }
 
     /**
-     * Clears the contained cells.
+     * Removes all the inner cells.
      */
     fun clear() {
         cells.clear()

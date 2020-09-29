@@ -5,7 +5,16 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.math.Vector2
 import com.elementalg.minigame.world.Finger
 
-class CubeObstacle(size: Float, private val textureRegion: TextureRegion) : Obstacle(Type.CUBE, size) {
+/**
+ * Square shaped obstacle.
+ *
+ * @author Gabriel Amihalachioaie.
+ *
+ * @constructor initializes an instance with the passed parameters.
+ * @param size cell's side size.
+ * @param textureRegion region of the texture where the square's texture data is located.
+ */
+class SquareObstacle(size: Float, private val textureRegion: TextureRegion) : Obstacle(Type.SQUARE, size) {
     private val origin: Float = getSize() / 2f
 
     override fun setPosition(position: Vector2) {
@@ -16,6 +25,11 @@ class CubeObstacle(size: Float, private val textureRegion: TextureRegion) : Obst
         getPosition().set(x, y)
     }
 
+    /**
+     * @param finger instance of finger to be checked.
+     *
+     * @return whether or not the [finger] is colliding with the square.
+     */
     override fun isFingerCollidingWithObstacle(finger: Finger): Boolean {
         return isFingerWithinCell(finger)
     }
@@ -26,6 +40,6 @@ class CubeObstacle(size: Float, private val textureRegion: TextureRegion) : Obst
     }
 
     companion object {
-        const val TEXTURE_REGION: String = "Cube"
+        const val TEXTURE_REGION: String = "Square"
     }
 }

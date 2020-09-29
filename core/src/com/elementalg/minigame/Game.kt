@@ -12,6 +12,16 @@ import com.elementalg.minigame.screens.MainScreen
 import java.util.*
 import kotlin.jvm.Throws
 
+/**
+ * Main class which implements all the required essential methods.
+ *
+ * @author Gabriel Amihalachioaie.
+ *
+ * @constructor initializes an instance with the passed parameters.
+ * @param systemLocale instance of the device's [Locale].
+ * @param displayXDPI density of pixels per inch on the x axis.
+ * @param displayYDPI density of pixels per inch on the y axis.
+ */
 class Game(private val systemLocale: Locale, private val displayXDPI: Float, private val displayYDPI: Float)
     : ApplicationAdapter() {
 
@@ -73,10 +83,6 @@ class Game(private val systemLocale: Locale, private val displayXDPI: Float, pri
     }
 
     override fun create() {
-        val vertex: Vector2 = Vector2(2.0f, 3.0f)
-        Gdx.app.log("VECTOR", "SCL: ${vertex.scl(2.0f)}" )
-        Gdx.app.log("VECTOR", "ORIGINAL: $vertex" )
-
         gameInstance = this
 
         eventManager.create()
@@ -91,7 +97,6 @@ class Game(private val systemLocale: Locale, private val displayXDPI: Float, pri
         dependencyManager.loadDependencyID("MAIN_SCREEN")
         dependencyManager.loadDependencyID("WORLD")
 
-        Gdx.app.log("DPI", "$displayXDPI | $displayYDPI")
         val mainScreen: MainScreen = MainScreen(displayXDPI, displayYDPI)
         mainScreen.create(dependencyManager)
         screenManager.setActiveScreen(mainScreen)

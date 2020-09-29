@@ -6,6 +6,11 @@ import kotlin.math.abs
 import kotlin.math.min
 import kotlin.random.Random
 
+/**
+ * Procedural generation of a path based on [Cell].
+ *
+ * @author Gabriel Amihalachioaie.
+ */
 class CellGenerator(private val fingerRadius: Float) {
     enum class Route {
         STRAIGHT,
@@ -13,40 +18,59 @@ class CellGenerator(private val fingerRadius: Float) {
         C_SHAPE,
     }
 
+    /**
+     * Returns a [Cell.Type], which is an obstacle, selected <i>randomly</i> by making usage of several factors.
+     *
+     * @param canBeVShapedObstacle (1) if the obstacle can be [Cell.Type.V] or (0) if not.
+     * @param difficulty [World.difficulty].
+     *
+     * @return type of obstacle cell selected <i>randomly</i>.
+     */
     private fun randomObstacleCellType(canBeVShapedObstacle: Int, difficulty: Float): Cell.Type {
-        val noVShapedObstacle: Int = abs(min(1, canBeVShapedObstacle) - 1)
+        val reversedCanBeVShapedObstacle: Int = abs(min(1, canBeVShapedObstacle) - 1)
 
-        val vShapedObstacleChance: Float = min(1, canBeVShapedObstacle) * (V_SHAPED_OBSTACLE_CHANCE -
-                (difficulty / 2f * V_SHAPED_OBSTACLE_CHANCE))
-        val cubeObstacleChance: Float = CUBE_OBSTACLE_CHANCE + (min(1, canBeVShapedObstacle) *
-                (difficulty / 2f * V_SHAPED_OBSTACLE_CHANCE)) + (noVShapedObstacle * V_SHAPED_OBSTACLE_CHANCE)
+        val vShapedObstacleChance: Float = min(1, canBeVShapedObstacle) *
+                (V_SHAPED_OBSTACLE_CHANCE - (difficulty / 2f * V_SHAPED_OBSTACLE_CHANCE))
+
+        val squareObstacleChance: Float = SQUARE_OBSTACLE_CHANCE +
+                (min(1, canBeVShapedObstacle) * (difficulty / 2f * V_SHAPED_OBSTACLE_CHANCE)) +
+                (reversedCanBeVShapedObstacle * V_SHAPED_OBSTACLE_CHANCE)
 
         val randomValue: Float = Random.nextFloat()
 
         return if (randomValue <= vShapedObstacleChance) {
             Cell.Type.V
-        } else if (randomValue <= vShapedObstacleChance + cubeObstacleChance) {
-            Cell.Type.CUBE
+        } else if (randomValue <= vShapedObstacleChance + squareObstacleChance) {
+            Cell.Type.SQUARE
         } else {
-            Cell.Type.CUBE
+            Cell.Type.SQUARE
         }
     }
 
+    /**
+     * Returns a [Cell.Type], which is passable, selected <i>randomly</i> by making usage of several factors.
+     *
+     * @param canBeCellHolder (1) if the cell type can be a [Cell.Type.HOLDER], or (0) if not.
+     * @param canBeSweeper (1) if the cell type can be a [Cell.Type.SWEEPER], or (0) if not.
+     * @param difficulty [World.difficulty].
+     *
+     * @return type of passable cell selected <i>randomly</i>.
+     */
     private fun randomPassableCellType(canBeCellHolder: Int, canBeSweeper: Int, difficulty: Float):
             Cell.Type {
-        val noCellHolder: Int = abs(min(1, canBeCellHolder) - 1)
-        val noSweeperObstacle: Int = abs(min(1, canBeSweeper) - 1)
+        val reversedCanBeCellHolder: Int = abs(min(1, canBeCellHolder) - 1)
+        val reversedCanBeSweeper: Int = abs(min(1, canBeSweeper) - 1)
 
         val cellHolderChance: Float = min(1, canBeCellHolder) * ((CELL_HOLDER_CHANCE +
-                (difficulty / 2f * EMPTY_CELL_CHANCE)) + (OBSTACLE_CHANCE * noSweeperObstacle / 2f))
+                (difficulty / 2f * EMPTY_CELL_CHANCE)) + (OBSTACLE_CHANCE * reversedCanBeSweeper / 2f))
 
-        val sweeperObstacleChance: Float = min(1, canBeSweeper) * (OBSTACLE_CHANCE +
-                (difficulty / 2f * EMPTY_CELL_CHANCE) + (noCellHolder * (CELL_HOLDER_CHANCE +
-                (difficulty / 2f * EMPTY_CELL_CHANCE))))
+        val sweeperObstacleChance: Float = min(1, canBeSweeper) *
+                (OBSTACLE_CHANCE + (difficulty / 2f * EMPTY_CELL_CHANCE) +
+                        (reversedCanBeCellHolder * (CELL_HOLDER_CHANCE + (difficulty / 2f * EMPTY_CELL_CHANCE))))
 
         val emptyCellChance: Float = EMPTY_CELL_CHANCE - (difficulty * EMPTY_CELL_CHANCE) +
-                (noCellHolder * (CELL_HOLDER_CHANCE + (difficulty / 2f * EMPTY_CELL_CHANCE))) +
-                (OBSTACLE_CHANCE * noSweeperObstacle / 2f)
+                (reversedCanBeCellHolder * (CELL_HOLDER_CHANCE + (difficulty / 2f * EMPTY_CELL_CHANCE))) +
+                (OBSTACLE_CHANCE * reversedCanBeSweeper / 2f)
 
         val randomValue: Float = Random.nextFloat()
 
@@ -61,6 +85,17 @@ class CellGenerator(private val fingerRadius: Float) {
         }
     }
 
+    /**
+     * Indicates whether or not a cell position within a [CellHolder] must be passable.
+     *
+     * @param cellPosition position within the [CellHolder]. (0 -> bottom left, 1 -> bottom right,
+     * 2 -> top left, 3 -> top right)
+     * @param route type of [Route].
+     * @param inputPosition entering position of the finger inside the [CellHolder].
+     * @param outputPosition exiting position of the finger inside the [CellHolder].
+     *
+     * @return whether or not the cell must be passable.
+     */
     private fun mustCellBePassable(cellPosition: Int, route: Route, inputPosition: Int, outputPosition: Int): Boolean {
         return if (cellPosition == inputPosition || cellPosition == outputPosition) {
             true
@@ -80,14 +115,16 @@ class CellGenerator(private val fingerRadius: Float) {
     }
 
     /**
+     * Generates a route accordingly to the passed arguments.
+     *
      * @param cellHolder Cell holder whose cells must be generated.
      * @param worldCellHolder Whether or not the cell holder is a world one.
      * @param inputPosition Position of the input cell. Must be 0 (bottom left) or 1 (bottom right) if we have a
      * world [cellHolder].
      * @param outputPosition Position of the output cell. Must be 1 (top left) or 2 (top right) if we have a
      * world [cellHolder].
-     * @param difficulty Difficulty multiplier, values between 0.0 and 1.0. The greater the value, the greater the
-     * possibilities to generate cell holders.
+     * @param difficulty [World.difficulty]. Difficulty multiplier, values between 0.0 and 1.0. The greater the value,
+     * the greater the possibilities to generate cell holders.
      *
      * @throws IllegalArgumentException if [inputPosition] is not 0 or 1, or if [outputPosition] is not 2 or 3, when
      * [worldCellHolder] is true.
@@ -128,13 +165,14 @@ class CellGenerator(private val fingerRadius: Float) {
 
         val canBeSweeper: Int = if (hypotheticalSweeperObstacleMargin >= (fingerRadius * 2f)) 1 else 0
 
-        var previousInnerCellType: Cell.Type = Cell.Type.CUBE
+        var previousInnerCellType: Cell.Type = Cell.Type.SQUARE // Avoids putting a triangle in the first cell.
+
         for (i: Int in 0 until CellHolder.HELD_CELLS) {
             val cellType: Cell.Type = if (mustCellBePassable(i, route, inputPosition, outputPosition)) {
                 randomPassableCellType(canBeInnerCellHolder, canBeSweeper, difficulty)
             } else {
-                val canBeOutlineTriangle: Int = if (previousInnerCellType != Cell.Type.CUBE && previousInnerCellType
-                        != Cell.Type.V) 0 else 1
+                val canBeOutlineTriangle: Int = if (previousInnerCellType != Cell.Type.SQUARE &&
+                        previousInnerCellType != Cell.Type.V) 0 else 1
 
                 randomObstacleCellType(canBeOutlineTriangle, difficulty)
             }
@@ -155,7 +193,7 @@ class CellGenerator(private val fingerRadius: Float) {
         const val OBSTACLE_CHANCE: Float = 0.25f
         const val EMPTY_CELL_CHANCE: Float = 0.25f
 
-        const val CUBE_OBSTACLE_CHANCE: Float = 0.5f
+        const val SQUARE_OBSTACLE_CHANCE: Float = 0.5f
         const val V_SHAPED_OBSTACLE_CHANCE: Float = 0.5f
 
         const val C_SHAPE_CHANCE: Float = 0.2f

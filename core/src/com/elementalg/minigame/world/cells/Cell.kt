@@ -1,6 +1,5 @@
 package com.elementalg.minigame.world.cells
 
-import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.math.Vector2
@@ -8,12 +7,21 @@ import com.elementalg.minigame.world.Finger
 import com.elementalg.minigame.world.World
 import kotlin.math.*
 
+/**
+ * Abstraction of a square-shaped area of space.
+ *
+ * @author Gabriel Amihalachioaie.
+ *
+ * @constructor parent instance holding the [Type] of the current cell and it's [size].
+ * @param type [Type] of cell.
+ * @param size cell's side size.
+ */
 abstract class Cell(private val type: Type, private val size: Float) {
     enum class Type {
         HOLDER,
         EMPTY,
         SWEEPER,
-        CUBE,
+        SQUARE,
         V,
     }
 
@@ -36,15 +44,22 @@ abstract class Cell(private val type: Type, private val size: Float) {
     abstract fun setPosition(x: Float, y: Float)
 
     /**
-     * Gets the size of the cell.
+     * Gets the size of a side of the cell.
      *
-     * @return float containing the size.
+     * @return float containing the size of a side of the cell.
      */
     fun getSize(): Float {
         return size
     }
 
-    open fun isFingerWithinCell(finger: Finger): Boolean {
+    /**
+     * Returns whether or not the passed [finger] is within the cell.
+     *
+     * @param finger instance of [Finger] whose position will be checked.
+     *
+     * @return whether or not [finger] is within the cell.
+     */
+     fun isFingerWithinCell(finger: Finger): Boolean {
         val fingerPosition: Vector2 = finger.getPosition()
         val cellPosition: Vector2 = getPosition()
 
@@ -77,6 +92,15 @@ abstract class Cell(private val type: Type, private val size: Float) {
         return dist <= finger.getRadius()
     }
 
+    /**
+     * Returns the distance between a segment defined by two points ([segmentPoint1], [segmentPoint2]) and a [point].
+     *
+     * @param segmentPoint1 point of the segment.
+     * @param segmentPoint2 point of the segment.
+     * @param point point whose distance to the segment will be returned.
+     *
+     * @return distance of the [point] to the segment defined by [segmentPoint1] and [segmentPoint2].
+     */
     protected fun distanceBetweenSegmentAndPoint(segmentPoint1: Vector2, segmentPoint2: Vector2,
                                                point: Vector2): Float {
         if ((min(segmentPoint1.x, segmentPoint2.x) <= point.x && point.x <= max(segmentPoint1.x, segmentPoint2.x)) ||
@@ -99,10 +123,10 @@ abstract class Cell(private val type: Type, private val size: Float) {
                 bottomPoint = segmentPoint1
             }
 
-            if (bottomPoint.y > point.y) {
-                return sqrt(((point.y - bottomPoint.y).pow(2)) + ((point.x - bottomPoint.x).pow(2)))
+            return if (bottomPoint.y > point.y) {
+                sqrt(((point.y - bottomPoint.y).pow(2)) + ((point.x - bottomPoint.x).pow(2)))
             } else {
-                return sqrt(((point.y - topPoint.y).pow(2)) + ((point.x - topPoint.x).pow(2)))
+                sqrt(((point.y - topPoint.y).pow(2)) + ((point.x - topPoint.x).pow(2)))
             }
         } else {
             val leftPoint: Vector2
@@ -116,14 +140,21 @@ abstract class Cell(private val type: Type, private val size: Float) {
                 rightPoint = segmentPoint1
             }
 
-            if (leftPoint.x > point.x) {
-                return sqrt(((point.y - leftPoint.y).pow(2)) + ((point.x - leftPoint.x).pow(2)))
+            return if (leftPoint.x > point.x) {
+                sqrt(((point.y - leftPoint.y).pow(2)) + ((point.x - leftPoint.x).pow(2)))
             } else {
-                return sqrt(((point.y - rightPoint.y).pow(2)) + ((point.x - rightPoint.x).pow(2)))
+                sqrt(((point.y - rightPoint.y).pow(2)) + ((point.x - rightPoint.x).pow(2)))
             }
         }
     }
 
+    /**
+     * Returns whether or not the passed number is a power of two.
+     *
+     * @param number number to be checked.
+     *
+     * @return whether or not [number] is a power of two.
+     */
     private fun isNumberAPowerOfTwo(number: Int): Boolean {
         val root: Float = sqrt(abs(number.toFloat()))
 
@@ -144,8 +175,8 @@ abstract class Cell(private val type: Type, private val size: Float) {
                 Type.EMPTY -> {
                     EmptyCell(innerSize)
                 }
-                Type.CUBE -> {
-                    CubeObstacle(innerSize, worldAtlas.findRegion(CubeObstacle.TEXTURE_REGION))
+                Type.SQUARE -> {
+                    SquareObstacle(innerSize, worldAtlas.findRegion(SquareObstacle.TEXTURE_REGION))
                 }
                 Type.SWEEPER -> {
                     SweeperObstacle(innerSize, worldAtlas.findRegion(SweeperObstacle.TEXTURE_REGION),

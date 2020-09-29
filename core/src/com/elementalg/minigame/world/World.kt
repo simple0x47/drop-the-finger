@@ -16,6 +16,16 @@ import kotlin.math.ceil
 import kotlin.math.pow
 import kotlin.random.Random
 
+/**
+ * Space in which the game takes place. It handles the different aspects of the game, such as, speed, difficulty,
+ * score, actor movement...
+ *
+ * @author Gabriel Amihalachioaie.
+ *
+ * @constructor initializes an instance with the passed parameters.
+ * @param stage LibGDX's stage instance instance used at the parent screen.
+ * @param worldViewport actor's viewports instance used at the parent screen.
+ */
 class World(private val stage: Stage, private val worldViewport: Viewport) {
     private val cellHolders: ArrayList<CellHolder> = ArrayList(CELL_HOLDERS)
 
@@ -31,8 +41,9 @@ class World(private val stage: Stage, private val worldViewport: Viewport) {
     private lateinit var cellGenerator: CellGenerator
 
     /**
-     * Adds a finger to the world with the passed [fingerRadius].
+     * Initializes a finger to the world with the passed [fingerRadius].
      *
+     * @param worldAtlas atlas containing the different texture regions required for the world's actors.
      * @param fingerRadius radius of the finger in pixels.
      *
      * @throws IllegalStateException if [finger] has been initialized already.
@@ -46,6 +57,9 @@ class World(private val stage: Stage, private val worldViewport: Viewport) {
         cellGenerator = CellGenerator(finger.getRadius())
     }
 
+    /**
+     * Initializes the world cell holders for the start of the game.
+     */
     private fun initializeWorldCellHolders() {
 
         val worldCellHolderSize: Float = WORLD_SIZE.x
@@ -67,6 +81,15 @@ class World(private val stage: Stage, private val worldViewport: Viewport) {
         generateWorldCellHolder(2)
     }
 
+    /**
+     * Generates randomly the content of the world's cell holder identified by the passed [cellHolderIndex].
+     *
+     * @param cellHolderIndex index of the world's cell holder whose content will be generated.
+     *
+     * @throws IllegalArgumentException if [cellHolderIndex] is out of limits.
+     * @throws IllegalStateException if [cellGenerator] has not been initialized yet or if the output position of a cell
+     * is not 3 or 4.
+     */
     @Throws(IllegalArgumentException::class, IllegalStateException::class)
     private fun generateWorldCellHolder(cellHolderIndex: Int) {
         require(cellHolderIndex in 0 until CELL_HOLDERS) {"'cellHolderIndex' is out of limits."}
@@ -78,13 +101,19 @@ class World(private val stage: Stage, private val worldViewport: Viewport) {
         val inputPosition: Int = inputCellHolder.getOutputCell() - (CellHolder.HELD_CELLS / 2)
         val outputPosition: Int = Random.nextInt(2, 4)
 
-        check(inputPosition in 0..1){"'inputCellPosition' is not a bottom cell."}
+        check(inputPosition in 0..1){"'inputPosition' is not a bottom cell."}
 
         cellHolders[cellHolderIndex].setOutputCell(outputPosition)
         cellGenerator.generateRoute(cellHolders[cellHolderIndex], true, CellHolder.WORLD_CELL_HOLDER_LEVEL,
                 inputPosition, outputPosition, difficulty)
     }
 
+    /**
+     * Creates the world's cell holders and initializes the finger.
+     *
+     * @param dependencyManager instance of the [DependencyManager] used for this game's instance.
+     * @param fingerRadius radius of the finger in pixels.
+     */
     @Throws(IllegalStateException::class)
     fun create(dependencyManager: DependencyManager, fingerRadius: Float) {
         val assets: HashMap<String, Any> = dependencyManager.retrieveAssets("WORLD")
@@ -105,6 +134,11 @@ class World(private val stage: Stage, private val worldViewport: Viewport) {
         initializeWorldCellHolders()
     }
 
+    /**
+     * Draws the world's actors, meanwhile updating the score and the difficulty as time passes.
+     *
+     * @param batch batch used for drawing the world's actors.
+     */
     fun render(batch: Batch) {
         finger.draw(batch)
 
@@ -137,18 +171,24 @@ class World(private val stage: Stage, private val worldViewport: Viewport) {
         }
     }
 
+    /**
+     * Checks whether or not the [finger] is colliding with an inner cell of the passed [cellHolder].
+     *
+     * @param cellHolder cell holder whose inner cells will be checked for collision.
+     * @param finger instance of finger to be checked for collision.
+     *
+     * @return whether or not the [finger] is colliding with [cellHolder]'s inner cells.
+     */
     private fun isCollidingFingerWithCellHoldersInnerObstacles(cellHolder: CellHolder, finger: Finger): Boolean {
         for (cellIndex: Int in 0 until CellHolder.HELD_CELLS) {
             val cell: Cell = cellHolder.getCell(cellIndex)
 
             if (cell.getType() == Cell.Type.HOLDER) {
                 if (isCollidingFingerWithCellHoldersInnerObstacles(cell as CellHolder, finger)) {
-                    Gdx.app.log("COLLISION", "CELL HOLDER")
                     return true
                 }
             } else if (cell is Obstacle) {
                 if (cell.isFingerCollidingWithObstacle(finger)) {
-                    Gdx.app.log("COLLISION", "CellType: ${cell.getType()} | CellSize: ${cell.getSize()} | CellPosition: ${cell.getPosition()} | FingerPosition: ${finger.getPosition()} | FingerRadius: ${finger.getRadius()}")
                     return true
                 }
             }
@@ -157,6 +197,11 @@ class World(private val stage: Stage, private val worldViewport: Viewport) {
         return false
     }
 
+    /**
+     * Displaces a world cell holder accordingly to the current [speed].
+     *
+     * @param cellHolder instance of world's cell holder to be displaced.
+     */
     private fun displaceCellHolder(cellHolder: CellHolder) {
         cellHolder.setPosition(cellHolder.getPosition().sub(0f, speed))
 
@@ -167,6 +212,13 @@ class World(private val stage: Stage, private val worldViewport: Viewport) {
         }
     }
 
+    /**
+     * @param movementStartPoint point where the movement started.
+     * @param movementEndPoint point where the movement ended.
+     *
+     * @return whether or not the movement described by [movementStartPoint] and [movementEndPoint] was fast enough
+     * to avoid collision detection.
+     */
     fun checkFastMovement(movementStartPoint: Vector2, movementEndPoint: Vector2) {
         val hypotheticalFinger: Finger = Finger(this, worldViewport, worldAtlas.findRegion(Finger.TEXTURE_REGION),
                 finger.getRadius())
@@ -192,20 +244,32 @@ class World(private val stage: Stage, private val worldViewport: Viewport) {
         }
     }
 
+    /**
+     * Starts listening to the finger.
+     */
     fun show() {
         fingerListener = FingerListener(finger, this)
 
         stage.addListener(fingerListener)
     }
 
+    /**
+     * Starts the world's generation and displacement.
+     */
     fun start() {
         started = true
     }
 
+    /**
+     * @return whether or not the world is being generated and displaced.
+     */
     fun isStarted(): Boolean {
         return started
     }
 
+    /**
+     * Stops the world's generation and displacement.
+     */
     fun gameOver() {
         Gdx.app.log("SCORE", "$score")
         Gdx.app.log("LISTENER", "REMOVED")
@@ -214,6 +278,9 @@ class World(private val stage: Stage, private val worldViewport: Viewport) {
         started = false
     }
 
+    /**
+     * Restarts the world's generation and displacement.
+     */
     fun restart() {
         initializeWorldCellHolders()
         finger.updatePosition(0f, 0f)
@@ -234,6 +301,8 @@ class World(private val stage: Stage, private val worldViewport: Viewport) {
         const val TIME_UNTIL_MAX_DIFFICULTY: Float = 15f // seconds
 
         val WORLD_SIZE: Vector2 = Vector2(8f, 16f)
+        
+        // Powered to the square in order to increase fast movement detection's efficiency.
         val FAST_MOVEMENT_DISTANCE_SQUARED: Float = WORLD_SIZE.x.pow(2)
     }
 }

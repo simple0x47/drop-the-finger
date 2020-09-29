@@ -5,6 +5,15 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.math.Vector2
 import com.elementalg.minigame.world.Finger
 
+/**
+ * V shaped obstacle.
+ *
+ * @author Gabriel Amihalachioaie.
+ *
+ * @constructor initializes an instance with the passed parameters.
+ * @param size cell's side size.
+ * @param textureRegion region of the texture where the v's texture data is located.
+ */
 class VShapedObstacle(size: Float, private val textureRegion: TextureRegion) : Obstacle(Type.V, size) {
     private val origin: Float = size / 2f
 
