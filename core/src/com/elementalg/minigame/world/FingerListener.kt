@@ -17,13 +17,19 @@ class FingerListener(private val finger: Finger, private val world: World) : Cli
     }
 
     override fun touchUp(event: InputEvent?, x: Float, y: Float, pointer: Int, button: Int) {
-        world.gameOver()
+        if (world.isStarted()) {
+            world.gameOver()
+        }
 
         Gdx.app.log("TOUCH-UP", "Touch Up")
         super.touchUp(event, x, y, pointer, button)
     }
 
     override fun touchDragged(event: InputEvent?, x: Float, y: Float, pointer: Int) {
+        if (lastPosition.dst2(x, y) > World.FAST_MOVEMENT_DISTANCE_SQUARED) {
+            world.checkFastMovement(lastPosition, Vector2(x, y))
+        }
+
         if (world.isStarted()) {
             finger.updatePosition(x, y)
         }

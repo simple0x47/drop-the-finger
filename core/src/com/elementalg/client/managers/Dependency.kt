@@ -5,7 +5,15 @@ import kotlin.jvm.Throws
 
 /**
  * Represents the dependencies of a game in an abstract way in order to allow the aggregation of assets by the
- * place where they are being used. Each <b>ID</b> must be unique to a <i>Dependency</i>.
+ * place where they are being used. Each [ID] must be unique and therefore identify a <i>Dependency</i>.
+ *
+ * @author Gabriel Amihalachioaie.
+ *
+ * @constructor Creates a dependency whose [assets] are passed through an already filled hash map.
+ * @param ID string identifier of the Dependency.
+ * @param assets hash map containing the assets required by this Dependency.
+ * @param forceLoad whether or not the assets required by this Dependency should be loaded synchronously, therefore
+ * freezing the main thread until all those assets are loaded.
  */
 internal class Dependency private constructor(private val ID: String,
                                               private val assets: HashMap<String, AssetDescriptor<*>>,
@@ -73,7 +81,7 @@ internal class Dependency private constructor(private val ID: String,
          * @param assets list of [AssetDescriptor]s.
          * @param forceLoad if assets must all be loaded <i>freezing</i> the thread until then.
          *
-         * @throws IllegalArgumentException if [ID] or [assets] is empty, or a dependecy has been created already
+         * @throws IllegalArgumentException if [ID] or [assets] is empty, or a dependency has been created already
          * with that [ID].
          *
          * @return an instance of [Dependency].

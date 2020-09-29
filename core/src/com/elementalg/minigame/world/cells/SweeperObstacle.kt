@@ -1,6 +1,5 @@
 package com.elementalg.minigame.world.cells
 
-import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.math.Vector2
@@ -63,13 +62,7 @@ class SweeperObstacle(size: Float, private val textureRegion: TextureRegion, pri
         }
 
         val dist: Float = distanceBetweenSegmentAndPoint(firstPoint, secondPoint, fingerPosition)
-        if (dist <= finger.getRadius()) {
-            Gdx.app.log("ANGLE", "Angle: $angle")
-            Gdx.app.log("FINGER", "Finger no: ${finger.getPosition()}")
-            Gdx.app.log("TRANSLATED-FINGER", "Finger: $fingerPosition")
-            Gdx.app.log("CENTER", "${Vector2(getPosition().x + origin.x,getPosition().y + origin.y)}")
-            Gdx.app.log("SWEEPER-DISTANCE", "FirstPoint: $firstPoint | SecondPoint: $secondPoint = Distance: $dist")
-        }
+
         return dist <= finger.getRadius()
     }
 

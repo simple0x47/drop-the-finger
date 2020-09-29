@@ -8,6 +8,14 @@ import com.elementalg.managers.IManager
 import java.util.*
 import kotlin.jvm.Throws
 
+/**
+ * Simplifies the implementation of different languages into a game, by making usage of a language file (XML).
+ *
+ * @author Gabriel Amihalachioaie.
+ *
+ * @constructor initializes the instance to the passed [dataXML] language file.
+ * @param dataXML file handle pointing to the XML file which will be used to retrieve strings from.
+ */
 class LocaleManager @Throws(IllegalArgumentException::class) private constructor(private var dataXML: FileHandle) :
     IManager {
 
@@ -24,9 +32,9 @@ class LocaleManager @Throws(IllegalArgumentException::class) private constructor
     }
 
     /**
-     * Update the active language.
+     * Changes the file used to retrieve strings from.
      *
-     * @param dataXML File containing the language data.
+     * @param dataXML file containing the language data.
      * @throws IllegalArgumentException if [dataXML] is empty.
      */
     @Throws(IllegalArgumentException::class)
@@ -59,9 +67,9 @@ class LocaleManager @Throws(IllegalArgumentException::class) private constructor
     }
 
     /**
-     * Returns the message identified by the [code]
+     * Returns the message identified by the [code].
      *
-     * @param code Code of the desired message.
+     * @param code code of the desired message.
      * @throws IllegalArgumentException if [code] is empty.
      */
     @Throws(IllegalArgumentException::class)
@@ -92,7 +100,7 @@ class LocaleManager @Throws(IllegalArgumentException::class) private constructor
          *
          * @throws IllegalStateException if [Gdx] has not been initialized yet.
          *
-         * @return instance of [LocaleManager]
+         * @return instance of [LocaleManager].
          */
         fun build(locale: Locale): LocaleManager {
             checkNotNull(Gdx.files){"'Gdx' has not been initialized yet, and 'LocaleManager' depends on it."}

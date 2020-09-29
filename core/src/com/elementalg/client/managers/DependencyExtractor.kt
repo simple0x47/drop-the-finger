@@ -8,6 +8,11 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader
 import com.badlogic.gdx.utils.XmlReader
 import kotlin.jvm.Throws
 
+/**
+ * Extracts dependencies from XML files.
+ *
+ * @author Gabriel Amihalachioaie.
+ */
 internal class DependencyExtractor private constructor() {
 
     /**

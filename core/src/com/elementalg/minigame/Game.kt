@@ -3,6 +3,7 @@ package com.elementalg.minigame
 import com.badlogic.gdx.ApplicationAdapter
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.FPSLogger
+import com.badlogic.gdx.math.Vector2
 import com.elementalg.client.managers.DependencyManager
 import com.elementalg.client.managers.LocaleManager
 import com.elementalg.client.managers.ScreenManager
@@ -72,6 +73,10 @@ class Game(private val systemLocale: Locale, private val displayXDPI: Float, pri
     }
 
     override fun create() {
+        val vertex: Vector2 = Vector2(2.0f, 3.0f)
+        Gdx.app.log("VECTOR", "SCL: ${vertex.scl(2.0f)}" )
+        Gdx.app.log("VECTOR", "ORIGINAL: $vertex" )
+
         gameInstance = this
 
         eventManager.create()

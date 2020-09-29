@@ -12,14 +12,19 @@ import com.elementalg.minigame.world.cells.CellGenerator
 import com.elementalg.minigame.world.cells.CellHolder
 import com.elementalg.minigame.world.cells.Obstacle
 import kotlin.jvm.Throws
+import kotlin.math.ceil
+import kotlin.math.pow
 import kotlin.random.Random
 
 class World(private val stage: Stage, private val worldViewport: Viewport) {
     private val cellHolders: ArrayList<CellHolder> = ArrayList(CELL_HOLDERS)
 
-    private var speed: Float = 0.05f
+    private var speed: Float = 0.025f
     private var difficulty: Float = 0f
     private var started: Boolean = false
+    private var score: Float = 0f
+
+    private lateinit var worldAtlas: TextureAtlas
 
     private lateinit var finger: Finger
     private lateinit var fingerListener: FingerListener
@@ -36,12 +41,21 @@ class World(private val stage: Stage, private val worldViewport: Viewport) {
     private fun initializeFinger(worldAtlas: TextureAtlas, fingerRadius: Float) {
         check(!this::finger.isInitialized) {"'finger' has already been initialized once."}
 
-        finger = Finger(this, worldViewport, worldAtlas.findRegion("Finger"),
+        finger = Finger(this, worldViewport, worldAtlas.findRegion(Finger.TEXTURE_REGION),
                 fingerRadius / UNIT_TO_PIXELS)
         cellGenerator = CellGenerator(finger.getRadius())
     }
 
-    private fun initializeStartingCellHolders() {
+    private fun initializeWorldCellHolders() {
+
+        val worldCellHolderSize: Float = WORLD_SIZE.x
+
+        for (i: Int in 0 until CELL_HOLDERS) {
+            cellHolders[i].getPosition().set(0f, (i * worldCellHolderSize))
+
+            cellHolders[i].clear()
+        }
+
         cellHolders[0].addCell(Cell.Type.EMPTY, 0)
         cellHolders[0].addCell(Cell.Type.EMPTY, 1)
         cellHolders[0].addCell(Cell.Type.EMPTY, 2)
@@ -77,24 +91,31 @@ class World(private val stage: Stage, private val worldViewport: Viewport) {
 
         check (assets.containsKey("WorldAtlas")) {"World dependency 'CellsAtlas' is not solved."}
 
-        val worldAtlas: TextureAtlas = assets["WorldAtlas"] as TextureAtlas
+        worldAtlas = assets["WorldAtlas"] as TextureAtlas
 
         val worldCellHolderSize: Float = WORLD_SIZE.x
 
         for (i: Int in 0 until CELL_HOLDERS) {
             val cellHolder: CellHolder = CellHolder(worldCellHolderSize, worldAtlas, CellHolder.WORLD_CELL_HOLDER_LEVEL)
 
-            cellHolder.getPosition().set(0f, (i * worldCellHolderSize))
-
             cellHolders.add(cellHolder)
         }
 
         initializeFinger(worldAtlas, fingerRadius)
-        initializeStartingCellHolders()
+        initializeWorldCellHolders()
     }
 
     fun render(batch: Batch) {
         finger.draw(batch)
+
+        score += Gdx.graphics.deltaTime
+
+        if (score < TIME_UNTIL_MAX_DIFFICULTY) {
+            difficulty = score / TIME_UNTIL_MAX_DIFFICULTY
+            speed = MIN_SPEED + difficulty * (MAX_SPEED - MIN_SPEED)
+        } else if (score != 1f) {
+            score = MAX_SPEED
+        }
 
         var count: Int = 0
         for (cellHolder: CellHolder in cellHolders) {
@@ -146,6 +167,31 @@ class World(private val stage: Stage, private val worldViewport: Viewport) {
         }
     }
 
+    fun checkFastMovement(movementStartPoint: Vector2, movementEndPoint: Vector2) {
+        val hypotheticalFinger: Finger = Finger(this, worldViewport, worldAtlas.findRegion(Finger.TEXTURE_REGION),
+                finger.getRadius())
+        val movementLength: Float = movementStartPoint.dst(movementEndPoint)
+        val lineStep: Float = (movementEndPoint.y - movementStartPoint.y) / (movementEndPoint.x - movementStartPoint.x)
+
+        for (step: Int in 0..ceil(movementLength / finger.getRadius()).toInt()) {
+            val stepX: Float = movementStartPoint.x + (finger.getRadius() * step)
+            val stepY: Float = lineStep * (stepX - movementStartPoint.x) + movementStartPoint.y
+
+            hypotheticalFinger.updatePosition(stepX, stepY)
+
+            for (cellHolder: CellHolder in cellHolders) {
+                if (cellHolder.isFingerWithinCell(hypotheticalFinger)) {
+                    if (isCollidingFingerWithCellHoldersInnerObstacles(cellHolder, finger)) {
+                        Gdx.app.log("GAMEOVVVVERRR", "GOT YA PRIK")
+                        gameOver()
+
+                        return
+                    }
+                }
+            }
+        }
+    }
+
     fun show() {
         fingerListener = FingerListener(finger, this)
 
@@ -161,10 +207,18 @@ class World(private val stage: Stage, private val worldViewport: Viewport) {
     }
 
     fun gameOver() {
+        Gdx.app.log("SCORE", "$score")
         Gdx.app.log("LISTENER", "REMOVED")
         stage.removeListener(fingerListener)
 
         started = false
+    }
+
+    fun restart() {
+        initializeWorldCellHolders()
+        finger.updatePosition(0f, 0f)
+
+        stage.addListener(fingerListener)
     }
 
     fun dispose() {
@@ -176,7 +230,10 @@ class World(private val stage: Stage, private val worldViewport: Viewport) {
         const val UNIT_TO_PIXELS: Int = 100
         const val FINGER_RADIUS_MARGIN: Float = 1.5f // lower = harder *evil laugh*, but never lower than 1.
         const val MAX_SPEED: Float = 0.05f
+        const val MIN_SPEED: Float = 0.01f
+        const val TIME_UNTIL_MAX_DIFFICULTY: Float = 15f // seconds
 
         val WORLD_SIZE: Vector2 = Vector2(8f, 16f)
+        val FAST_MOVEMENT_DISTANCE_SQUARED: Float = WORLD_SIZE.x.pow(2)
     }
 }

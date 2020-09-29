@@ -7,6 +7,17 @@ import com.badlogic.gdx.files.FileHandle
 import com.elementalg.managers.IUpdatableManager
 import kotlin.jvm.Throws
 
+/**
+ * Provides an ability to load and retrieve assets blocks, called [Dependency] obtained from a [dependenciesFile], with
+ * the [AssetManager].
+ *
+ * @author Gabriel Amihalachioaie.
+ *
+ * @constructor provides an instance ready to load the dependencies defined within the [dependenciesFile].
+ *
+ * @param assetManager instance of [AssetManager] used for this game's instance.
+ * @param dependenciesFile [FileHandle] pointed to the dependencies file (XML).
+ */
 class DependencyManager private constructor(private val assetManager: AssetManager,
                                             private val dependenciesFile: FileHandle) : IUpdatableManager {
 
@@ -16,10 +27,16 @@ class DependencyManager private constructor(private val assetManager: AssetManag
         return assetManager
     }
 
+    /**
+     * Extracts all the dependencies within the [dependenciesFile] by making usage of [DependencyExtractor].
+     */
     override fun create() {
         DependencyExtractor.getInstance().extractAll(dependenciesFile)
     }
 
+    /**
+     * Calls [AssetManager.update] method and updates the status of those dependencies that have been loaded completely.
+     */
     override fun update() {
         if (assetManager.update() && dependenciesLoadingCache.size > 0) {
             for (dependency: Dependency in dependenciesLoadingCache) {
@@ -39,8 +56,7 @@ class DependencyManager private constructor(private val assetManager: AssetManag
      *
      * @param dependencyID ID of the dependency to be loaded.
      *
-     * @throws IllegalArgumentException if [dependencyID] is empty or there's not a dependency built with [dependencyID]
-     * .
+     * @throws IllegalArgumentException if [dependencyID] is empty or there's not a dependency built with [dependencyID].
      */
     @Throws(IllegalArgumentException::class)
     fun loadDependencyID(dependencyID: String) {
@@ -73,8 +89,7 @@ class DependencyManager private constructor(private val assetManager: AssetManag
      *
      * @param dependencyID ID of the dependency.
      *
-     * @throws IllegalArgumentException if [dependencyID] is empty or there's not a dependency built with [dependencyID]
-     * .
+     * @throws IllegalArgumentException if [dependencyID] is empty or there's not a dependency built with [dependencyID].
      *
      * @return true if the dependency is available, false otherwise.
      */
@@ -90,8 +105,7 @@ class DependencyManager private constructor(private val assetManager: AssetManag
      *
      * @param dependencyID ID of the dependency.
      *
-     * @throws IllegalArgumentException if [dependencyID] is empty or there's not a dependency built with [dependencyID]
-     * .
+     * @throws IllegalArgumentException if [dependencyID] is empty or there's not a dependency built with [dependencyID].
      */
     @Throws(IllegalArgumentException::class)
     fun unloadDependencyID(dependencyID: String) {
@@ -117,8 +131,7 @@ class DependencyManager private constructor(private val assetManager: AssetManag
      *
      * @param dependencyID ID of the dependency whose assets are going to be returned.
      *
-     * @throws IllegalArgumentException if [dependencyID] is empty or there's not a dependency built with [dependencyID]
-     * .
+     * @throws IllegalArgumentException if [dependencyID] is empty or there's not a dependency built with [dependencyID].
      * @throws IllegalStateException if [dependencyID] has not been loaded yet.
      *
      * @return map containing the processed assets objects as value and the assets ids as keys.
@@ -152,7 +165,7 @@ class DependencyManager private constructor(private val assetManager: AssetManag
          *
          * @throws IllegalStateException if [Gdx] has not been initialized yet.
          *
-         * @return instance of [DependencyManager]
+         * @return instance of [DependencyManager].
          */
         @Throws(IllegalStateException::class)
         fun build(): DependencyManager {

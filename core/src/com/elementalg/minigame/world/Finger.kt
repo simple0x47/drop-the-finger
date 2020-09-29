@@ -30,5 +30,7 @@ class Finger(private val world: World, private val worldViewport: Viewport, priv
 
     companion object {
         const val FINGER_INCH_RADIUS: Float = 0.15f
+
+        const val TEXTURE_REGION: String = "Finger"
     }
 }

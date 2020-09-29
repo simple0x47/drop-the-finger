@@ -5,6 +5,11 @@ import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.elementalg.client.ui.Notification
 
+/**
+ * Implementation of LibGDX's Screen which allows easily to show a notification on any screen.
+ *
+ * @author Gabriel Amihalachioaie.
+ */
 abstract class Screen : com.badlogic.gdx.Screen {
     private val viewport: FitViewport = FitViewport(UI_WORLD_WIDTH, UI_WORLD_HEIGHT)
     private val stage: Stage = Stage(viewport)
@@ -41,6 +46,11 @@ abstract class Screen : com.badlogic.gdx.Screen {
 
     abstract fun create(dependencyManager: DependencyManager)
 
+    /**
+     * Shows the [notification] on this screen.
+     *
+     * @param notification instance of [Notification] to be shown.
+     */
     fun announce(notification: Notification) {
         stage.addActor(notification)
         notification.show(Gdx.input.inputProcessor)

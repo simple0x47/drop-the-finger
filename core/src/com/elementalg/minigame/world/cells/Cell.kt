@@ -14,6 +14,7 @@ abstract class Cell(private val type: Type, private val size: Float) {
         EMPTY,
         SWEEPER,
         CUBE,
+        V,
     }
 
     private val position: Vector2 = Vector2(0f, 0f)
@@ -149,6 +150,9 @@ abstract class Cell(private val type: Type, private val size: Float) {
                 Type.SWEEPER -> {
                     SweeperObstacle(innerSize, worldAtlas.findRegion(SweeperObstacle.TEXTURE_REGION),
                             SweeperObstacle.DEFAULT_THICKNESS)
+                }
+                Type.V -> {
+                    VShapedObstacle(innerSize, worldAtlas.findRegion(VShapedObstacle.TEXTURE_REGION))
                 }
             }
         }

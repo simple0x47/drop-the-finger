@@ -13,8 +13,23 @@ class CellGenerator(private val fingerRadius: Float) {
         C_SHAPE,
     }
 
-    private fun randomObstacleCellType(difficulty: Float): Cell.Type {
-        return Cell.Type.CUBE
+    private fun randomObstacleCellType(canBeVShapedObstacle: Int, difficulty: Float): Cell.Type {
+        val noVShapedObstacle: Int = abs(min(1, canBeVShapedObstacle) - 1)
+
+        val vShapedObstacleChance: Float = min(1, canBeVShapedObstacle) * (V_SHAPED_OBSTACLE_CHANCE -
+                (difficulty / 2f * V_SHAPED_OBSTACLE_CHANCE))
+        val cubeObstacleChance: Float = CUBE_OBSTACLE_CHANCE + (min(1, canBeVShapedObstacle) *
+                (difficulty / 2f * V_SHAPED_OBSTACLE_CHANCE)) + (noVShapedObstacle * V_SHAPED_OBSTACLE_CHANCE)
+
+        val randomValue: Float = Random.nextFloat()
+
+        return if (randomValue <= vShapedObstacleChance) {
+            Cell.Type.V
+        } else if (randomValue <= vShapedObstacleChance + cubeObstacleChance) {
+            Cell.Type.CUBE
+        } else {
+            Cell.Type.CUBE
+        }
     }
 
     private fun randomPassableCellType(canBeCellHolder: Int, canBeSweeper: Int, difficulty: Float):
@@ -113,13 +128,18 @@ class CellGenerator(private val fingerRadius: Float) {
 
         val canBeSweeper: Int = if (hypotheticalSweeperObstacleMargin >= (fingerRadius * 2f)) 1 else 0
 
+        var previousInnerCellType: Cell.Type = Cell.Type.CUBE
         for (i: Int in 0 until CellHolder.HELD_CELLS) {
             val cellType: Cell.Type = if (mustCellBePassable(i, route, inputPosition, outputPosition)) {
-
                 randomPassableCellType(canBeInnerCellHolder, canBeSweeper, difficulty)
             } else {
-                randomObstacleCellType(difficulty)
+                val canBeOutlineTriangle: Int = if (previousInnerCellType != Cell.Type.CUBE && previousInnerCellType
+                        != Cell.Type.V) 0 else 1
+
+                randomObstacleCellType(canBeOutlineTriangle, difficulty)
             }
+
+            previousInnerCellType = cellType
 
             val cell: Cell = cellHolder.addCell(cellType, i)
 
@@ -134,6 +154,9 @@ class CellGenerator(private val fingerRadius: Float) {
         const val CELL_HOLDER_CHANCE: Float = 0.5f
         const val OBSTACLE_CHANCE: Float = 0.25f
         const val EMPTY_CELL_CHANCE: Float = 0.25f
+
+        const val CUBE_OBSTACLE_CHANCE: Float = 0.5f
+        const val V_SHAPED_OBSTACLE_CHANCE: Float = 0.5f
 
         const val C_SHAPE_CHANCE: Float = 0.2f
     }

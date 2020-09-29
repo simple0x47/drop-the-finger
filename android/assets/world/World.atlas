@@ -6,7 +6,7 @@ filter: Nearest,Nearest
 repeat: none
 Cube
   rotate: false
-  xy: 804, 84
+  xy: 2, 84
   size: 800, 800
   orig: 800, 800
   offset: 0, 0
@@ -25,9 +25,9 @@ Line
   orig: 800, 80
   offset: 0, 0
   index: -1
-OutlineTriangle
+V
   rotate: false
-  xy: 2, 84
+  xy: 804, 84
   size: 800, 800
   orig: 800, 800
   offset: 0, 0
