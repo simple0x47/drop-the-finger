@@ -4,13 +4,6 @@ size: 2048,1024
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-Cube
-  rotate: false
-  xy: 2, 84
-  size: 800, 800
-  orig: 800, 800
-  offset: 0, 0
-  index: -1
 Finger
   rotate: false
   xy: 1606, 664
@@ -18,7 +11,14 @@ Finger
   orig: 220, 220
   offset: 0, 0
   index: -1
-Line
+Square
+  rotate: false
+  xy: 804, 84
+  size: 800, 800
+  orig: 800, 800
+  offset: 0, 0
+  index: -1
+Sweeper
   rotate: false
   xy: 2, 2
   size: 800, 80
@@ -27,7 +27,7 @@ Line
   index: -1
 V
   rotate: false
-  xy: 804, 84
+  xy: 2, 84
   size: 800, 800
   orig: 800, 800
   offset: 0, 0

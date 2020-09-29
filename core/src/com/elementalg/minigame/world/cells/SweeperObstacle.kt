@@ -101,6 +101,6 @@ class SweeperObstacle(size: Float, private val textureRegion: TextureRegion, pri
 
         const val DEFAULT_THICKNESS: Float = 0.025f
         const val REQUIRED_SPACE_MARGIN: Float = 0.05f
-        const val TEXTURE_REGION: String = "Line"
+        const val TEXTURE_REGION: String = "Sweeper"
     }
 }

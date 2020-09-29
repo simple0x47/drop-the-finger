@@ -147,8 +147,8 @@ class World(private val stage: Stage, private val worldViewport: Viewport) {
         if (score < TIME_UNTIL_MAX_DIFFICULTY) {
             difficulty = score / TIME_UNTIL_MAX_DIFFICULTY
             speed = MIN_SPEED + difficulty * (MAX_SPEED - MIN_SPEED)
-        } else if (score != 1f) {
-            score = MAX_SPEED
+        } else if (speed != 1f) {
+            speed = MAX_SPEED
         }
 
         var count: Int = 0
@@ -234,7 +234,6 @@ class World(private val stage: Stage, private val worldViewport: Viewport) {
             for (cellHolder: CellHolder in cellHolders) {
                 if (cellHolder.isFingerWithinCell(hypotheticalFinger)) {
                     if (isCollidingFingerWithCellHoldersInnerObstacles(cellHolder, finger)) {
-                        Gdx.app.log("GAMEOVVVVERRR", "GOT YA PRIK")
                         gameOver()
 
                         return
@@ -271,8 +270,6 @@ class World(private val stage: Stage, private val worldViewport: Viewport) {
      * Stops the world's generation and displacement.
      */
     fun gameOver() {
-        Gdx.app.log("SCORE", "$score")
-        Gdx.app.log("LISTENER", "REMOVED")
         stage.removeListener(fingerListener)
 
         started = false
