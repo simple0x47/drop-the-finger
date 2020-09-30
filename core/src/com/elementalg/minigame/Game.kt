@@ -103,7 +103,7 @@ class Game(private val systemLocale: Locale, private val displayXDPI: Float, pri
     }
 
     override fun render() {
-        //fpsLogger.log()
+        fpsLogger.log()
         eventManager.update()
 
         dependencyManager.update()

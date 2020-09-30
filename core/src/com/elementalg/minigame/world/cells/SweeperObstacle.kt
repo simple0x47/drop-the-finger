@@ -21,7 +21,7 @@ class SweeperObstacle(size: Float, private val textureRegion: TextureRegion, pri
     private val origin: Vector2 = Vector2(getSize() / 2f, getSize() * thickness / 2f)
     private val heightOffset: Float = (getSize() / 2f) - (getSize() * thickness / 2f)
 
-    private var angleIncrement: Float = Random.nextFloat() * MAX_ANGLE_INCREMENT
+    private var angleIncrement: Float = Math.max(MIN_ANGLE_INCREMENT, Random.nextFloat() * MAX_ANGLE_INCREMENT)
     private var angle: Float = Random.nextFloat() * MAX_ANGLE
 
     /**
@@ -96,7 +96,8 @@ class SweeperObstacle(size: Float, private val textureRegion: TextureRegion, pri
     }
 
     companion object {
-        const val MAX_ANGLE_INCREMENT = 5f
+        const val MIN_ANGLE_INCREMENT = 1f
+        const val MAX_ANGLE_INCREMENT = 4f
         const val MAX_ANGLE = 360f
 
         const val DEFAULT_THICKNESS: Float = 0.025f

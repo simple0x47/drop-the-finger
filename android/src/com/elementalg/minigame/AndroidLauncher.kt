@@ -14,6 +14,7 @@ class AndroidLauncher : AndroidApplication() {
         windowManager.defaultDisplay.getRealMetrics(displayMetrics)
 
         val config = AndroidApplicationConfiguration()
+        config.numSamples = 4
         initialize(Game(Locale.getDefault(), displayMetrics.xdpi, displayMetrics.ydpi), config)
     }
 }

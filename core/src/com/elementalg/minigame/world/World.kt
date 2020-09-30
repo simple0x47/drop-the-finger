@@ -1,6 +1,7 @@
 package com.elementalg.minigame.world
 
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.math.Vector2
@@ -13,6 +14,7 @@ import com.elementalg.minigame.world.cells.CellHolder
 import com.elementalg.minigame.world.cells.Obstacle
 import kotlin.jvm.Throws
 import kotlin.math.ceil
+import kotlin.math.floor
 import kotlin.math.pow
 import kotlin.random.Random
 
@@ -36,6 +38,8 @@ class World(private val stage: Stage, private val worldViewport: Viewport) {
 
     private lateinit var worldAtlas: TextureAtlas
 
+    private lateinit var worldBackground: Texture
+
     private lateinit var finger: Finger
     private lateinit var fingerListener: FingerListener
     private lateinit var cellGenerator: CellGenerator
@@ -52,8 +56,7 @@ class World(private val stage: Stage, private val worldViewport: Viewport) {
     private fun initializeFinger(worldAtlas: TextureAtlas, fingerRadius: Float) {
         check(!this::finger.isInitialized) {"'finger' has already been initialized once."}
 
-        finger = Finger(this, worldViewport, worldAtlas.findRegion(Finger.TEXTURE_REGION),
-                fingerRadius / UNIT_TO_PIXELS)
+        finger = Finger(worldAtlas, this, worldViewport, fingerRadius / UNIT_TO_PIXELS)
         cellGenerator = CellGenerator(finger.getRadius())
     }
 
@@ -122,6 +125,9 @@ class World(private val stage: Stage, private val worldViewport: Viewport) {
 
         worldAtlas = assets["WorldAtlas"] as TextureAtlas
 
+        worldBackground = assets["WorldBackground"] as Texture
+        worldBackground.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat)
+
         val worldCellHolderSize: Float = WORLD_SIZE.x
 
         for (i: Int in 0 until CELL_HOLDERS) {
@@ -140,8 +146,6 @@ class World(private val stage: Stage, private val worldViewport: Viewport) {
      * @param batch batch used for drawing the world's actors.
      */
     fun render(batch: Batch) {
-        finger.draw(batch)
-
         score += Gdx.graphics.deltaTime
 
         if (score < TIME_UNTIL_MAX_DIFFICULTY) {
@@ -151,8 +155,17 @@ class World(private val stage: Stage, private val worldViewport: Viewport) {
             speed = MAX_SPEED
         }
 
+        val distance: Float = (speed * score) * UNIT_TO_PIXELS
+        val location: Int = if (distance >= Int.MAX_VALUE) (distance - floor(distance / Int.MAX_VALUE)).toInt()
+        else distance.toInt()
+
+        batch.draw(worldBackground, 0f, 0f, WORLD_SIZE.x, WORLD_SIZE.y, 0, location,
+                WORLD_BACKGROUND_SIZE, WORLD_BACKGROUND_SIZE, false, false)
+
         var count: Int = 0
-        for (cellHolder: CellHolder in cellHolders) {
+        for (cellHolderIndex: Int in 0 until cellHolders.size) {
+            val cellHolder: CellHolder = cellHolders[cellHolderIndex]
+
             cellHolder.draw(batch)
 
             if (started) {
@@ -169,6 +182,8 @@ class World(private val stage: Stage, private val worldViewport: Viewport) {
                 }
             }
         }
+
+        finger.draw(batch)
     }
 
     /**
@@ -220,8 +235,7 @@ class World(private val stage: Stage, private val worldViewport: Viewport) {
      * to avoid collision detection.
      */
     fun checkFastMovement(movementStartPoint: Vector2, movementEndPoint: Vector2) {
-        val hypotheticalFinger: Finger = Finger(this, worldViewport, worldAtlas.findRegion(Finger.TEXTURE_REGION),
-                finger.getRadius())
+        val hypotheticalFinger: Finger = Finger(worldAtlas, this, worldViewport, finger.getRadius())
         val movementLength: Float = movementStartPoint.dst(movementEndPoint)
         val lineStep: Float = (movementEndPoint.y - movementStartPoint.y) / (movementEndPoint.x - movementStartPoint.x)
 
@@ -271,6 +285,7 @@ class World(private val stage: Stage, private val worldViewport: Viewport) {
      */
     fun gameOver() {
         stage.removeListener(fingerListener)
+        finger.setCollided(true)
 
         started = false
     }
@@ -292,13 +307,16 @@ class World(private val stage: Stage, private val worldViewport: Viewport) {
     companion object {
         const val CELL_HOLDERS: Int = 3
         const val UNIT_TO_PIXELS: Int = 100
+
+        const val WORLD_BACKGROUND_SIZE: Int = 2048
+
         const val FINGER_RADIUS_MARGIN: Float = 1.5f // lower = harder *evil laugh*, but never lower than 1.
         const val MAX_SPEED: Float = 0.05f
         const val MIN_SPEED: Float = 0.01f
         const val TIME_UNTIL_MAX_DIFFICULTY: Float = 15f // seconds
 
         val WORLD_SIZE: Vector2 = Vector2(8f, 16f)
-        
+
         // Powered to the square in order to increase fast movement detection's efficiency.
         val FAST_MOVEMENT_DISTANCE_SQUARED: Float = WORLD_SIZE.x.pow(2)
     }

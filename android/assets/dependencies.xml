@@ -12,5 +12,8 @@
         <asset id="WorldAtlas" class="com.badlogic.gdx.graphics.g2d.TextureAtlas">
             World.atlas
         </asset>
+        <asset id="WorldBackground" class="com.badlogic.gdx.graphics.Texture">
+            WorldBackground.png
+        </asset>
     </dependency>
 </dependencies>
