@@ -1,6 +1,6 @@
 package com.elementalg.minigame.world.cells
 
-import com.elementalg.minigame.world.World
+import com.elementalg.minigame.world.SelfGeneratingWorld
 import kotlin.jvm.Throws
 import kotlin.math.abs
 import kotlin.math.min
@@ -22,7 +22,7 @@ class CellGenerator(private val fingerRadius: Float) {
      * Returns a [Cell.Type], which is an obstacle, selected <i>randomly</i> by making usage of several factors.
      *
      * @param canBeVShapedObstacle (1) if the obstacle can be [Cell.Type.V] or (0) if not.
-     * @param difficulty [World.difficulty].
+     * @param difficulty [SelfGeneratingWorld.difficulty].
      *
      * @return type of obstacle cell selected <i>randomly</i>.
      */
@@ -52,7 +52,7 @@ class CellGenerator(private val fingerRadius: Float) {
      *
      * @param canBeCellHolder (1) if the cell type can be a [Cell.Type.HOLDER], or (0) if not.
      * @param canBeSweeper (1) if the cell type can be a [Cell.Type.SWEEPER], or (0) if not.
-     * @param difficulty [World.difficulty].
+     * @param difficulty [SelfGeneratingWorld.difficulty].
      *
      * @return type of passable cell selected <i>randomly</i>.
      */
@@ -123,7 +123,7 @@ class CellGenerator(private val fingerRadius: Float) {
      * world [cellHolder].
      * @param outputPosition Position of the output cell. Must be 1 (top left) or 2 (top right) if we have a
      * world [cellHolder].
-     * @param difficulty [World.difficulty]. Difficulty multiplier, values between 0.0 and 1.0. The greater the value,
+     * @param difficulty [SelfGeneratingWorld.difficulty]. Difficulty multiplier, values between 0.0 and 1.0. The greater the value,
      * the greater the possibilities to generate cell holders.
      *
      * @throws IllegalArgumentException if [inputPosition] is not 0 or 1, or if [outputPosition] is not 2 or 3, when
@@ -153,7 +153,7 @@ class CellGenerator(private val fingerRadius: Float) {
         }
 
         val hypotheticalInnerCellHolderSize: Float = cellHolder.getSize() / 4f
-        val doesInnerCellHolderSizeComply: Boolean = ((fingerRadius * 2f * World.FINGER_RADIUS_MARGIN) <
+        val doesInnerCellHolderSizeComply: Boolean = ((fingerRadius * 2f * SelfGeneratingWorld.FINGER_RADIUS_MARGIN) <
                 hypotheticalInnerCellHolderSize)
 
         val canBeInnerCellHolder: Int = if (doesInnerCellHolderSizeComply &&
@@ -163,7 +163,8 @@ class CellGenerator(private val fingerRadius: Float) {
                 (hypotheticalInnerCellHolderSize * SweeperObstacle.DEFAULT_THICKNESS) +
                 (hypotheticalInnerCellHolderSize * SweeperObstacle.REQUIRED_SPACE_MARGIN))
 
-        val canBeSweeper: Int = if (hypotheticalSweeperObstacleMargin >= (fingerRadius * 2f)) 1 else 0
+        val canBeSweeper: Int = if (hypotheticalSweeperObstacleMargin >= (fingerRadius * 2f) &&
+                (difficulty >= SweeperObstacle.APPEAR_AFTER_DIFFICULTY)) 1 else 0
 
         var previousInnerCellType: Cell.Type = Cell.Type.SQUARE // Avoids putting a triangle in the first cell.
 

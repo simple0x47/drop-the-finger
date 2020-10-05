@@ -11,16 +11,16 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
  *
  * @constructor initializes an instance with the passed parameters.
  * @param finger instance of finger which will be updated as input events are listened.
- * @param world instance of world in which the finger is located.
+ * @param selfGeneratingWorld instance of world in which the finger is located.
  */
-class FingerListener(private val finger: Finger, private val world: World) : ClickListener() {
+class FingerListener(private val finger: Finger, private val selfGeneratingWorld: SelfGeneratingWorld) : ClickListener() {
     private val lastPosition: Vector2 = Vector2()
 
     /**
      * Proceeds to start the world, and this way, the game.
      */
     override fun touchDown(event: InputEvent?, x: Float, y: Float, pointer: Int, button: Int): Boolean {
-        world.start()
+        selfGeneratingWorld.start()
 
         lastPosition.set(x, y)
         return super.touchDown(event, x, y, pointer, button)
@@ -30,8 +30,8 @@ class FingerListener(private val finger: Finger, private val world: World) : Cli
      * If the world is started, it calls game over.
      */
     override fun touchUp(event: InputEvent?, x: Float, y: Float, pointer: Int, button: Int) {
-        if (world.isStarted()) {
-            world.gameOver()
+        if (selfGeneratingWorld.isStarted()) {
+            selfGeneratingWorld.gameOver()
         }
 
         super.touchUp(event, x, y, pointer, button)
@@ -43,11 +43,11 @@ class FingerListener(private val finger: Finger, private val world: World) : Cli
      * It also updates the position of the finger if the world is started.
      */
     override fun touchDragged(event: InputEvent?, x: Float, y: Float, pointer: Int) {
-        if (lastPosition.dst2(x, y) > World.FAST_MOVEMENT_DISTANCE_SQUARED) {
-            world.checkFastMovement(lastPosition, Vector2(x, y))
+        if (lastPosition.dst2(x, y) > SelfGeneratingWorld.FAST_MOVEMENT_DISTANCE_SQUARED) {
+            selfGeneratingWorld.checkFastMovement(lastPosition, Vector2(x, y))
         }
 
-        if (world.isStarted()) {
+        if (selfGeneratingWorld.isStarted()) {
             finger.updatePosition(x, y)
         }
 

@@ -15,11 +15,11 @@ import com.badlogic.gdx.utils.viewport.Viewport
  *
  * @constructor initializes an instance with the passed parameters.
  * @param worldAtlas texture atlas which contains the world's actors.
- * @param world world where the finger will be located in.
+ * @param selfGeneratingWorld world where the finger will be located in.
  * @param worldViewport viewport used for the world's actors.
  * @param radius radius of the finger in world's units.
  */
-class Finger(worldAtlas: TextureAtlas, private val world: World, private val worldViewport: Viewport,
+class Finger(worldAtlas: TextureAtlas, private val selfGeneratingWorld: SelfGeneratingWorld, private val worldViewport: Viewport,
              private val radius: Float) {
     private val fingerPointer: TextureRegion
     private val collisionAnimation: Animation<TextureRegion>
@@ -29,7 +29,7 @@ class Finger(worldAtlas: TextureAtlas, private val world: World, private val wor
     private var collisionTime: Float = 0f
 
     init {
-        fingerPointer = worldAtlas.findRegion(Finger.POINTER_REGION)
+        fingerPointer = worldAtlas.findRegion(POINTER_REGION)
         collisionAnimation = Animation(COLLISION_ANIMATION_FRAME_DURATION,
                 worldAtlas.findRegions(COLLISION_ANIMATION_BASE_KEY), Animation.PlayMode.NORMAL)
     }

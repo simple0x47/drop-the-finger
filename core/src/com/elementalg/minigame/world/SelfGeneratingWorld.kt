@@ -28,7 +28,8 @@ import kotlin.random.Random
  * @param stage LibGDX's stage instance instance used at the parent screen.
  * @param worldViewport actor's viewports instance used at the parent screen.
  */
-class World(private val stage: Stage, private val worldViewport: Viewport) {
+class SelfGeneratingWorld(private val stage: Stage, private val worldViewport: Viewport,
+                          private val gameOverListener: GameOverListener) {
     private val cellHolders: ArrayList<CellHolder> = ArrayList(CELL_HOLDERS)
 
     private var speed: Float = 0.025f
@@ -288,6 +289,8 @@ class World(private val stage: Stage, private val worldViewport: Viewport) {
         finger.setCollided(true)
 
         started = false
+
+        gameOverListener.handle()
     }
 
     /**
@@ -313,7 +316,7 @@ class World(private val stage: Stage, private val worldViewport: Viewport) {
         const val FINGER_RADIUS_MARGIN: Float = 1.5f // lower = harder *evil laugh*, but never lower than 1.
         const val MAX_SPEED: Float = 0.05f
         const val MIN_SPEED: Float = 0.01f
-        const val TIME_UNTIL_MAX_DIFFICULTY: Float = 15f // seconds
+        const val TIME_UNTIL_MAX_DIFFICULTY: Float = 20f // seconds
 
         val WORLD_SIZE: Vector2 = Vector2(8f, 16f)
 

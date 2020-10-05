@@ -8,7 +8,8 @@ import com.elementalg.client.managers.DependencyManager
 import com.elementalg.client.managers.Screen
 import com.elementalg.client.managers.ScreenManager
 import com.elementalg.minigame.world.Finger
-import com.elementalg.minigame.world.World
+import com.elementalg.minigame.world.GameOverListener
+import com.elementalg.minigame.world.SelfGeneratingWorld
 
 import kotlin.math.min
 
@@ -22,11 +23,19 @@ import kotlin.math.min
  * @param displayYDPI density of pixels per inch on the y axis.
  */
 class ContinuousModeScreen(private val displayXDPI: Float, private val displayYDPI: Float) : Screen() {
-    private val backgroundViewport: FillViewport = FillViewport(World.WORLD_SIZE.x, World.WORLD_SIZE.y)
-    private val actorsViewport: StretchViewport = StretchViewport(World.WORLD_SIZE.x, World.WORLD_SIZE.y)
-    private val stage: Stage = Stage(actorsViewport)
+    private class Listener(private val screen: ContinuousModeScreen) : GameOverListener {
+        override fun handle() {
+            screen.showRestartWidget()
+        }
+    }
 
-    private lateinit var world: World
+    private val backgroundViewport: FillViewport = FillViewport(SelfGeneratingWorld.WORLD_SIZE.x, SelfGeneratingWorld.WORLD_SIZE.y)
+    private val actorsViewport: StretchViewport = StretchViewport(SelfGeneratingWorld.WORLD_SIZE.x, SelfGeneratingWorld.WORLD_SIZE.y)
+    private val stage: Stage = Stage(actorsViewport)
+    private val gameOverListener: Listener = Listener(this)
+
+    private lateinit var selfGeneratingWorld: SelfGeneratingWorld
+    private lateinit var restartWidget: RestartWidget
 
     /**
      * Calculates the finger's radius in pixels, and initializes the world.
@@ -34,8 +43,11 @@ class ContinuousModeScreen(private val displayXDPI: Float, private val displayYD
     override fun create(dependencyManager: DependencyManager) {
         val fingerRadius: Float = Finger.FINGER_INCH_RADIUS * min(displayXDPI, displayYDPI)
 
-        world = World(stage, actorsViewport)
-        world.create(dependencyManager, fingerRadius)
+        selfGeneratingWorld = SelfGeneratingWorld(stage, actorsViewport, gameOverListener)
+        selfGeneratingWorld.create(dependencyManager, fingerRadius)
+
+        restartWidget = RestartWidget(dependencyManager)
+        restartWidget.create()
     }
 
     /**
@@ -45,7 +57,7 @@ class ContinuousModeScreen(private val displayXDPI: Float, private val displayYD
         super.show()
 
         Gdx.input.inputProcessor = stage
-        world.show()
+        selfGeneratingWorld.show()
     }
 
     override fun resize(width: Int, height: Int) {
@@ -62,7 +74,7 @@ class ContinuousModeScreen(private val displayXDPI: Float, private val displayYD
         actorsViewport.apply()
         stage.batch.projectionMatrix = actorsViewport.camera.combined
         stage.batch.begin()
-        world.render(stage.batch)
+        selfGeneratingWorld.render(stage.batch)
         stage.batch.end()
 
         super.render(delta)
@@ -82,8 +94,12 @@ class ContinuousModeScreen(private val displayXDPI: Float, private val displayYD
 
     override fun dispose() {
         stage.dispose()
-        world.dispose()
+        selfGeneratingWorld.dispose()
 
         super.dispose()
+    }
+
+    fun showRestartWidget() {
+        restartWidget.show()
     }
 }

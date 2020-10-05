@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.math.Vector2
 import com.elementalg.minigame.world.Finger
-import com.elementalg.minigame.world.World
+import com.elementalg.minigame.world.SelfGeneratingWorld
 import kotlin.math.*
 
 /**
@@ -170,7 +170,7 @@ abstract class Cell(private val type: Type, private val size: Float) {
             return when (cellType) {
                 Type.HOLDER -> {
                     CellHolder(innerSize, worldAtlas,
-                            (min(World.WORLD_SIZE.x, World.WORLD_SIZE.y) / innerSize).toInt() - 1)
+                            (min(SelfGeneratingWorld.WORLD_SIZE.x, SelfGeneratingWorld.WORLD_SIZE.y) / innerSize).toInt() - 1)
                 }
                 Type.EMPTY -> {
                     EmptyCell(innerSize)
