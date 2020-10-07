@@ -1,0 +1,20 @@
+
+RestartWidget.png
+size: 1024,512
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+BackButton
+  rotate: false
+  xy: 503, 2
+  size: 499, 432
+  orig: 499, 432
+  offset: 0, 0
+  index: -1
+RestartButton
+  rotate: false
+  xy: 2, 2
+  size: 499, 432
+  orig: 499, 432
+  offset: 0, 0
+  index: -1

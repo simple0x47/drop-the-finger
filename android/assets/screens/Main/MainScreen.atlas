@@ -13,28 +13,35 @@ Background
   index: -1
 
 MainScreen2.png
-size: 2048,1024
+size: 2048,512
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-HighScoreButton
+BackButton
   rotate: false
-  xy: 2, 416
-  size: 681, 590
-  orig: 681, 590
+  xy: 503, 2
+  size: 499, 432
+  orig: 499, 432
   offset: 0, 0
   index: -1
-Logo
+HighScoreButton
   rotate: false
   xy: 2, 2
-  size: 450, 412
-  orig: 450, 412
+  size: 499, 432
+  orig: 499, 432
+  offset: 0, 0
+  index: -1
+LogoButton
+  rotate: false
+  xy: 1505, 220
+  size: 214, 214
+  orig: 214, 214
   offset: 0, 0
   index: -1
 PlayButton
   rotate: false
-  xy: 685, 416
-  size: 681, 590
-  orig: 681, 590
+  xy: 1004, 2
+  size: 499, 432
+  orig: 499, 432
   offset: 0, 0
   index: -1

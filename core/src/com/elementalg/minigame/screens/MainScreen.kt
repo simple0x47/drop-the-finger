@@ -15,6 +15,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport
 import com.elementalg.client.managers.DependencyManager
 import com.elementalg.client.managers.Screen
 import com.elementalg.client.managers.ScreenManager
+import com.elementalg.minigame.Game
 import kotlin.jvm.Throws
 
 /**
@@ -60,22 +61,24 @@ class MainScreen(private val displayXDPI: Float, private val displayYDPI: Float)
     private lateinit var background: TextureRegion
     private lateinit var playButton: Button
     private lateinit var highScoreButton: Button
-    private lateinit var logo: TextureRegion
-
-    private lateinit var theme: Music
-
+    private lateinit var logo: Button
+    
     private lateinit var modeScreen: ContinuousModeScreen
 
     /**
      * Initializes the main menu's design and UI elements.
      *
-     * @param dependencyManager instance of the game's [DependencyManager].
+     * @param game instance of the game.
      *
      * @throws IllegalStateException if 'MAIN_SCREEN' dependency is not loaded yet or if an asset could not be solved.
      */
     @Throws(IllegalStateException::class)
-    override fun create(dependencyManager: DependencyManager) {
-        check(dependencyManager.isDependencyAvailable("MAIN_SCREEN")){"'MAIN_SCREEN' is not loaded yet."}
+    override fun create(game: Game) {
+        val dependencyManager: DependencyManager = game.getDependencyManager()
+
+        check(dependencyManager.isDependencyAvailable("MAIN_SCREEN")) {
+            "'MAIN_SCREEN' is not loaded yet."
+        }
 
         val assets: HashMap<String, Any> = dependencyManager.retrieveAssets("MAIN_SCREEN")
 
@@ -89,37 +92,34 @@ class MainScreen(private val displayXDPI: Float, private val displayYDPI: Float)
 
         playButton = Button(TextureRegionDrawable(atlas.findRegion("PlayButton")))
         playButton.setSize(0.333823529f, 0.28921569f)
-        playButton.setPosition(0.5f, 0.644607845f, Align.center)
+        playButton.setPosition(0.33333333f, 0.569117647f, Align.center)
 
         highScoreButton = Button(TextureRegionDrawable(atlas.findRegion("HighScoreButton")))
         highScoreButton.setSize(0.333823529f, 0.28921569f)
-        highScoreButton.setPosition(0.5f, 0.355392155f, Align.center)
+        highScoreButton.setPosition(0.667156862f, 0.424509803f, Align.center)
 
-        logo = atlas.findRegion("Logo")
+        logo = Button(TextureRegionDrawable(atlas.findRegion("LogoButton")))
+        logo.setSize(0.10490196078f, 0.10490196078f)
+        logo.setPosition(0.667156762f, 0.76617647f, Align.center)
 
-        theme = assets["MainScreenTheme"] as Music
-
-        modeScreen = ContinuousModeScreen(displayXDPI, displayYDPI)
-        modeScreen.create(dependencyManager)
+        modeScreen = ContinuousModeScreen(this, displayXDPI, displayYDPI)
+        modeScreen.create(game)
     }
 
     /**
-     * Shows the main menu's actors and starts playing the theme.
+     * Shows the main menu's actors.
      *
      * @param screenManager instance of [ScreenManager] used for this game's instance.
      */
     override fun show(screenManager: ScreenManager) {
         stage.addActor(playButton)
         stage.addActor(highScoreButton)
+        stage.addActor(logo)
 
         playButton.addListener(PlayButtonListener(screenManager, modeScreen))
         highScoreButton.addListener(HighScoreButtonListener())
 
         Gdx.input.inputProcessor = stage
-
-        theme.isLooping = true
-        theme.play()
-        theme.volume = 0.2f
 
         super.show()
     }
@@ -138,7 +138,6 @@ class MainScreen(private val displayXDPI: Float, private val displayYDPI: Float)
         stageViewport.apply(true)
         stage.batch.begin()
         stage.batch.draw(background, 0f, 0f, 1f, 1f)
-        stage.batch.draw(logo, 0.45f, 0.05f, 0.1f, 0.091556f)
         stage.batch.end()
 
         actorsViewport.apply(true)
@@ -168,14 +167,11 @@ class MainScreen(private val displayXDPI: Float, private val displayYDPI: Float)
 
         Gdx.input.inputProcessor = null
 
-        theme.stop()
-
         super.hide()
     }
 
     override fun dispose() {
         stage.dispose()
-        theme.dispose()
 
         super.dispose()
     }

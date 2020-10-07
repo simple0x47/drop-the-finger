@@ -1,5 +1,5 @@
 package com.elementalg.minigame.world
 
-interface GameOverListener {
+interface BasicListener {
     fun handle()
 }

@@ -1,9 +1,11 @@
 package com.elementalg.minigame.world
 
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.audio.Music
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
+import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.viewport.Viewport
@@ -13,9 +15,7 @@ import com.elementalg.minigame.world.cells.CellGenerator
 import com.elementalg.minigame.world.cells.CellHolder
 import com.elementalg.minigame.world.cells.Obstacle
 import kotlin.jvm.Throws
-import kotlin.math.ceil
-import kotlin.math.floor
-import kotlin.math.pow
+import kotlin.math.*
 import kotlin.random.Random
 
 /**
@@ -29,21 +29,32 @@ import kotlin.random.Random
  * @param worldViewport actor's viewports instance used at the parent screen.
  */
 class SelfGeneratingWorld(private val stage: Stage, private val worldViewport: Viewport,
-                          private val gameOverListener: GameOverListener) {
+                          private val gameOverListener: BasicListener) {
     private val cellHolders: ArrayList<CellHolder> = ArrayList(CELL_HOLDERS)
 
-    private var speed: Float = 0.025f
+    private val screenBorders: ArrayList<Vector2> = ArrayList()
+
+    private var speed: Float = MIN_SPEED
     private var difficulty: Float = 0f
     private var started: Boolean = false
     private var score: Float = 0f
 
     private lateinit var worldAtlas: TextureAtlas
+    private lateinit var screenDarker: TextureRegion
 
     private lateinit var worldBackground: Texture
 
     private lateinit var finger: Finger
     private lateinit var fingerListener: FingerListener
     private lateinit var cellGenerator: CellGenerator
+    private lateinit var theme: Music
+
+    init {
+        screenBorders.add(Vector2(0f, WORLD_SIZE.y))
+        screenBorders.add(Vector2(WORLD_SIZE.x, WORLD_SIZE.y))
+        screenBorders.add(Vector2(WORLD_SIZE.x, 0f))
+        screenBorders.add(Vector2(0f, 0f))
+    }
 
     /**
      * Initializes a finger to the world with the passed [fingerRadius].
@@ -58,6 +69,8 @@ class SelfGeneratingWorld(private val stage: Stage, private val worldViewport: V
         check(!this::finger.isInitialized) {"'finger' has already been initialized once."}
 
         finger = Finger(worldAtlas, this, worldViewport, fingerRadius / UNIT_TO_PIXELS)
+        finger.updatePosition(WORLD_SIZE.x / 2f, WORLD_SIZE.x / 2f)
+        fingerListener = FingerListener(finger, this)
         cellGenerator = CellGenerator(finger.getRadius())
     }
 
@@ -139,6 +152,10 @@ class SelfGeneratingWorld(private val stage: Stage, private val worldViewport: V
 
         initializeFinger(worldAtlas, fingerRadius)
         initializeWorldCellHolders()
+
+        screenDarker = worldAtlas.findRegion("Background")
+
+        theme = assets["WorldTheme"] as Music
     }
 
     /**
@@ -156,14 +173,17 @@ class SelfGeneratingWorld(private val stage: Stage, private val worldViewport: V
             speed = MAX_SPEED
         }
 
-        val distance: Float = (speed * score) * UNIT_TO_PIXELS
+        val distance: Float = (speed * score) * UNIT_TO_PIXELS * 10
         val location: Int = if (distance >= Int.MAX_VALUE) (distance - floor(distance / Int.MAX_VALUE)).toInt()
         else distance.toInt()
 
         batch.draw(worldBackground, 0f, 0f, WORLD_SIZE.x, WORLD_SIZE.y, 0, location,
                 WORLD_BACKGROUND_SIZE, WORLD_BACKGROUND_SIZE, false, false)
 
-        var count: Int = 0
+        if (started && isCollidingFingerWithScreenBorders(finger)) {
+            gameOver()
+        }
+
         for (cellHolderIndex: Int in 0 until cellHolders.size) {
             val cellHolder: CellHolder = cellHolders[cellHolderIndex]
 
@@ -172,19 +192,39 @@ class SelfGeneratingWorld(private val stage: Stage, private val worldViewport: V
             if (started) {
                 displaceCellHolder(cellHolder)
 
-                if (count < 2) {
-                    if (cellHolder.isFingerWithinCell(finger)) {
-                        if (isCollidingFingerWithCellHoldersInnerObstacles(cellHolder, finger)) {
-                            gameOver()
-                        } else {
-                            ++count
-                        }
+                if (cellHolder.isFingerWithinCell(finger)) {
+                    if (isCollidingFingerWithCellHoldersInnerObstacles(cellHolder, finger)) {
+                        gameOver()
                     }
                 }
             }
         }
 
         finger.draw(batch)
+
+        if (finger.hasCollided()) {
+            batch.draw(screenDarker, 0f, 0f, 100f, 100f)
+        }
+    }
+
+    private fun isCollidingFingerWithScreenBorders(finger: Finger): Boolean {
+        val fingerPosition: Vector2 = finger.getPosition()
+
+        for (line: Int in 0..3) {
+            val firstPoint: Vector2 = screenBorders[line]
+            val secondPoint: Vector2 = screenBorders[if ((line + 1 ) > 3) 0 else (line + 1)]
+
+            val distance: Float = abs((secondPoint.y - firstPoint.y) * fingerPosition.x -
+                    (secondPoint.x - firstPoint.x) * fingerPosition.y +
+                    secondPoint.x * firstPoint.y - secondPoint.y * firstPoint.x) /
+                    sqrt((secondPoint.y - firstPoint.y).pow(2) + (secondPoint.x - firstPoint.x).pow(2))
+
+            if (distance <= finger.getRadius()) {
+                return true
+            }
+        }
+
+        return false
     }
 
     /**
@@ -262,9 +302,7 @@ class SelfGeneratingWorld(private val stage: Stage, private val worldViewport: V
      * Starts listening to the finger.
      */
     fun show() {
-        fingerListener = FingerListener(finger, this)
-
-        stage.addListener(fingerListener)
+        restart()
     }
 
     /**
@@ -272,6 +310,11 @@ class SelfGeneratingWorld(private val stage: Stage, private val worldViewport: V
      */
     fun start() {
         started = true
+
+        theme.position = 0f
+        theme.volume = WORLD_THEME_VOLUME
+        theme.isLooping = true
+        theme.play()
     }
 
     /**
@@ -289,7 +332,9 @@ class SelfGeneratingWorld(private val stage: Stage, private val worldViewport: V
         finger.setCollided(true)
 
         started = false
+        difficulty = 0f
 
+        theme.stop()
         gameOverListener.handle()
     }
 
@@ -297,14 +342,25 @@ class SelfGeneratingWorld(private val stage: Stage, private val worldViewport: V
      * Restarts the world's generation and displacement.
      */
     fun restart() {
+        started = false
+
         initializeWorldCellHolders()
-        finger.updatePosition(0f, 0f)
+        finger.updatePosition(WORLD_SIZE.x / 2f, WORLD_SIZE.x / 2f)
+        finger.restart()
+
+        speed = MIN_SPEED
+        difficulty = 0f
+        score = 0f
 
         stage.addListener(fingerListener)
     }
 
-    fun dispose() {
+    fun hide() {
 
+    }
+
+    fun dispose() {
+        theme.dispose()
     }
 
     companion object {
@@ -312,6 +368,7 @@ class SelfGeneratingWorld(private val stage: Stage, private val worldViewport: V
         const val UNIT_TO_PIXELS: Int = 100
 
         const val WORLD_BACKGROUND_SIZE: Int = 2048
+        const val WORLD_THEME_VOLUME: Float = 0.2f
 
         const val FINGER_RADIUS_MARGIN: Float = 1.5f // lower = harder *evil laugh*, but never lower than 1.
         const val MAX_SPEED: Float = 0.05f

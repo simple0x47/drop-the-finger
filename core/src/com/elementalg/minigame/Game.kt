@@ -1,9 +1,7 @@
 package com.elementalg.minigame
 
 import com.badlogic.gdx.ApplicationAdapter
-import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.FPSLogger
-import com.badlogic.gdx.math.Vector2
 import com.elementalg.client.managers.DependencyManager
 import com.elementalg.client.managers.LocaleManager
 import com.elementalg.client.managers.ScreenManager
@@ -96,14 +94,15 @@ class Game(private val systemLocale: Locale, private val displayXDPI: Float, pri
 
         dependencyManager.loadDependencyID("MAIN_SCREEN")
         dependencyManager.loadDependencyID("WORLD")
+        dependencyManager.loadDependencyID("RESTART_WIDGET")
 
         val mainScreen: MainScreen = MainScreen(displayXDPI, displayYDPI)
-        mainScreen.create(dependencyManager)
+        mainScreen.create(gameInstance)
         screenManager.setActiveScreen(mainScreen)
     }
 
     override fun render() {
-        fpsLogger.log()
+        //fpsLogger.log()
         eventManager.update()
 
         dependencyManager.update()

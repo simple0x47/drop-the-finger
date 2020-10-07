@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.elementalg.client.ui.Notification
+import com.elementalg.minigame.Game
 
 /**
  * Implementation of LibGDX's Screen which allows easily to show a notification on any screen.
@@ -44,7 +45,7 @@ abstract class Screen : com.badlogic.gdx.Screen {
         stage.dispose()
     }
 
-    abstract fun create(dependencyManager: DependencyManager)
+    abstract fun create(game: Game)
 
     /**
      * Shows the [notification] on this screen.

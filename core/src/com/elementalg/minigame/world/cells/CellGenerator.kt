@@ -191,8 +191,8 @@ class CellGenerator(private val fingerRadius: Float) {
 
     companion object {
         const val CELL_HOLDER_CHANCE: Float = 0.5f
-        const val OBSTACLE_CHANCE: Float = 0.25f
-        const val EMPTY_CELL_CHANCE: Float = 0.25f
+        const val OBSTACLE_CHANCE: Float = 0.15f
+        const val EMPTY_CELL_CHANCE: Float = 0.35f
 
         const val SQUARE_OBSTACLE_CHANCE: Float = 0.5f
         const val V_SHAPED_OBSTACLE_CHANCE: Float = 0.5f

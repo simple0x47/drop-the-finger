@@ -4,6 +4,13 @@ size: 2048,1024
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
+Background
+  rotate: false
+  xy: 2020, 990
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
 Finger
   rotate: false
   xy: 404, 764
@@ -59,175 +66,175 @@ collision
   size: 200, 200
   orig: 200, 200
   offset: 0, 0
-  index: 12
+  index: 13
 collision
   rotate: false
   xy: 606, 764
   size: 200, 200
   orig: 200, 200
   offset: 0, 0
-  index: 13
+  index: 14
 collision
   rotate: false
   xy: 606, 562
   size: 200, 200
   orig: 200, 200
   offset: 0, 0
-  index: 14
+  index: 15
 collision
   rotate: false
   xy: 606, 360
   size: 200, 200
   orig: 200, 200
   offset: 0, 0
-  index: 15
+  index: 16
 collision
   rotate: false
   xy: 808, 806
   size: 200, 200
   orig: 200, 200
   offset: 0, 0
-  index: 16
+  index: 17
 collision
   rotate: false
   xy: 808, 604
   size: 200, 200
   orig: 200, 200
   offset: 0, 0
-  index: 17
+  index: 18
 collision
   rotate: false
   xy: 1010, 806
   size: 200, 200
   orig: 200, 200
   offset: 0, 0
-  index: 18
+  index: 19
 collision
   rotate: false
   xy: 808, 402
   size: 200, 200
   orig: 200, 200
   offset: 0, 0
-  index: 19
+  index: 1
 collision
   rotate: false
   xy: 1010, 604
   size: 200, 200
   orig: 200, 200
   offset: 0, 0
-  index: 1
+  index: 2
 collision
   rotate: false
   xy: 1212, 806
   size: 200, 200
   orig: 200, 200
   offset: 0, 0
-  index: 2
+  index: 3
 collision
   rotate: false
   xy: 1010, 402
   size: 200, 200
   orig: 200, 200
   offset: 0, 0
-  index: 3
+  index: 4
 collision
   rotate: false
   xy: 1212, 604
   size: 200, 200
   orig: 200, 200
   offset: 0, 0
-  index: 4
+  index: 5
 collision
   rotate: false
   xy: 1414, 806
   size: 200, 200
   orig: 200, 200
   offset: 0, 0
-  index: 5
+  index: 6
 collision
   rotate: false
   xy: 1212, 402
   size: 200, 200
   orig: 200, 200
   offset: 0, 0
-  index: 6
+  index: 7
 collision
   rotate: false
   xy: 1414, 604
   size: 200, 200
   orig: 200, 200
   offset: 0, 0
-  index: 7
+  index: 20
 collision
   rotate: false
   xy: 1616, 806
   size: 200, 200
   orig: 200, 200
   offset: 0, 0
-  index: 20
+  index: 9
 collision
   rotate: false
   xy: 1414, 402
   size: 200, 200
   orig: 200, 200
   offset: 0, 0
-  index: 9
+  index: 22
 collision
   rotate: false
   xy: 1616, 604
   size: 200, 200
   orig: 200, 200
   offset: 0, 0
-  index: 22
+  index: 23
 collision
   rotate: false
   xy: 1818, 806
   size: 200, 200
   orig: 200, 200
   offset: 0, 0
-  index: 23
+  index: 24
 collision
   rotate: false
   xy: 1616, 402
   size: 200, 200
   orig: 200, 200
   offset: 0, 0
-  index: 24
+  index: 25
 collision
   rotate: false
   xy: 1818, 604
   size: 200, 200
   orig: 200, 200
   offset: 0, 0
-  index: 25
+  index: 26
 collision
   rotate: false
   xy: 1818, 402
   size: 200, 200
   orig: 200, 200
   offset: 0, 0
-  index: 26
+  index: 27
 collision
   rotate: false
   xy: 406, 158
   size: 200, 200
   orig: 200, 200
   offset: 0, 0
-  index: 27
+  index: 28
 collision
   rotate: false
   xy: 608, 158
   size: 200, 200
   orig: 200, 200
   offset: 0, 0
-  index: 28
+  index: 29
 collision
   rotate: false
   xy: 810, 200
   size: 200, 200
   orig: 200, 200
   offset: 0, 0
-  index: 29
+  index: 12
 collision
   rotate: false
   xy: 1012, 200

@@ -4,9 +4,6 @@
         <asset id="MainScreenAtlas" class="com.badlogic.gdx.graphics.g2d.TextureAtlas">
             MainScreen.atlas
         </asset>
-        <asset id="MainScreenTheme" class="com.badlogic.gdx.audio.Music">
-            main.mp3
-        </asset>
     </dependency>
     <dependency id="WORLD" path="world/" forceLoad="true">
         <asset id="WorldAtlas" class="com.badlogic.gdx.graphics.g2d.TextureAtlas">
@@ -14,6 +11,14 @@
         </asset>
         <asset id="WorldBackground" class="com.badlogic.gdx.graphics.Texture">
             WorldBackground.png
+        </asset>
+		<asset id="WorldTheme" class="com.badlogic.gdx.audio.Music">
+            WorldTheme.mp3
+        </asset>
+    </dependency>
+    <dependency id="RESTART_WIDGET" path="widgets/restart/" forceLoad="true">
+        <asset id="RestartWidgetAtlas" class="com.badlogic.gdx.graphics.g2d.TextureAtlas">
+            RestartWidget.atlas
         </asset>
     </dependency>
 </dependencies>

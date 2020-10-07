@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.math.Vector2
 import com.elementalg.minigame.world.Finger
+import kotlin.math.max
 import kotlin.random.Random
 
 /**
@@ -21,7 +22,7 @@ class SweeperObstacle(size: Float, private val textureRegion: TextureRegion, pri
     private val origin: Vector2 = Vector2(getSize() / 2f, getSize() * thickness / 2f)
     private val heightOffset: Float = (getSize() / 2f) - (getSize() * thickness / 2f)
 
-    private var angleIncrement: Float = Math.max(MIN_ANGLE_INCREMENT, Random.nextFloat() * MAX_ANGLE_INCREMENT)
+    private var angleIncrement: Float = max(MIN_ANGLE_INCREMENT, Random.nextFloat() * MAX_ANGLE_INCREMENT)
     private var angle: Float = Random.nextFloat() * MAX_ANGLE
 
     /**
@@ -96,8 +97,8 @@ class SweeperObstacle(size: Float, private val textureRegion: TextureRegion, pri
     }
 
     companion object {
-        const val MIN_ANGLE_INCREMENT: Float = 1f
-        const val MAX_ANGLE_INCREMENT: Float = 4f
+        const val MIN_ANGLE_INCREMENT: Float = 1.5f
+        const val MAX_ANGLE_INCREMENT: Float = 3f
         const val MAX_ANGLE: Float = 360f
         const val APPEAR_AFTER_DIFFICULTY: Float = 0.5f
         const val DEFAULT_THICKNESS: Float = 0.025f
