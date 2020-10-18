@@ -1,9 +1,15 @@
 package com.elementalg.minigame.screens
 
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.audio.Music
+import com.badlogic.gdx.graphics.Color
+import com.badlogic.gdx.graphics.Pixmap
+import com.badlogic.gdx.graphics.Texture
+import com.badlogic.gdx.graphics.g2d.BitmapFont
+import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.viewport.FillViewport
+import com.badlogic.gdx.utils.viewport.FitViewport
+import com.badlogic.gdx.utils.viewport.ScreenViewport
 import com.badlogic.gdx.utils.viewport.StretchViewport
 import com.elementalg.client.managers.DependencyManager
 import com.elementalg.client.managers.Screen
@@ -28,13 +34,13 @@ class ContinuousModeScreen(private val mainScreen: MainScreen, private val displ
                            private val displayYDPI: Float) : Screen() {
     private class GameOverListener(private val screen: ContinuousModeScreen) : BasicListener {
         override fun handle() {
-            screen.showRestartWidget()
+            screen.showRestartWindow()
         }
     }
 
     private class RestartListener(private val screen: ContinuousModeScreen) : BasicListener {
         override fun handle() {
-            screen.hideRestartWidget()
+            screen.hideRestartWindow()
         }
     }
 
@@ -42,13 +48,18 @@ class ContinuousModeScreen(private val mainScreen: MainScreen, private val displ
             SelfGeneratingWorld.WORLD_SIZE.y)
     private val actorsViewport: StretchViewport = StretchViewport(SelfGeneratingWorld.WORLD_SIZE.x,
             SelfGeneratingWorld.WORLD_SIZE.y)
+    //private val userInterfaceViewport: FitViewport = FitViewport(SelfGeneratingWorld.WORLD_SIZE.x, SelfGeneratingWorld.WORLD_SIZE.x)
+    private val userInterfaceViewport: ScreenViewport = ScreenViewport()
     private val stage: Stage = Stage(actorsViewport)
+    private val uiStage: Stage = Stage(userInterfaceViewport)
     private val gameOverListener: GameOverListener = GameOverListener(this)
 
     private var drawRestartWidget: Boolean = false
 
     private lateinit var selfGeneratingWorld: SelfGeneratingWorld
-    private lateinit var restartWidget: RestartWidget
+    private lateinit var restartWindow: RestartWindow
+    private lateinit var scoreWidget: ScoreWidget
+    private lateinit var texture: Texture
 
     /**
      * Calculates the finger's radius in pixels, and initializes the world.
@@ -61,8 +72,25 @@ class ContinuousModeScreen(private val mainScreen: MainScreen, private val displ
         selfGeneratingWorld = SelfGeneratingWorld(stage, actorsViewport, gameOverListener)
         selfGeneratingWorld.create(dependencyManager, fingerRadius)
 
-        restartWidget = RestartWidget(game, selfGeneratingWorld, mainScreen, RestartListener(this))
-        restartWidget.create()
+        restartWindow = RestartWindow(game, selfGeneratingWorld, mainScreen, RestartListener(this))
+        restartWindow.create()
+
+        val assets: HashMap<String, Any> = dependencyManager.retrieveAssets("CONTINUOUS_MODE_SCREEN")
+
+        check(assets.containsKey("Text")) {"ContinuousModeScreen dependency 'Text' is not solved."}
+        check(assets.containsKey("Value")) {"ContinuousModeScreen dependency 'Value' is not solved."}
+
+        val textFont: BitmapFont = assets["Text"] as BitmapFont
+        val valueFont: BitmapFont = assets["Value"] as BitmapFont
+        val pixMap: Pixmap = Pixmap(16, 16, Pixmap.Format.RGB888)
+        pixMap.setColor(1f, 1f, 1f, 1f)
+        pixMap.fill()
+
+        userInterfaceViewport.unitsPerPixel = 0.01f
+        userInterfaceViewport.screenY = 0
+        texture = Texture(pixMap)
+
+        scoreWidget = ScoreWidget(textFont, valueFont, Color(0x29EFFFFF))
     }
 
     /**
@@ -78,6 +106,7 @@ class ContinuousModeScreen(private val mainScreen: MainScreen, private val displ
     override fun resize(width: Int, height: Int) {
         backgroundViewport.update(width, height)
         actorsViewport.update(width, height)
+        userInterfaceViewport.update(width, height)
 
         super.resize(width, height)
     }
@@ -92,13 +121,23 @@ class ContinuousModeScreen(private val mainScreen: MainScreen, private val displ
         selfGeneratingWorld.render(stage.batch)
         stage.batch.end()
 
+        if (selfGeneratingWorld.isStarted()) {
+            userInterfaceViewport.apply()
+            uiStage.batch.projectionMatrix = userInterfaceViewport.camera.combined
+            uiStage.batch.begin()
+            scoreWidget.draw(uiStage.batch)
+            uiStage.batch.end()
+        }
+
         if (!selfGeneratingWorld.isStarted()) {
             if (drawRestartWidget) {
-                restartWidget.draw()
+                restartWindow.draw()
             }
         } else if (!drawRestartWidget) {
             drawRestartWidget = false
         }
+
+        scoreWidget.updateScore(selfGeneratingWorld.getScore())
 
         super.render(delta)
     }
@@ -112,26 +151,27 @@ class ContinuousModeScreen(private val mainScreen: MainScreen, private val displ
     }
 
     override fun hide() {
-        selfGeneratingWorld.dispose()
+        selfGeneratingWorld.hide()
 
         super.hide()
     }
 
     override fun dispose() {
         stage.dispose()
+        uiStage.dispose()
         selfGeneratingWorld.dispose()
 
         super.dispose()
     }
 
-    fun showRestartWidget() {
-        restartWidget.show()
+    fun showRestartWindow() {
+        restartWindow.show()
 
         drawRestartWidget = true
     }
 
-    fun hideRestartWidget() {
-        restartWidget.hide()
+    fun hideRestartWindow() {
+        restartWindow.hide()
 
         drawRestartWidget = false
 

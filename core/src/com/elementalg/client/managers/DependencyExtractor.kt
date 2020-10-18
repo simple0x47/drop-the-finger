@@ -23,6 +23,7 @@ internal class DependencyExtractor private constructor() {
      * @throws IllegalArgumentException if [dependenciesFile] does not exist or is empty.
      * @throws IllegalStateException if [dependenciesFile] contains invalid data.
      */
+    @Throws(IllegalArgumentException::class, IllegalStateException::class)
     internal fun extractAll(dependenciesFile: FileHandle) {
         require(dependenciesFile.exists()) {"'dependenciesFile' does not exist."}
         require(dependenciesFile.length() > 0L) {"'dependenciesFile' is empty."}
@@ -46,7 +47,7 @@ internal class DependencyExtractor private constructor() {
                 val assetPath: String = dependencyPath + xmlAsset.text
                 val assetClass: Class<*> = Class.forName(xmlAsset.getAttribute("class"))
 
-                if (assetClass == BitmapFont::class) {
+                if (assetClass == BitmapFont::class.java) {
                     check(xmlAsset.getAttribute("fontSize").isNotEmpty()) {
                         "'dependenciesFile' contains an empty 'fontSize' attribute."
                     }
@@ -59,7 +60,7 @@ internal class DependencyExtractor private constructor() {
                     fontParams.fontParameters.magFilter = Texture.TextureFilter.Linear
                     fontParams.fontParameters.minFilter = Texture.TextureFilter.Linear
 
-                    assetsMap[assetID] = AssetDescriptor(assetPath, assetClass.java, fontParams)
+                    assetsMap[assetID] = AssetDescriptor(assetPath, BitmapFont::class.java, fontParams)
                 } else {
                     assetsMap[assetID] = AssetDescriptor(assetPath, assetClass)
                 }

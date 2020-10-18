@@ -5,6 +5,14 @@
             MainScreen.atlas
         </asset>
     </dependency>
+    <dependency id="CONTINUOUS_MODE_SCREEN" path="screens/continuous_mode/" forceLoad="true">
+        <asset id="Text" class="com.badlogic.gdx.graphics.g2d.BitmapFont" fontSize="32">
+            Text.ttf
+        </asset>
+        <asset id="Value" class="com.badlogic.gdx.graphics.g2d.BitmapFont" fontSize="32">
+            Value.ttf
+        </asset>
+    </dependency>
     <dependency id="WORLD" path="world/" forceLoad="true">
         <asset id="WorldAtlas" class="com.badlogic.gdx.graphics.g2d.TextureAtlas">
             World.atlas
@@ -15,6 +23,9 @@
 		<asset id="WorldTheme" class="com.badlogic.gdx.audio.Music">
             WorldTheme.mp3
         </asset>
+		<asset id="Hit" class="com.badlogic.gdx.audio.Music">
+			Hit.mp3
+		</asset>
     </dependency>
     <dependency id="RESTART_WIDGET" path="widgets/restart/" forceLoad="true">
         <asset id="RestartWidgetAtlas" class="com.badlogic.gdx.graphics.g2d.TextureAtlas">

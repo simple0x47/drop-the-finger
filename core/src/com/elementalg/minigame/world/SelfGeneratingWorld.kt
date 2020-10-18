@@ -48,12 +48,21 @@ class SelfGeneratingWorld(private val stage: Stage, private val worldViewport: V
     private lateinit var fingerListener: FingerListener
     private lateinit var cellGenerator: CellGenerator
     private lateinit var theme: Music
+    private lateinit var gameover: Music
 
     init {
         screenBorders.add(Vector2(0f, WORLD_SIZE.y))
         screenBorders.add(Vector2(WORLD_SIZE.x, WORLD_SIZE.y))
         screenBorders.add(Vector2(WORLD_SIZE.x, 0f))
         screenBorders.add(Vector2(0f, 0f))
+    }
+
+    fun getDifficulty(): Float {
+        return difficulty
+    }
+
+    fun getScore(): Float {
+        return score
     }
 
     /**
@@ -156,6 +165,7 @@ class SelfGeneratingWorld(private val stage: Stage, private val worldViewport: V
         screenDarker = worldAtlas.findRegion("Background")
 
         theme = assets["WorldTheme"] as Music
+        gameover = assets["Hit"] as Music
     }
 
     /**
@@ -164,13 +174,15 @@ class SelfGeneratingWorld(private val stage: Stage, private val worldViewport: V
      * @param batch batch used for drawing the world's actors.
      */
     fun render(batch: Batch) {
-        score += Gdx.graphics.deltaTime
+        if (started) {
+            score += Gdx.graphics.deltaTime
 
-        if (score < TIME_UNTIL_MAX_DIFFICULTY) {
-            difficulty = score / TIME_UNTIL_MAX_DIFFICULTY
-            speed = MIN_SPEED + difficulty * (MAX_SPEED - MIN_SPEED)
-        } else if (speed != 1f) {
-            speed = MAX_SPEED
+            if (score < TIME_UNTIL_MAX_DIFFICULTY) {
+                difficulty = score / TIME_UNTIL_MAX_DIFFICULTY
+                speed = MIN_SPEED + difficulty * (MAX_SPEED - MIN_SPEED)
+            } else if (speed != 1f) {
+                speed = MAX_SPEED
+            }
         }
 
         val distance: Float = (speed * score) * UNIT_TO_PIXELS * 10
@@ -311,6 +323,10 @@ class SelfGeneratingWorld(private val stage: Stage, private val worldViewport: V
     fun start() {
         started = true
 
+        speed = MIN_SPEED
+        difficulty = 0f
+        score = 0f
+
         theme.position = 0f
         theme.volume = WORLD_THEME_VOLUME
         theme.isLooping = true
@@ -331,10 +347,15 @@ class SelfGeneratingWorld(private val stage: Stage, private val worldViewport: V
         stage.removeListener(fingerListener)
         finger.setCollided(true)
 
+        gameover.position = 0f
+        gameover.volume = 0.2f
+        gameover.setPan(1f, 0.2f)
+        gameover.play()
+
         started = false
         difficulty = 0f
-
         theme.stop()
+
         gameOverListener.handle()
     }
 
@@ -361,6 +382,7 @@ class SelfGeneratingWorld(private val stage: Stage, private val worldViewport: V
 
     fun dispose() {
         theme.dispose()
+        gameover.dispose()
     }
 
     companion object {
@@ -372,7 +394,7 @@ class SelfGeneratingWorld(private val stage: Stage, private val worldViewport: V
 
         const val FINGER_RADIUS_MARGIN: Float = 1.5f // lower = harder *evil laugh*, but never lower than 1.
         const val MAX_SPEED: Float = 0.05f
-        const val MIN_SPEED: Float = 0.01f
+        const val MIN_SPEED: Float = 0.02f
         const val TIME_UNTIL_MAX_DIFFICULTY: Float = 20f // seconds
 
         val WORLD_SIZE: Vector2 = Vector2(8f, 16f)

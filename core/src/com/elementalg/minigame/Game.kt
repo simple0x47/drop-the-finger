@@ -93,6 +93,7 @@ class Game(private val systemLocale: Locale, private val displayXDPI: Float, pri
         screenManager.create()
 
         dependencyManager.loadDependencyID("MAIN_SCREEN")
+        dependencyManager.loadDependencyID("CONTINUOUS_MODE_SCREEN")
         dependencyManager.loadDependencyID("WORLD")
         dependencyManager.loadDependencyID("RESTART_WIDGET")
 

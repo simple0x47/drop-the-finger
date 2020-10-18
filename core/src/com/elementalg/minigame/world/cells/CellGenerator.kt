@@ -15,7 +15,6 @@ class CellGenerator(private val fingerRadius: Float) {
     enum class Route {
         STRAIGHT,
         L_SHAPE,
-        C_SHAPE,
     }
 
     /**
@@ -104,9 +103,6 @@ class CellGenerator(private val fingerRadius: Float) {
                 Route.STRAIGHT -> {
                     false
                 }
-                Route.C_SHAPE -> {
-                    true
-                }
                 Route.L_SHAPE -> {
                     (cellPosition == (inputPosition + 2))
                 }
@@ -143,13 +139,7 @@ class CellGenerator(private val fingerRadius: Float) {
                         ((inputPosition == 1) && (outputPosition == 2)))) {
             Route.L_SHAPE
         } else {
-            val randomForRoute: Float = Random.nextFloat()
-
-            if (randomForRoute <= C_SHAPE_CHANCE + (difficulty * C_SHAPE_CHANCE)) {
-                Route.C_SHAPE
-            } else {
-                Route.STRAIGHT
-            }
+            Route.STRAIGHT
         }
 
         val hypotheticalInnerCellHolderSize: Float = cellHolder.getSize() / 4f
