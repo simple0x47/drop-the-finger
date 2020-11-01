@@ -3,4 +3,66 @@
     <string id="SCORE_INDICATOR">
         Score:
     </string>
+
+    <string id="RESTART_SCORE_TITLE">
+        SCORE
+    </string>
+    <string id="RESTART_HIGH_SCORE_TITLE">
+        NEW HIGH SCORE!
+    </string>
+
+    <string id="RESTART_MESSAGE_GOOD_1">
+        EXCELLENT!
+    </string>
+    <string id="RESTART_MESSAGE_GOOD_2">
+        BEAST MODE: ON!
+    </string>
+    <string id="RESTART_MESSAGE_GOOD_3">
+        YOU'RE A BEAST!
+    </string>
+    <string id="RESTART_MESSAGE_GOOD_4">
+        GOD MODE!
+    </string>
+    <string id="RESTART_MESSAGE_GOOD_5">
+        Just... BRILLIANT!
+    </string>
+    <string id="RESTART_MESSAGE_GOOD_6">
+        MAGIC FINGERS!
+    </string>
+    <string id="RESTART_MESSAGE_NEUTRAL_1">
+        Not bad.
+    </string>
+    <string id="RESTART_MESSAGE_NEUTRAL_2">
+        You can do it better!
+    </string>
+    <string id="RESTART_MESSAGE_NEUTRAL_3">
+        Now, try to last longer!
+    </string>
+    <string id="RESTART_MESSAGE_NEUTRAL_4">
+        You need to practice more!
+    </string>
+    <string id="RESTART_MESSAGE_NEUTRAL_5">
+        You've got a challenge!
+    </string>
+    <string id="RESTART_MESSAGE_NEUTRAL_6">
+        You've gotta pump up those numbers, rookie!
+    </string>
+    <string id="RESTART_MESSAGE_BAD_1">
+        Are you speed running this game?
+    </string>
+    <string id="RESTART_MESSAGE_BAD_2">
+        You collapse as fast as Eminem raps.
+    </string>
+    <string id="RESTART_MESSAGE_BAD_3">
+        You are so fast... losing!
+    </string>
+    <string id="RESTART_MESSAGE_BAD_4">
+        Already sweating!? Huh, amateurs.
+    </string>
+    <string id="RESTART_MESSAGE_BAD_5">
+        Warp speed towards losers planet.
+    </string>
+    <string id="RESTART_MESSAGE_BAD_6">
+        HA! HA!
+    </string>
 </lang>

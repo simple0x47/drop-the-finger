@@ -20,7 +20,8 @@ import kotlin.jvm.Throws
  * @param displayXDPI density of pixels per inch on the x axis.
  * @param displayYDPI density of pixels per inch on the y axis.
  */
-class Game(private val systemLocale: Locale, private val displayXDPI: Float, private val displayYDPI: Float)
+class Game(private val systemLocale: Locale, private val displayXDPI: Float,
+           private val displayYDPI: Float)
     : ApplicationAdapter() {
 
     private val eventManager: EventManager = EventManager()
@@ -28,6 +29,8 @@ class Game(private val systemLocale: Locale, private val displayXDPI: Float, pri
     private lateinit var dependencyManager: DependencyManager
     private lateinit var localeManager: LocaleManager
     private lateinit var screenManager: ScreenManager
+
+    private lateinit var leaderboard: Leaderboard
 
     private val fpsLogger: FPSLogger = FPSLogger()
 
@@ -80,6 +83,18 @@ class Game(private val systemLocale: Locale, private val displayXDPI: Float, pri
         return screenManager
     }
 
+    fun initializeLeaderboard(leaderboard: Leaderboard) {
+        this.leaderboard = leaderboard
+    }
+
+    fun getLeaderboard(): Leaderboard {
+        if (!this::leaderboard.isInitialized) {
+            throw IllegalStateException("'leaderboard' has not been initialized yet.")
+        }
+
+        return leaderboard
+    }
+
     override fun create() {
         gameInstance = this
 
@@ -91,7 +106,6 @@ class Game(private val systemLocale: Locale, private val displayXDPI: Float, pri
         localeManager.create()
         screenManager = ScreenManager.build()
         screenManager.create()
-
         dependencyManager.loadDependencyID("MAIN_SCREEN")
         dependencyManager.loadDependencyID("CONTINUOUS_MODE_SCREEN")
         dependencyManager.loadDependencyID("WORLD")
@@ -107,7 +121,10 @@ class Game(private val systemLocale: Locale, private val displayXDPI: Float, pri
         eventManager.update()
 
         dependencyManager.update()
-        screenManager.update()
+
+        if (this::leaderboard.isInitialized) {
+            screenManager.update()
+        }
     }
 
     override fun resize(width: Int, height: Int) {

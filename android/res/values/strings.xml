@@ -2,5 +2,8 @@
 <resources>
 
     <string name="app_name">Drop The Finger</string>
-
+    <string name="failed_gs_title">Failed Sign In</string>
+    <string name="failed_gs_message">We could not authenticate you with Google\'s Play Services.</string>
+    <string name="retry_sign_in">Retry</string>
+    <string name="exit_game">Exit</string>
 </resources>

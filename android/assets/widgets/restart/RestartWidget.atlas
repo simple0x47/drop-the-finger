@@ -1,20 +1,733 @@
 
 RestartWidget.png
-size: 1024,512
+size: 2048,2048
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
 BackButton
   rotate: false
-  xy: 503, 2
+  xy: 503, 1550
   size: 499, 432
   orig: 499, 432
   offset: 0, 0
   index: -1
-RestartButton
+Fireworks02
+  rotate: false
+  xy: 1262, 1726
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 57
+Fireworks02
+  rotate: false
+  xy: 1778, 1726
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 10
+Fireworks02
+  rotate: false
+  xy: 1778, 1726
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 1
+Fireworks02
+  rotate: false
+  xy: 1778, 1726
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 9
+Fireworks02
+  rotate: false
+  xy: 1778, 1726
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 6
+Fireworks02
+  rotate: false
+  xy: 1778, 1726
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 3
+Fireworks02
+  rotate: false
+  xy: 1778, 1726
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 0
+Fireworks02
+  rotate: false
+  xy: 1778, 1726
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 4
+Fireworks02
+  rotate: false
+  xy: 1778, 1726
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 5
+Fireworks02
+  rotate: false
+  xy: 1778, 1726
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 8
+Fireworks02
+  rotate: false
+  xy: 1778, 1726
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 7
+Fireworks02
+  rotate: false
+  xy: 1778, 1726
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 2
+Fireworks02
+  rotate: false
+  xy: 1778, 1726
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 58
+Fireworks03
+  rotate: false
+  xy: 1778, 1726
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 0
+Fireworks03
+  rotate: false
+  xy: 1778, 1726
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 41
+Fireworks03
+  rotate: false
+  xy: 1778, 1726
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 40
+Fireworks02
+  rotate: false
+  xy: 1004, 1468
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 11
+Fireworks02
+  rotate: false
+  xy: 1262, 1468
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 12
+Fireworks02
+  rotate: false
+  xy: 1520, 1468
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 13
+Fireworks02
+  rotate: false
+  xy: 1778, 1468
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 14
+Fireworks02
+  rotate: false
+  xy: 2, 1292
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 15
+Fireworks02
+  rotate: false
+  xy: 260, 1292
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 16
+Fireworks02
+  rotate: false
+  xy: 518, 1292
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 17
+Fireworks02
+  rotate: false
+  xy: 776, 1210
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 18
+Fireworks02
+  rotate: false
+  xy: 2, 1034
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 55
+Fireworks02
+  rotate: false
+  xy: 260, 1034
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 20
+Fireworks02
+  rotate: false
+  xy: 518, 1034
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 21
+Fireworks02
+  rotate: false
+  xy: 1034, 1210
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 22
+Fireworks02
+  rotate: false
+  xy: 1292, 1210
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 23
+Fireworks02
+  rotate: false
+  xy: 1550, 1210
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 24
+Fireworks02
+  rotate: false
+  xy: 776, 952
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 25
+Fireworks02
+  rotate: false
+  xy: 2, 776
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 26
+Fireworks02
+  rotate: false
+  xy: 260, 776
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 27
+Fireworks02
+  rotate: false
+  xy: 518, 776
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 28
+Fireworks02
+  rotate: false
+  xy: 1034, 952
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 29
+Fireworks02
+  rotate: false
+  xy: 1550, 952
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 32
+Fireworks02
+  rotate: false
+  xy: 776, 694
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 56
+Fireworks02
+  rotate: false
+  xy: 2, 518
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 47
+Fireworks02
+  rotate: false
+  xy: 260, 518
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 37
+Fireworks02
+  rotate: false
+  xy: 518, 518
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 30
+Fireworks02
+  rotate: false
+  xy: 776, 436
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 31
+Fireworks02
+  rotate: false
+  xy: 2, 260
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 33
+Fireworks02
+  rotate: false
+  xy: 260, 260
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 34
+Fireworks02
+  rotate: false
+  xy: 776, 178
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 53
+Fireworks02
+  rotate: false
+  xy: 260, 2
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 38
+Fireworks02
+  rotate: false
+  xy: 518, 2
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 39
+Fireworks02
+  rotate: false
+  xy: 1034, 178
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 40
+Fireworks02
+  rotate: false
+  xy: 1292, 694
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 41
+Fireworks02
+  rotate: false
+  xy: 1550, 694
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 42
+Fireworks02
+  rotate: false
+  xy: 1292, 178
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 44
+Fireworks02
+  rotate: false
+  xy: 1550, 436
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 45
+Fireworks02
+  rotate: false
+  xy: 1550, 178
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 46
+Fireworks03
+  rotate: false
+  xy: 1004, 1726
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 7
+Fireworks03
+  rotate: false
+  xy: 1520, 1726
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 2
+Fireworks03
+  rotate: false
+  xy: 1292, 952
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 12
+Fireworks03
+  rotate: false
+  xy: 518, 260
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 3
+Fireworks03
   rotate: false
   xy: 2, 2
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 5
+Fireworks03
+  rotate: false
+  xy: 1034, 694
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 8
+Fireworks03
+  rotate: false
+  xy: 1034, 436
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 9
+Fireworks03
+  rotate: false
+  xy: 1292, 436
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 11
+RestartButton
+  rotate: false
+  xy: 2, 1550
   size: 499, 432
   orig: 499, 432
   offset: 0, 0
   index: -1
+
+RestartWidget2.png
+size: 2048,2048
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+Fireworks02
+  rotate: false
+  xy: 518, 1550
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 19
+Fireworks02
+  rotate: false
+  xy: 260, 1034
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 36
+Fireworks02
+  rotate: false
+  xy: 518, 1292
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 52
+Fireworks02
+  rotate: false
+  xy: 2, 518
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 50
+Fireworks02
+  rotate: false
+  xy: 260, 776
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 51
+Fireworks02
+  rotate: false
+  xy: 776, 1292
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 49
+Fireworks02
+  rotate: false
+  xy: 1292, 1034
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 43
+Fireworks02
+  rotate: false
+  xy: 518, 2
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 48
+Fireworks02
+  rotate: false
+  xy: 776, 2
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 35
+Fireworks02
+  rotate: false
+  xy: 1034, 260
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 54
+Fireworks03
+  rotate: false
+  xy: 2, 1550
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 15
+Fireworks03
+  rotate: false
+  xy: 2, 1292
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 16
+Fireworks03
+  rotate: false
+  xy: 260, 1550
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 17
+Fireworks03
+  rotate: false
+  xy: 2, 1034
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 18
+Fireworks03
+  rotate: false
+  xy: 260, 1292
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 19
+Fireworks03
+  rotate: false
+  xy: 2, 776
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 14
+Fireworks03
+  rotate: false
+  xy: 776, 1550
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 10
+Fireworks03
+  rotate: false
+  xy: 518, 1034
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 20
+Fireworks03
+  rotate: false
+  xy: 1034, 1550
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 22
+Fireworks03
+  rotate: false
+  xy: 2, 260
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 23
+Fireworks03
+  rotate: false
+  xy: 260, 518
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 24
+Fireworks03
+  rotate: false
+  xy: 518, 776
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 25
+Fireworks03
+  rotate: false
+  xy: 776, 1034
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 27
+Fireworks03
+  rotate: false
+  xy: 1034, 1292
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 28
+Fireworks03
+  rotate: false
+  xy: 1292, 1550
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 29
+Fireworks03
+  rotate: false
+  xy: 2, 2
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 26
+Fireworks03
+  rotate: false
+  xy: 260, 260
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 30
+Fireworks03
+  rotate: false
+  xy: 518, 518
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 31
+Fireworks03
+  rotate: false
+  xy: 776, 776
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 32
+Fireworks03
+  rotate: false
+  xy: 1034, 1034
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 33
+Fireworks03
+  rotate: false
+  xy: 1292, 1292
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 34
+Fireworks03
+  rotate: false
+  xy: 1550, 1550
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 35
+Fireworks03
+  rotate: false
+  xy: 260, 2
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 36
+Fireworks03
+  rotate: false
+  xy: 518, 260
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 37
+Fireworks03
+  rotate: false
+  xy: 776, 518
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 38
+Fireworks03
+  rotate: false
+  xy: 1034, 776
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 39
+Fireworks03
+  rotate: false
+  xy: 1550, 1292
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 21
+Fireworks03
+  rotate: false
+  xy: 776, 260
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 6
+Fireworks03
+  rotate: false
+  xy: 1034, 518
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 13
+Fireworks03
+  rotate: false
+  xy: 1292, 776
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 1
+Fireworks03
+  rotate: false
+  xy: 1550, 1034
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: 4

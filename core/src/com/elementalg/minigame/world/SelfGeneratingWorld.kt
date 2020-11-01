@@ -10,6 +10,8 @@ import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.elementalg.client.managers.DependencyManager
+import com.elementalg.minigame.Game
+import com.elementalg.minigame.Leaderboard
 import com.elementalg.minigame.world.cells.Cell
 import com.elementalg.minigame.world.cells.CellGenerator
 import com.elementalg.minigame.world.cells.CellHolder
@@ -183,6 +185,10 @@ class SelfGeneratingWorld(private val stage: Stage, private val worldViewport: V
             } else if (speed != 1f) {
                 speed = MAX_SPEED
             }
+        } else {
+            if (theme.isPlaying) {
+                theme.stop()
+            }
         }
 
         val distance: Float = (speed * score) * UNIT_TO_PIXELS * 10
@@ -333,6 +339,14 @@ class SelfGeneratingWorld(private val stage: Stage, private val worldViewport: V
         theme.play()
     }
 
+    fun pause() {
+        theme.stop()
+
+        if (isStarted()) {
+            gameOver()
+        }
+    }
+
     /**
      * @return whether or not the world is being generated and displaced.
      */
@@ -347,16 +361,21 @@ class SelfGeneratingWorld(private val stage: Stage, private val worldViewport: V
         stage.removeListener(fingerListener)
         finger.setCollided(true)
 
-        gameover.position = 0f
-        gameover.volume = 0.2f
-        gameover.setPan(1f, 0.2f)
-        gameover.play()
+        val leaderboard: Leaderboard = Game.instance().getLeaderboard()
+
+        if (leaderboard.getHighScore() >= score) {
+            gameover.position = 0f
+            gameover.volume = 0.2f
+            gameover.setPan(1f, 0.2f)
+            gameover.play()
+        }
 
         started = false
         difficulty = 0f
         theme.stop()
 
         gameOverListener.handle()
+        leaderboard.addScore(score)
     }
 
     /**

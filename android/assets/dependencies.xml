@@ -31,5 +31,14 @@
         <asset id="RestartWidgetAtlas" class="com.badlogic.gdx.graphics.g2d.TextureAtlas">
             RestartWidget.atlas
         </asset>
+        <asset id="ScoreText" class="com.badlogic.gdx.graphics.g2d.BitmapFont" fontSize="64">
+            ScoreText.ttf
+        </asset>
+        <asset id="ScoreValue" class="com.badlogic.gdx.graphics.g2d.BitmapFont" fontSize="64">
+            ScoreValue.ttf
+        </asset>
+        <asset id="HighScore" class="com.badlogic.gdx.audio.Music">
+            HighScore.mp3
+        </asset>
     </dependency>
 </dependencies>

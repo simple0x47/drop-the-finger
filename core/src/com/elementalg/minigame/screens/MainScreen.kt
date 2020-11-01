@@ -21,7 +21,7 @@ import kotlin.jvm.Throws
 /**
  * Screen containing the main menu of the game.
  *
- * @author Gabriel Amihalachioaie & Alberto Moreno Bonillo.
+ * @author Gabriel Amihalachioaie.
  *
  * @constructor initializes an instance with the passed parameters.
  * @param displayXDPI density of pixels per inch on the x axis.
@@ -50,6 +50,8 @@ class MainScreen(private val displayXDPI: Float, private val displayYDPI: Float)
      */
     private class HighScoreButtonListener : ClickListener() {
         override fun clicked(event: InputEvent?, x: Float, y: Float) {
+            Game.instance().getLeaderboard().showLeaderboard()
+
             super.clicked(event, x, y)
         }
     }

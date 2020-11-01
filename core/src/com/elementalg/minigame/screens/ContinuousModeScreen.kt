@@ -82,13 +82,9 @@ class ContinuousModeScreen(private val mainScreen: MainScreen, private val displ
 
         val textFont: BitmapFont = assets["Text"] as BitmapFont
         val valueFont: BitmapFont = assets["Value"] as BitmapFont
-        val pixMap: Pixmap = Pixmap(16, 16, Pixmap.Format.RGB888)
-        pixMap.setColor(1f, 1f, 1f, 1f)
-        pixMap.fill()
 
         userInterfaceViewport.unitsPerPixel = 0.01f
         userInterfaceViewport.screenY = 0
-        texture = Texture(pixMap)
 
         scoreWidget = ScoreWidget(textFont, valueFont, Color(0x29EFFFFF))
     }
@@ -106,7 +102,6 @@ class ContinuousModeScreen(private val mainScreen: MainScreen, private val displ
     override fun resize(width: Int, height: Int) {
         backgroundViewport.update(width, height)
         actorsViewport.update(width, height)
-        userInterfaceViewport.update(width, height)
 
         super.resize(width, height)
     }
@@ -144,10 +139,20 @@ class ContinuousModeScreen(private val mainScreen: MainScreen, private val displ
 
     override fun pause() {
         super.pause()
+
+        selfGeneratingWorld.pause()
+
+        if (drawRestartWidget) {
+            restartWindow.pause()
+        }
     }
 
     override fun resume() {
         super.resume()
+
+        if (drawRestartWidget) {
+            restartWindow.resume()
+        }
     }
 
     override fun hide() {
@@ -165,7 +170,7 @@ class ContinuousModeScreen(private val mainScreen: MainScreen, private val displ
     }
 
     fun showRestartWindow() {
-        restartWindow.show()
+        restartWindow.show(selfGeneratingWorld.getScore())
 
         drawRestartWidget = true
     }
