@@ -2,13 +2,9 @@ package com.elementalg.minigame.screens
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
-import com.badlogic.gdx.graphics.Pixmap
-import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.BitmapFont
-import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.viewport.FillViewport
-import com.badlogic.gdx.utils.viewport.FitViewport
 import com.badlogic.gdx.utils.viewport.ScreenViewport
 import com.badlogic.gdx.utils.viewport.StretchViewport
 import com.elementalg.client.managers.DependencyManager
@@ -48,7 +44,6 @@ class ContinuousModeScreen(private val mainScreen: MainScreen, private val displ
             SelfGeneratingWorld.WORLD_SIZE.y)
     private val actorsViewport: StretchViewport = StretchViewport(SelfGeneratingWorld.WORLD_SIZE.x,
             SelfGeneratingWorld.WORLD_SIZE.y)
-    //private val userInterfaceViewport: FitViewport = FitViewport(SelfGeneratingWorld.WORLD_SIZE.x, SelfGeneratingWorld.WORLD_SIZE.x)
     private val userInterfaceViewport: ScreenViewport = ScreenViewport()
     private val stage: Stage = Stage(actorsViewport)
     private val uiStage: Stage = Stage(userInterfaceViewport)
@@ -59,7 +54,6 @@ class ContinuousModeScreen(private val mainScreen: MainScreen, private val displ
     private lateinit var selfGeneratingWorld: SelfGeneratingWorld
     private lateinit var restartWindow: RestartWindow
     private lateinit var scoreWidget: ScoreWidget
-    private lateinit var texture: Texture
 
     /**
      * Calculates the finger's radius in pixels, and initializes the world.

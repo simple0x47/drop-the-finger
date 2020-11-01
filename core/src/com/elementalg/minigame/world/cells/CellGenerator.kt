@@ -149,11 +149,11 @@ class CellGenerator(private val fingerRadius: Float) {
         val canBeInnerCellHolder: Int = if (doesInnerCellHolderSizeComply &&
                 ((CellHolder.getLevelFromSize(hypotheticalInnerCellHolderSize)) != inputLevel)) 1 else 0
 
-        val hypotheticalSweeperObstacleMargin: Float = (hypotheticalInnerCellHolderSize +
-                (hypotheticalInnerCellHolderSize * SweeperObstacle.DEFAULT_THICKNESS) +
+        val hypotheticalSweeperObstacleMargin: Float = (hypotheticalInnerCellHolderSize -
+                (hypotheticalInnerCellHolderSize * SweeperObstacle.DEFAULT_THICKNESS) -
                 (hypotheticalInnerCellHolderSize * SweeperObstacle.REQUIRED_SPACE_MARGIN))
 
-        val canBeSweeper: Int = if (hypotheticalSweeperObstacleMargin >= (fingerRadius * 2f) &&
+        var canBeSweeper: Int = if (hypotheticalSweeperObstacleMargin >= (fingerRadius * 2f) &&
                 (difficulty >= SweeperObstacle.APPEAR_AFTER_DIFFICULTY)) 1 else 0
 
         var previousInnerCellType: Cell.Type = Cell.Type.SQUARE // Avoids putting a triangle in the first cell.
@@ -166,6 +166,10 @@ class CellGenerator(private val fingerRadius: Float) {
                         previousInnerCellType != Cell.Type.V) 0 else 1
 
                 randomObstacleCellType(canBeOutlineTriangle, difficulty)
+            }
+
+            if (cellType == Cell.Type.SWEEPER) {
+                canBeSweeper = 0
             }
 
             previousInnerCellType = cellType
