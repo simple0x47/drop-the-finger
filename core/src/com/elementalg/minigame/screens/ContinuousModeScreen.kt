@@ -14,8 +14,7 @@ import com.elementalg.minigame.Game
 import com.elementalg.minigame.world.Finger
 import com.elementalg.minigame.world.BasicListener
 import com.elementalg.minigame.world.SelfGeneratingWorld
-
-import kotlin.math.min
+import kotlin.math.max
 
 /**
  * Infinite game mode based on the displacement and generation of a world.
@@ -61,7 +60,7 @@ class ContinuousModeScreen(private val mainScreen: MainScreen, private val displ
     override fun create(game: Game) {
         val dependencyManager: DependencyManager = game.getDependencyManager()
 
-        val fingerRadius: Float = Finger.FINGER_INCH_RADIUS * min(displayXDPI, displayYDPI)
+        val fingerRadius: Float = Finger.FINGER_INCH_RADIUS * max(displayXDPI, displayYDPI)
 
         selfGeneratingWorld = SelfGeneratingWorld(stage, actorsViewport, gameOverListener)
         selfGeneratingWorld.create(dependencyManager, fingerRadius)

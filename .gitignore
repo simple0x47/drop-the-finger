@@ -1,5 +1,7 @@
 ## Java
 
+*.aab
+*.aar
 *.class
 *.war
 *.ear
