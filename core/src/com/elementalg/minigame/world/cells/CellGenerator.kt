@@ -116,9 +116,9 @@ class CellGenerator(private val fingerRadius: Float) {
      * @param cellHolder Cell holder whose cells must be generated.
      * @param worldCellHolder Whether or not the cell holder is a world one.
      * @param inputLevel Level representing the nesting level of the cell holder. World cell holders are 0.
-     * @param inputPosition Position of the input cell. Must be 0 (bottom left) or 1 (bottom right) if we have a
+     * @param inputPosition Position of the input cell. Must be 1 (bottom left) or 0 (bottom right) if we have a
      * world [cellHolder].
-     * @param outputPosition Position of the output cell. Must be 1 (top left) or 2 (top right) if we have a
+     * @param outputPosition Position of the output cell. Must be 2 (top left) or 3 (top right) if we have a
      * world [cellHolder].
      * @param difficulty [SelfGeneratingWorld.difficulty]. Difficulty multiplier, values between 0.0 and 1.0. The greater the value,
      * the greater the possibilities to generate cell holders.

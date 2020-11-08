@@ -16,7 +16,7 @@ import kotlin.math.*
  * @param type [Type] of cell.
  * @param size cell's side size.
  */
-abstract class Cell(private val type: Type, private val size: Float) {
+abstract class Cell(private val parentCell: CellHolder?, private val type: Type, private val size: Float) {
     enum class Type {
         HOLDER,
         EMPTY,
@@ -26,6 +26,12 @@ abstract class Cell(private val type: Type, private val size: Float) {
     }
 
     private val position: Vector2 = Vector2(0f, 0f)
+
+    val level: Int = if (parentCell == null) 0 else (parentCell.level + 1)
+
+    fun getParent(): CellHolder? {
+        return parentCell
+    }
 
     fun getType(): Type {
         return type
@@ -164,26 +170,25 @@ abstract class Cell(private val type: Type, private val size: Float) {
     abstract fun draw(batch: Batch)
 
     companion object {
-        fun createCell(cellType: Type, size: Float, worldAtlas: TextureAtlas): Cell {
+        fun createCell(parentCell: CellHolder?, cellType: Type, size: Float, worldAtlas: TextureAtlas): Cell {
             val innerSize: Float = size
 
             return when (cellType) {
                 Type.HOLDER -> {
-                    CellHolder(innerSize, worldAtlas,
-                            (min(SelfGeneratingWorld.WORLD_SIZE.x, SelfGeneratingWorld.WORLD_SIZE.y) / innerSize).toInt() - 1)
+                    CellHolder(parentCell, innerSize, worldAtlas)
                 }
                 Type.EMPTY -> {
-                    EmptyCell(innerSize)
+                    EmptyCell(parentCell, innerSize)
                 }
                 Type.SQUARE -> {
-                    SquareObstacle(innerSize, worldAtlas.findRegion(SquareObstacle.TEXTURE_REGION))
+                    SquareObstacle(parentCell, innerSize, worldAtlas.findRegion(SquareObstacle.TEXTURE_REGION))
                 }
                 Type.SWEEPER -> {
-                    SweeperObstacle(innerSize, worldAtlas.findRegion(SweeperObstacle.TEXTURE_REGION),
+                    SweeperObstacle(parentCell, innerSize, worldAtlas.findRegion(SweeperObstacle.TEXTURE_REGION),
                             SweeperObstacle.DEFAULT_THICKNESS)
                 }
                 Type.V -> {
-                    VShapedObstacle(innerSize, worldAtlas.findRegion(VShapedObstacle.TEXTURE_REGION))
+                    VShapedObstacle(parentCell, innerSize, worldAtlas.findRegion(VShapedObstacle.TEXTURE_REGION))
                 }
             }
         }

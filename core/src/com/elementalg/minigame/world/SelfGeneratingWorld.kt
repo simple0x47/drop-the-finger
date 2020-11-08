@@ -12,10 +12,7 @@ import com.badlogic.gdx.utils.viewport.Viewport
 import com.elementalg.client.managers.DependencyManager
 import com.elementalg.minigame.Game
 import com.elementalg.minigame.Leaderboard
-import com.elementalg.minigame.world.cells.Cell
-import com.elementalg.minigame.world.cells.CellGenerator
-import com.elementalg.minigame.world.cells.CellHolder
-import com.elementalg.minigame.world.cells.Obstacle
+import com.elementalg.minigame.world.cells.*
 import kotlin.jvm.Throws
 import kotlin.math.*
 import kotlin.random.Random
@@ -48,7 +45,8 @@ class SelfGeneratingWorld(private val stage: Stage, private val worldViewport: V
 
     private lateinit var finger: Finger
     private lateinit var fingerListener: FingerListener
-    private lateinit var cellGenerator: CellGenerator
+    //private lateinit var cellGenerator: CellGenerator
+    private lateinit var cellGenerator: CellContinuousGenerator
     private lateinit var theme: Music
     private lateinit var gameover: Music
 
@@ -82,7 +80,7 @@ class SelfGeneratingWorld(private val stage: Stage, private val worldViewport: V
         finger = Finger(worldAtlas, this, worldViewport, fingerRadius)
         finger.updatePosition(WORLD_SIZE.x / 2f, WORLD_SIZE.x / 2f)
         fingerListener = FingerListener(finger, this, false)
-        cellGenerator = CellGenerator(finger.getRadius())
+        cellGenerator = CellContinuousGenerator(finger.getRadius())
     }
 
     /**
@@ -98,12 +96,9 @@ class SelfGeneratingWorld(private val stage: Stage, private val worldViewport: V
             cellHolders[i].clear()
         }
 
-        cellHolders[0].addCell(Cell.Type.EMPTY, 0)
-        cellHolders[0].addCell(Cell.Type.EMPTY, 1)
-        cellHolders[0].addCell(Cell.Type.EMPTY, 2)
-        cellHolders[0].addCell(Cell.Type.EMPTY, 3)
+        cellHolders[0].fill()
 
-        cellHolders[0].setOutputCell(Random.nextInt(2, 4))
+        cellHolders[0].outputCellPosition = Random.nextInt(2, CellHolder.HELD_CELLS)
 
         generateWorldCellHolder(1)
         generateWorldCellHolder(2)
@@ -126,14 +121,14 @@ class SelfGeneratingWorld(private val stage: Stage, private val worldViewport: V
         val inputCellHolder: CellHolder = if (cellHolderIndex > 0) cellHolders[cellHolderIndex - 1]
             else cellHolders[CELL_HOLDERS - 1]
 
-        val inputPosition: Int = inputCellHolder.getOutputCell() - (CellHolder.HELD_CELLS / 2)
-        val outputPosition: Int = Random.nextInt(2, 4)
+        val inputPosition: Int = abs(inputCellHolder.outputCellPosition - 3)
+        val outputPosition: Int = if (Random.nextBoolean()) 2 else 3
 
         check(inputPosition in 0..1){"'inputPosition' is not a bottom cell."}
 
-        cellHolders[cellHolderIndex].setOutputCell(outputPosition)
-        cellGenerator.generateRoute(cellHolders[cellHolderIndex], true, CellHolder.WORLD_CELL_HOLDER_LEVEL,
-                inputPosition, outputPosition, difficulty)
+        cellHolders[cellHolderIndex].outputCellPosition = outputPosition
+
+        cellGenerator.generateRoute(cellHolders[cellHolderIndex], inputCellHolder, difficulty)
     }
 
     /**
@@ -156,7 +151,7 @@ class SelfGeneratingWorld(private val stage: Stage, private val worldViewport: V
         val worldCellHolderSize: Float = WORLD_SIZE.x
 
         for (i: Int in 0 until CELL_HOLDERS) {
-            val cellHolder: CellHolder = CellHolder(worldCellHolderSize, worldAtlas, CellHolder.WORLD_CELL_HOLDER_LEVEL)
+            val cellHolder: CellHolder = CellHolder(null, worldCellHolderSize, worldAtlas)
 
             cellHolders.add(cellHolder)
         }

@@ -17,8 +17,8 @@ import kotlin.random.Random
  * @param textureRegion region where the sweeper's texture data is located.
  * @param thickness percentage (0.0, 1.0) of the size of the cell.
  */
-class SweeperObstacle(size: Float, private val textureRegion: TextureRegion, private val thickness: Float)
-    : Obstacle(Type.SWEEPER, size) {
+class SweeperObstacle(parentCell: CellHolder?, size: Float, private val textureRegion: TextureRegion,
+                      private val thickness: Float) : Obstacle(parentCell, Type.SWEEPER, size) {
     private val origin: Vector2 = Vector2(getSize() / 2f, getSize() * thickness / 2f)
     private val heightOffset: Float = (getSize() / 2f) - (getSize() * thickness / 2f)
 
