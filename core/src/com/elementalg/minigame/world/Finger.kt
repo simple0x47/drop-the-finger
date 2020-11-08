@@ -81,7 +81,7 @@ class Finger(worldAtlas: TextureAtlas, private val selfGeneratingWorld: SelfGene
     }
 
     companion object {
-        const val FINGER_INCH_RADIUS: Float = 0.15f
+        const val FINGER_INCH_RADIUS: Float = 0.16f
 
         const val POINTER_REGION: String = "Finger"
         const val COLLISION_ANIMATION_BASE_KEY: String = "collision"

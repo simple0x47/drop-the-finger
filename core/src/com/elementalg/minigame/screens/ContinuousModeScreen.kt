@@ -14,7 +14,6 @@ import com.elementalg.minigame.Game
 import com.elementalg.minigame.world.Finger
 import com.elementalg.minigame.world.BasicListener
 import com.elementalg.minigame.world.SelfGeneratingWorld
-import kotlin.math.min
 
 /**
  * Infinite game mode based on the displacement and generation of a world.
@@ -27,15 +26,33 @@ import kotlin.math.min
  */
 class ContinuousModeScreen(private val mainScreen: MainScreen, private val displayXDPI: Float,
                            private val displayYDPI: Float) : Screen() {
+    private var retriesWithoutAds: Int = 0
+    private var lastAdSince: Float = 0f
+
     private class GameOverListener(private val screen: ContinuousModeScreen) : BasicListener {
         override fun handle() {
             screen.showRestartWindow()
+            screen.retriesWithoutAds++
         }
     }
 
     private class RestartListener(private val screen: ContinuousModeScreen) : BasicListener {
         override fun handle() {
-            screen.hideRestartWindow()
+            screen.selfGeneratingWorld.regenerateWorld()
+
+            if ((screen.retriesWithoutAds >= MAX_RETRIES_BEFORE_AD) ||
+                    (screen.lastAdSince >= MAX_TIME_BEFORE_AD)) {
+                screen.retriesWithoutAds = 0
+                screen.lastAdSince = 0f
+
+                screen.hideRestartWindow()
+                Game.instance().getAdsBridge().show(RestartAdsListener(screen.selfGeneratingWorld,
+                        screen.stage))
+            } else {
+                screen.hideRestartWindow()
+                screen.selfGeneratingWorld.restart()
+                Gdx.input.inputProcessor = screen.stage
+            }
         }
     }
 
@@ -60,7 +77,7 @@ class ContinuousModeScreen(private val mainScreen: MainScreen, private val displ
     override fun create(game: Game) {
         val dependencyManager: DependencyManager = game.getDependencyManager()
 
-        val fingerRadius: Float = Finger.FINGER_INCH_RADIUS * min(displayXDPI, displayYDPI) *
+        val fingerRadius: Float = Finger.FINGER_INCH_RADIUS * displayXDPI *
                 SelfGeneratingWorld.WORLD_SIZE.x / Gdx.graphics.width
 
         selfGeneratingWorld = SelfGeneratingWorld(stage, actorsViewport, gameOverListener)
@@ -109,6 +126,8 @@ class ContinuousModeScreen(private val mainScreen: MainScreen, private val displ
         stage.batch.begin()
         selfGeneratingWorld.render(stage.batch)
         stage.batch.end()
+
+        lastAdSince += Gdx.graphics.deltaTime
 
         if (selfGeneratingWorld.isStarted()) {
             userInterfaceViewport.apply()
@@ -173,7 +192,10 @@ class ContinuousModeScreen(private val mainScreen: MainScreen, private val displ
         restartWindow.hide()
 
         drawRestartWidget = false
+    }
 
-        Gdx.input.inputProcessor = stage
+    companion object {
+        private const val MAX_RETRIES_BEFORE_AD: Int = 5
+        private const val MAX_TIME_BEFORE_AD: Float = 100f // 100 seconds
     }
 }

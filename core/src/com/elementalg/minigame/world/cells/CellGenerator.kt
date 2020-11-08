@@ -14,7 +14,7 @@ import kotlin.random.Random
 class CellGenerator(private val fingerRadius: Float) {
     enum class Route {
         STRAIGHT,
-        L_SHAPE,
+        L_SHAPE_UP,
     }
 
     /**
@@ -96,14 +96,14 @@ class CellGenerator(private val fingerRadius: Float) {
      * @return whether or not the cell must be passable.
      */
     private fun mustCellBePassable(cellPosition: Int, route: Route, inputPosition: Int, outputPosition: Int): Boolean {
-        return if (cellPosition == inputPosition || cellPosition == outputPosition) {
+        return if ((cellPosition == inputPosition) || (cellPosition == outputPosition)) {
             true
         } else {
             when (route) {
                 Route.STRAIGHT -> {
                     false
                 }
-                Route.L_SHAPE -> {
+                Route.L_SHAPE_UP -> {
                     (cellPosition == (inputPosition + 2))
                 }
             }
@@ -115,6 +115,7 @@ class CellGenerator(private val fingerRadius: Float) {
      *
      * @param cellHolder Cell holder whose cells must be generated.
      * @param worldCellHolder Whether or not the cell holder is a world one.
+     * @param inputLevel Level representing the nesting level of the cell holder. World cell holders are 0.
      * @param inputPosition Position of the input cell. Must be 0 (bottom left) or 1 (bottom right) if we have a
      * world [cellHolder].
      * @param outputPosition Position of the output cell. Must be 1 (top left) or 2 (top right) if we have a
@@ -137,7 +138,7 @@ class CellGenerator(private val fingerRadius: Float) {
 
         val route: Route = if ((((inputPosition == 0) && (outputPosition == 3)) ||
                         ((inputPosition == 1) && (outputPosition == 2)))) {
-            Route.L_SHAPE
+            Route.L_SHAPE_UP
         } else {
             Route.STRAIGHT
         }

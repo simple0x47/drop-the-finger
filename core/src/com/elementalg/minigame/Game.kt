@@ -21,7 +21,7 @@ import kotlin.jvm.Throws
  * @param displayYDPI density of pixels per inch on the y axis.
  */
 class Game(private val systemLocale: Locale, private val displayXDPI: Float,
-           private val displayYDPI: Float)
+           private val displayYDPI: Float, private val adsBridge: IAdsBridge)
     : ApplicationAdapter() {
 
     private val eventManager: EventManager = EventManager()
@@ -83,6 +83,10 @@ class Game(private val systemLocale: Locale, private val displayXDPI: Float,
         return screenManager
     }
 
+    fun getAdsBridge() : IAdsBridge {
+        return adsBridge
+    }
+
     fun initializeLeaderboard(leaderboard: Leaderboard) {
         this.leaderboard = leaderboard
     }
@@ -99,6 +103,8 @@ class Game(private val systemLocale: Locale, private val displayXDPI: Float,
         gameInstance = this
 
         eventManager.create()
+
+        leaderboard = MockLeaderboard()
 
         dependencyManager = DependencyManager.build()
         dependencyManager.create()

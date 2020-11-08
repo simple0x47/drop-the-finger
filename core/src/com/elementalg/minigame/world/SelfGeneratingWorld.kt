@@ -79,9 +79,9 @@ class SelfGeneratingWorld(private val stage: Stage, private val worldViewport: V
     private fun initializeFinger(worldAtlas: TextureAtlas, fingerRadius: Float) {
         check(!this::finger.isInitialized) {"'finger' has already been initialized once."}
 
-        finger = Finger(worldAtlas, this, worldViewport, fingerRadius / UNIT_TO_PIXELS)
+        finger = Finger(worldAtlas, this, worldViewport, fingerRadius)
         finger.updatePosition(WORLD_SIZE.x / 2f, WORLD_SIZE.x / 2f)
-        fingerListener = FingerListener(finger, this)
+        fingerListener = FingerListener(finger, this, false)
         cellGenerator = CellGenerator(finger.getRadius())
     }
 
@@ -376,6 +376,12 @@ class SelfGeneratingWorld(private val stage: Stage, private val worldViewport: V
 
         gameOverListener.handle()
         leaderboard.addScore(score)
+        stage.removeListener(fingerListener)
+    }
+
+    fun regenerateWorld() {
+        initializeWorldCellHolders()
+        finger.updatePosition(WORLD_SIZE.x / 2f, WORLD_SIZE.x / 2f)
     }
 
     /**
@@ -384,14 +390,14 @@ class SelfGeneratingWorld(private val stage: Stage, private val worldViewport: V
     fun restart() {
         started = false
 
-        initializeWorldCellHolders()
-        finger.updatePosition(WORLD_SIZE.x / 2f, WORLD_SIZE.x / 2f)
         finger.restart()
 
         speed = MIN_SPEED
         difficulty = 0f
         score = 0f
 
+        stage.removeListener(fingerListener)
+        fingerListener = FingerListener(finger, this, Gdx.input.isTouched)
         stage.addListener(fingerListener)
     }
 
@@ -413,7 +419,7 @@ class SelfGeneratingWorld(private val stage: Stage, private val worldViewport: V
 
         const val FINGER_RADIUS_MARGIN: Float = 1.5f // lower = harder *evil laugh*, but never lower than 1.
         const val MAX_SPEED: Float = 0.05f
-        const val MIN_SPEED: Float = 0.02f
+        const val MIN_SPEED: Float = 0.025f
         const val TIME_UNTIL_MAX_DIFFICULTY: Float = 20f // seconds
 
         val WORLD_SIZE: Vector2 = Vector2(8f, 16f)

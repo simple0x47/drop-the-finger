@@ -1,6 +1,5 @@
 package com.elementalg.minigame.world
 
-import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
@@ -14,14 +13,15 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
  * @param finger instance of finger which will be updated as input events are listened.
  * @param selfGeneratingWorld instance of world in which the finger is located.
  */
-class FingerListener(private val finger: Finger, private val selfGeneratingWorld: SelfGeneratingWorld) : ClickListener() {
+class FingerListener(private val finger: Finger, private val selfGeneratingWorld: SelfGeneratingWorld,
+        private var isTouchedBeforeStarting: Boolean) : ClickListener() {
     private val lastPosition: Vector2 = Vector2()
 
     /**
      * Proceeds to start the world, and this way, the game.
      */
     override fun touchDown(event: InputEvent?, x: Float, y: Float, pointer: Int, button: Int): Boolean {
-        if (pointer == 0) {
+        if ((!isTouchedBeforeStarting) && (pointer == 0)) {
             selfGeneratingWorld.start()
 
             lastPosition.set(x, y)
@@ -35,8 +35,13 @@ class FingerListener(private val finger: Finger, private val selfGeneratingWorld
      */
     override fun touchUp(event: InputEvent?, x: Float, y: Float, pointer: Int, button: Int) {
         if (pointer == 0) {
-            if (selfGeneratingWorld.isStarted()) {
-                selfGeneratingWorld.gameOver()
+            if (isTouchedBeforeStarting) {
+                isTouchedBeforeStarting = false
+            }
+            else {
+                if (selfGeneratingWorld.isStarted()) {
+                    selfGeneratingWorld.gameOver()
+                }
             }
         }
 

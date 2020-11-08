@@ -6,4 +6,8 @@
     <string name="failed_gs_message">We could not authenticate you with Google\'s Play Services.</string>
     <string name="retry_sign_in">Retry</string>
     <string name="exit_game">Exit</string>
+    <string name="signing_in">Signing in…</string>
+    <string name="retrying_sign_in">Retrying to sign in…</string>
+    <string name="failed_sign_in">Failed to sign in with Google Play Services.</string>
+    <string name="updating_gps">Updating Google Play Services…</string>
 </resources>
