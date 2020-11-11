@@ -18,10 +18,8 @@ import com.elementalg.client.managers.LocaleManager
 import com.elementalg.client.managers.ScreenManager
 import com.elementalg.minigame.Game
 import com.elementalg.minigame.world.BasicListener
-import com.elementalg.minigame.world.SelfGeneratingWorld
 
-class RestartWindow(private val game: Game, selfGeneratingWorld: SelfGeneratingWorld, mainScreen: MainScreen,
-                    restartListener: BasicListener) {
+class RestartWindow(private val game: Game, mainScreen: MainScreen, restartListener: BasicListener) {
     private class RestartButtonListener(private val restartWindow: RestartWindow,
                                         private val restartListener: BasicListener) : ClickListener() {
         override fun clicked(event: InputEvent?, x: Float, y: Float) {

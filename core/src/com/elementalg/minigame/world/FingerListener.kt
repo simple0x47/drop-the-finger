@@ -34,7 +34,7 @@ class FingerListener(private val finger: Finger, private val selfGeneratingWorld
      * If the world is started, it calls game over.
      */
     override fun touchUp(event: InputEvent?, x: Float, y: Float, pointer: Int, button: Int) {
-        if (pointer == 0) {
+        /*if (pointer == 0) {
             if (isTouchedBeforeStarting) {
                 isTouchedBeforeStarting = false
             }
@@ -43,7 +43,7 @@ class FingerListener(private val finger: Finger, private val selfGeneratingWorld
                     selfGeneratingWorld.gameOver()
                 }
             }
-        }
+        }*/
 
         super.touchUp(event, x, y, pointer, button)
     }

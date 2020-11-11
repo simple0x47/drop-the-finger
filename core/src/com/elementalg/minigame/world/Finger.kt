@@ -19,8 +19,8 @@ import com.badlogic.gdx.utils.viewport.Viewport
  * @param worldViewport viewport used for the world's actors.
  * @param radius radius of the finger in world's units.
  */
-class Finger(worldAtlas: TextureAtlas, private val selfGeneratingWorld: SelfGeneratingWorld, private val worldViewport: Viewport,
-             private val radius: Float) {
+class Finger(worldAtlas: TextureAtlas, private val selfGeneratingWorld: SelfGeneratingWorld,
+             private val worldViewport: Viewport, private val radius: Float) {
     private val fingerPointer: TextureRegion
     private val collisionAnimation: Animation<TextureRegion>
 
@@ -81,11 +81,12 @@ class Finger(worldAtlas: TextureAtlas, private val selfGeneratingWorld: SelfGene
     }
 
     companion object {
-        const val FINGER_INCH_RADIUS: Float = 0.16f
+        const val FINGER_INCH_RADIUS: Float = 0.2f
 
         const val POINTER_REGION: String = "Finger"
         const val COLLISION_ANIMATION_BASE_KEY: String = "collision"
         const val COLLISION_ANIMATION_FRAME_DURATION: Float = 0.02f
         const val COLLISION_ANIMATION_DURATION: Float = 0.58f
+        const val FINGER_RADIUS_MARGIN: Float = 1.5f
     }
 }

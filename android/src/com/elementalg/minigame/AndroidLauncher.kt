@@ -6,6 +6,7 @@ import android.content.Intent
 import com.badlogic.gdx.backends.android.AndroidApplication
 import android.os.Bundle
 import android.util.DisplayMetrics
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.multidex.MultiDex
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration
@@ -29,6 +30,7 @@ class AndroidLauncher : AndroidApplication() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         val displayMetrics: DisplayMetrics = DisplayMetrics()
         windowManager.defaultDisplay.getRealMetrics(displayMetrics)
 
@@ -38,7 +40,6 @@ class AndroidLauncher : AndroidApplication() {
         adMob = AdMobImplementation(this)
         adMob.onCreate(context)
         adMob.load()
-
         game = Game(Locale.getDefault(), displayMetrics.xdpi, displayMetrics.ydpi, adMob)
 
         initialize(game, config)
@@ -47,7 +48,7 @@ class AndroidLauncher : AndroidApplication() {
     override fun onResume() {
         super.onResume()
 
-        checkGoogleApiAvailability()
+        //checkGoogleApiAvailability()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

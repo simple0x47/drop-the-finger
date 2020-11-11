@@ -103,7 +103,7 @@ class Game(private val systemLocale: Locale, private val displayXDPI: Float,
         gameInstance = this
 
         eventManager.create()
-
+        leaderboard = MockLeaderboard()
         dependencyManager = DependencyManager.build()
         dependencyManager.create()
         localeManager = LocaleManager.build(systemLocale)
@@ -121,7 +121,6 @@ class Game(private val systemLocale: Locale, private val displayXDPI: Float,
     }
 
     override fun render() {
-        //fpsLogger.log()
         eventManager.update()
 
         dependencyManager.update()

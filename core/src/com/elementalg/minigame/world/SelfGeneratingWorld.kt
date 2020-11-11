@@ -45,7 +45,6 @@ class SelfGeneratingWorld(private val stage: Stage, private val worldViewport: V
 
     private lateinit var finger: Finger
     private lateinit var fingerListener: FingerListener
-    //private lateinit var cellGenerator: CellGenerator
     private lateinit var cellGenerator: CellContinuousGenerator
     private lateinit var theme: Music
     private lateinit var gameover: Music
@@ -199,6 +198,7 @@ class SelfGeneratingWorld(private val stage: Stage, private val worldViewport: V
             gameOver()
         }
 
+        var cellHolderCount: Int = 0
         for (cellHolderIndex: Int in 0 until cellHolders.size) {
             val cellHolder: CellHolder = cellHolders[cellHolderIndex]
 
@@ -207,9 +207,13 @@ class SelfGeneratingWorld(private val stage: Stage, private val worldViewport: V
             if (started) {
                 displaceCellHolder(cellHolder)
 
-                if (cellHolder.isFingerWithinCell(finger)) {
-                    if (isCollidingFingerWithCellHoldersInnerObstacles(cellHolder, finger)) {
-                        gameOver()
+                if (cellHolderCount < 2) {
+                    if (cellHolder.isFingerWithinCell(finger)) {
+                        /*if (isCollidingFingerWithCellHoldersInnerObstacles(cellHolder, finger)) {
+                            gameOver()
+                        }*/
+
+                        cellHolderCount++
                     }
                 }
             }
@@ -279,7 +283,7 @@ class SelfGeneratingWorld(private val stage: Stage, private val worldViewport: V
         if (cellHolder.getPosition().y <= ( -1 * WORLD_SIZE.x)) { // if it's under the screen
             generateWorldCellHolder(cellHolders.indexOf(cellHolder))
 
-            cellHolder.setPosition(cellHolder.getPosition().x,  WORLD_SIZE.x * 2f)
+            cellHolder.setPosition(cellHolder.getPosition().x,  WORLD_SIZE.y)
         }
     }
 
@@ -414,8 +418,7 @@ class SelfGeneratingWorld(private val stage: Stage, private val worldViewport: V
         const val WORLD_BACKGROUND_SIZE: Int = 2048
         const val WORLD_THEME_VOLUME: Float = 0.2f
 
-        const val FINGER_RADIUS_MARGIN: Float = 1.5f // lower = harder *evil laugh*, but never lower than 1.
-        const val MAX_SPEED: Float = 0.05f
+        const val MAX_SPEED: Float = 0.06f
         const val MIN_SPEED: Float = 0.025f
         const val TIME_UNTIL_MAX_DIFFICULTY: Float = 37f // seconds
 

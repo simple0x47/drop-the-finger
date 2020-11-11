@@ -14,6 +14,8 @@ import com.elementalg.minigame.Game
 import com.elementalg.minigame.world.Finger
 import com.elementalg.minigame.world.BasicListener
 import com.elementalg.minigame.world.SelfGeneratingWorld
+import com.elementalg.minigame.world.cells.CellContinuousGenerator
+import kotlin.math.pow
 
 /**
  * Infinite game mode based on the displacement and generation of a world.
@@ -77,13 +79,12 @@ class ContinuousModeScreen(private val mainScreen: MainScreen, private val displ
     override fun create(game: Game) {
         val dependencyManager: DependencyManager = game.getDependencyManager()
 
-        val fingerRadius: Float = Finger.FINGER_INCH_RADIUS * displayXDPI *
-                SelfGeneratingWorld.WORLD_SIZE.x / Gdx.graphics.width
+        val fingerRadius: Float = calculateFingerRadius()
 
         selfGeneratingWorld = SelfGeneratingWorld(stage, actorsViewport, gameOverListener)
         selfGeneratingWorld.create(dependencyManager, fingerRadius)
 
-        restartWindow = RestartWindow(game, selfGeneratingWorld, mainScreen, RestartListener(this))
+        restartWindow = RestartWindow(game, mainScreen, RestartListener(this))
         restartWindow.create()
 
         val assets: HashMap<String, Any> = dependencyManager.retrieveAssets("CONTINUOUS_MODE_SCREEN")
@@ -192,6 +193,24 @@ class ContinuousModeScreen(private val mainScreen: MainScreen, private val displ
         restartWindow.hide()
 
         drawRestartWidget = false
+    }
+
+    private fun calculateFingerRadius(): Float {
+        val minimumCellHolderInnerSize: Float = SelfGeneratingWorld.WORLD_SIZE.x /
+                (2f.pow(CellContinuousGenerator.CELL_HOLDER_UNTIL_LEVEL + 1))
+
+        val originalRadius = Finger.FINGER_INCH_RADIUS * displayXDPI *
+                SelfGeneratingWorld.WORLD_SIZE.x / Gdx.graphics.width
+
+        return if ((originalRadius * 2f * Finger.FINGER_RADIUS_MARGIN) < minimumCellHolderInnerSize) {
+            /*
+             * Since multiple nesting levels, decrease the overall fluidity of the game, we will increase the finger
+             * radius to the minimum cell holder inner size by the finger required margin.
+            */
+            (minimumCellHolderInnerSize * Finger.FINGER_RADIUS_MARGIN) / 2f
+        } else {
+            originalRadius
+        }
     }
 
     companion object {
