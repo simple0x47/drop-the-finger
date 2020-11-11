@@ -19,16 +19,14 @@ import com.elementalg.client.managers.ScreenManager
 import com.elementalg.minigame.Game
 import com.elementalg.minigame.world.BasicListener
 import com.elementalg.minigame.world.SelfGeneratingWorld
-import kotlin.random.Random
 
 class RestartWindow(private val game: Game, selfGeneratingWorld: SelfGeneratingWorld, mainScreen: MainScreen,
                     restartListener: BasicListener) {
     private class RestartButtonListener(private val restartWindow: RestartWindow,
-                                        private val world: SelfGeneratingWorld,
                                         private val restartListener: BasicListener) : ClickListener() {
         override fun clicked(event: InputEvent?, x: Float, y: Float) {
             restartWindow.hide()
-            world.restart()
+
             restartListener.handle()
 
             super.clicked(event, x, y)
@@ -49,7 +47,7 @@ class RestartWindow(private val game: Game, selfGeneratingWorld: SelfGeneratingW
     private val actorsViewport: FitViewport = FitViewport(1024f, 1024f)
     private val stage: Stage = Stage(actorsViewport)
 
-    private val restartButtonListener: RestartButtonListener = RestartButtonListener(this, selfGeneratingWorld,
+    private val restartButtonListener: RestartButtonListener = RestartButtonListener(this,
             restartListener)
     private val backButtonListener: BackButtonListener = BackButtonListener(this, game.getScreenManager(),
             mainScreen)

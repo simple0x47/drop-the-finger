@@ -12,10 +12,7 @@ import com.badlogic.gdx.utils.viewport.Viewport
 import com.elementalg.client.managers.DependencyManager
 import com.elementalg.minigame.Game
 import com.elementalg.minigame.Leaderboard
-import com.elementalg.minigame.world.cells.Cell
-import com.elementalg.minigame.world.cells.CellGenerator
-import com.elementalg.minigame.world.cells.CellHolder
-import com.elementalg.minigame.world.cells.Obstacle
+import com.elementalg.minigame.world.cells.*
 import kotlin.jvm.Throws
 import kotlin.math.*
 import kotlin.random.Random
@@ -48,7 +45,8 @@ class SelfGeneratingWorld(private val stage: Stage, private val worldViewport: V
 
     private lateinit var finger: Finger
     private lateinit var fingerListener: FingerListener
-    private lateinit var cellGenerator: CellGenerator
+    //private lateinit var cellGenerator: CellGenerator
+    private lateinit var cellGenerator: CellContinuousGenerator
     private lateinit var theme: Music
     private lateinit var gameover: Music
 
@@ -79,10 +77,10 @@ class SelfGeneratingWorld(private val stage: Stage, private val worldViewport: V
     private fun initializeFinger(worldAtlas: TextureAtlas, fingerRadius: Float) {
         check(!this::finger.isInitialized) {"'finger' has already been initialized once."}
 
-        finger = Finger(worldAtlas, this, worldViewport, fingerRadius / UNIT_TO_PIXELS)
+        finger = Finger(worldAtlas, this, worldViewport, fingerRadius)
         finger.updatePosition(WORLD_SIZE.x / 2f, WORLD_SIZE.x / 2f)
-        fingerListener = FingerListener(finger, this)
-        cellGenerator = CellGenerator(finger.getRadius())
+        fingerListener = FingerListener(finger, this, false)
+        cellGenerator = CellContinuousGenerator(finger.getRadius())
     }
 
     /**
@@ -98,12 +96,9 @@ class SelfGeneratingWorld(private val stage: Stage, private val worldViewport: V
             cellHolders[i].clear()
         }
 
-        cellHolders[0].addCell(Cell.Type.EMPTY, 0)
-        cellHolders[0].addCell(Cell.Type.EMPTY, 1)
-        cellHolders[0].addCell(Cell.Type.EMPTY, 2)
-        cellHolders[0].addCell(Cell.Type.EMPTY, 3)
+        cellHolders[0].fill()
 
-        cellHolders[0].setOutputCell(Random.nextInt(2, 4))
+        cellHolders[0].outputCellPosition = Random.nextInt(2, CellHolder.HELD_CELLS)
 
         generateWorldCellHolder(1)
         generateWorldCellHolder(2)
@@ -126,14 +121,14 @@ class SelfGeneratingWorld(private val stage: Stage, private val worldViewport: V
         val inputCellHolder: CellHolder = if (cellHolderIndex > 0) cellHolders[cellHolderIndex - 1]
             else cellHolders[CELL_HOLDERS - 1]
 
-        val inputPosition: Int = inputCellHolder.getOutputCell() - (CellHolder.HELD_CELLS / 2)
-        val outputPosition: Int = Random.nextInt(2, 4)
+        val inputPosition: Int = abs(inputCellHolder.outputCellPosition - 3)
+        val outputPosition: Int = if (Random.nextBoolean()) 2 else 3
 
         check(inputPosition in 0..1){"'inputPosition' is not a bottom cell."}
 
-        cellHolders[cellHolderIndex].setOutputCell(outputPosition)
-        cellGenerator.generateRoute(cellHolders[cellHolderIndex], true, CellHolder.WORLD_CELL_HOLDER_LEVEL,
-                inputPosition, outputPosition, difficulty)
+        cellHolders[cellHolderIndex].outputCellPosition = outputPosition
+
+        cellGenerator.generateRoute(cellHolders[cellHolderIndex], inputCellHolder, difficulty)
     }
 
     /**
@@ -156,7 +151,7 @@ class SelfGeneratingWorld(private val stage: Stage, private val worldViewport: V
         val worldCellHolderSize: Float = WORLD_SIZE.x
 
         for (i: Int in 0 until CELL_HOLDERS) {
-            val cellHolder: CellHolder = CellHolder(worldCellHolderSize, worldAtlas, CellHolder.WORLD_CELL_HOLDER_LEVEL)
+            val cellHolder: CellHolder = CellHolder(null, worldCellHolderSize, worldAtlas)
 
             cellHolders.add(cellHolder)
         }
@@ -179,11 +174,13 @@ class SelfGeneratingWorld(private val stage: Stage, private val worldViewport: V
         if (started) {
             score += Gdx.graphics.deltaTime
 
-            if (score < TIME_UNTIL_MAX_DIFFICULTY) {
+            if (score <= TIME_UNTIL_MAX_DIFFICULTY) {
                 difficulty = score / TIME_UNTIL_MAX_DIFFICULTY
                 speed = MIN_SPEED + difficulty * (MAX_SPEED - MIN_SPEED)
             } else if (speed != 1f) {
                 speed = MAX_SPEED
+            } else if (difficulty != 1f) {
+                difficulty = 1f
             }
         } else {
             if (theme.isPlaying) {
@@ -376,6 +373,12 @@ class SelfGeneratingWorld(private val stage: Stage, private val worldViewport: V
 
         gameOverListener.handle()
         leaderboard.addScore(score)
+        stage.removeListener(fingerListener)
+    }
+
+    fun regenerateWorld() {
+        initializeWorldCellHolders()
+        finger.updatePosition(WORLD_SIZE.x / 2f, WORLD_SIZE.x / 2f)
     }
 
     /**
@@ -384,14 +387,14 @@ class SelfGeneratingWorld(private val stage: Stage, private val worldViewport: V
     fun restart() {
         started = false
 
-        initializeWorldCellHolders()
-        finger.updatePosition(WORLD_SIZE.x / 2f, WORLD_SIZE.x / 2f)
         finger.restart()
 
         speed = MIN_SPEED
         difficulty = 0f
         score = 0f
 
+        stage.removeListener(fingerListener)
+        fingerListener = FingerListener(finger, this, Gdx.input.isTouched)
         stage.addListener(fingerListener)
     }
 
@@ -413,8 +416,8 @@ class SelfGeneratingWorld(private val stage: Stage, private val worldViewport: V
 
         const val FINGER_RADIUS_MARGIN: Float = 1.5f // lower = harder *evil laugh*, but never lower than 1.
         const val MAX_SPEED: Float = 0.05f
-        const val MIN_SPEED: Float = 0.02f
-        const val TIME_UNTIL_MAX_DIFFICULTY: Float = 20f // seconds
+        const val MIN_SPEED: Float = 0.025f
+        const val TIME_UNTIL_MAX_DIFFICULTY: Float = 37f // seconds
 
         val WORLD_SIZE: Vector2 = Vector2(8f, 16f)
 

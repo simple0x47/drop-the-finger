@@ -14,7 +14,8 @@ import com.elementalg.minigame.world.Finger
  * @param size cell's side size.
  * @param textureRegion region of the texture where the v's texture data is located.
  */
-class VShapedObstacle(size: Float, private val textureRegion: TextureRegion) : Obstacle(Type.V, size) {
+class VShapedObstacle(parentCell: CellHolder?, size: Float, private val textureRegion: TextureRegion) :
+        Obstacle(parentCell, Type.V, size) {
     private val origin: Float = size / 2f
 
     override fun isFingerCollidingWithObstacle(finger: Finger): Boolean {

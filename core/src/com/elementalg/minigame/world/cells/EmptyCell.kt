@@ -11,7 +11,7 @@ import com.badlogic.gdx.math.Vector2
  * @constructor initializes an instance with each side measuring the passed [size].
  * @param size cell's side size.
  */
-class EmptyCell(size: Float) : Cell(Type.EMPTY, size) {
+class EmptyCell(parentCell: CellHolder?, size: Float) : Cell(parentCell, Type.EMPTY, size) {
     override fun setPosition(position: Vector2) {
         getPosition().set(position)
     }

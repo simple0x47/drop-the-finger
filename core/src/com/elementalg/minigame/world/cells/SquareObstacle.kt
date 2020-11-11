@@ -14,7 +14,8 @@ import com.elementalg.minigame.world.Finger
  * @param size cell's side size.
  * @param textureRegion region of the texture where the square's texture data is located.
  */
-class SquareObstacle(size: Float, private val textureRegion: TextureRegion) : Obstacle(Type.SQUARE, size) {
+class SquareObstacle(parentCell: CellHolder?, size: Float, private val textureRegion: TextureRegion) :
+        Obstacle(parentCell, Type.SQUARE, size) {
     private val origin: Float = getSize() / 2f
 
     override fun setPosition(position: Vector2) {

@@ -15,12 +15,29 @@ import kotlin.math.*
  * @constructor initializes an empty CellHolder.
  * @param size cell's side size.
  * @param worldAtlas atlas containing the texture coordinates for the world related textures.
- * @param level nesting level, starting at the level 0 with world's cell holders.
  */
-class CellHolder(size: Float, private val worldAtlas: TextureAtlas, private val level: Int) : Cell(Type.HOLDER, size) {
+class CellHolder(parentCell: CellHolder?, size: Float, private val worldAtlas: TextureAtlas) :
+        Cell(parentCell, Type.HOLDER, size) {
     private val cells: ArrayList<Cell> = ArrayList(HELD_CELLS)
 
-    private var outputCell: Int = -1
+    var outputCellPosition: Int = -1
+        set(value) {
+            if ((value < 0) || (value > HELD_CELLS)) {
+                throw IllegalArgumentException("Tried to assign to 'outputCell' an invalid value.")
+            }
+
+            field = value
+        }
+    var inputCellPosition: Int = -1
+        set (value) {
+            if ((value < 0) || (value > HELD_CELLS)) {
+                throw IllegalArgumentException("Tried to assign to 'inputCell' an invalid value.")
+            }
+
+            field = value
+        }
+
+    var innerRoute: CellContinuousGenerator.Route = CellContinuousGenerator.Route.STRAIGHT
 
     init {
         cells.ensureCapacity(HELD_CELLS)
@@ -29,7 +46,7 @@ class CellHolder(size: Float, private val worldAtlas: TextureAtlas, private val 
     /**
      * Gets a defined cell.
      *
-     * @param position position of the cell to be retrieved. (0 - bottom left) (1 - bottom right) (2 - top left)
+     * @param position position of the cell to be retrieved. (0 - bottom right) (1 - bottom left) (2 - top left)
      * (3 - top right).
      *
      * @return cell at the passed [position].
@@ -44,33 +61,19 @@ class CellHolder(size: Float, private val worldAtlas: TextureAtlas, private val 
     }
 
     /**
-     * Returns the level of nesting of the cell holder.
+     * Gets the position of the passed reference to a [Cell].
+     * @param innerCell cell whose parent is this instance of [CellHolder].
      *
-     * @return integer representing the level of nesting of this cell holder.
+     * @throws IllegalArgumentException if [innerCell] is not a child of this instance of [CellHolder].
      */
-    fun getLevel(): Int {
-        return level
-    }
+    fun getCellPosition(innerCell: Cell): Int {
+        for (i: Int in 0 until HELD_CELLS) {
+            if (cells[i] === innerCell) {
+                return i
+            }
+        }
 
-    /**
-     * Sets the output cell of the CellHolder.
-     *
-     * @param outputCell integer representing the cell which acts as output.
-     *
-     * @throws IllegalArgumentException if [outputCell] is out of limits.
-     */
-    @Throws(IllegalArgumentException::class)
-    fun setOutputCell(outputCell: Int) {
-        require(outputCell in 0 until HELD_CELLS) {"'outputCell' is out of limits."}
-
-        this.outputCell = outputCell
-    }
-
-    /**
-     * @return integer representing the position of the output cell, -1 if there's no output.
-     */
-    fun getOutputCell(): Int {
-        return outputCell
+        throw IllegalArgumentException("'innerCell' is not nested within this CellHolder.")
     }
 
     /**
@@ -111,7 +114,7 @@ class CellHolder(size: Float, private val worldAtlas: TextureAtlas, private val 
         for (cell: Cell in cells) {
             val index: Int = cells.indexOf(cell)
 
-            val multiplierX: Int = if (index % 2 == 0) 0 else 1
+            val multiplierX: Int = if ((index == 1) || (index == 2)) 0 else 1
             val multiplierY: Int = if (floor(index / 2f) > 0) 1 else 0
 
 
@@ -132,7 +135,7 @@ class CellHolder(size: Float, private val worldAtlas: TextureAtlas, private val 
     fun addCell(cellType: Type): Cell {
         check(cells.size < HELD_CELLS) {"'cells' is full."}
         val innerSize: Float = getSize() / 2f
-        val cell: Cell = createCell(cellType, innerSize, worldAtlas)
+        val cell: Cell = createCell(this, cellType, innerSize, worldAtlas)
 
         cells.add(cell)
 
@@ -155,12 +158,11 @@ class CellHolder(size: Float, private val worldAtlas: TextureAtlas, private val 
     @Throws(IllegalArgumentException::class, IllegalStateException::class)
     fun addCell(cellType: Type, position: Int): Cell {
         require(position in 0 until HELD_CELLS) {"'position' is out of the limits."}
-        check(cells.size < HELD_CELLS) {"'cells' is full."}
 
         val innerSize: Float = getSize() / 2f
-        val cell: Cell = createCell(cellType, innerSize, worldAtlas)
+        val cell: Cell = createCell(this, cellType, innerSize, worldAtlas)
 
-        cells.add(position, cell)
+        cells[position] = cell
 
         updateInnerCellsPositions()
 
@@ -174,11 +176,21 @@ class CellHolder(size: Float, private val worldAtlas: TextureAtlas, private val 
         cells.clear()
     }
 
+    /**
+     * Fills with empty cells in order to allow custom adding positioning.
+     */
+    fun fill() {
+        for (i: Int in 0 until HELD_CELLS) {
+            addCell(Type.EMPTY)
+        }
+    }
+
     companion object {
         fun getLevelFromSize(size: Float): Int {
             return ((min(SelfGeneratingWorld.WORLD_SIZE.x, SelfGeneratingWorld.WORLD_SIZE.y) / size) - 1).toInt()
         }
 
+        const val APPEAR_AFTER_DIFFICULTY: Float = 0.333f
         const val WORLD_CELL_HOLDER_LEVEL: Int = 0
         const val HELD_CELLS: Int = 4
     }

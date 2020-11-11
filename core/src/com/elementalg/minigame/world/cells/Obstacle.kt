@@ -8,7 +8,7 @@ import com.elementalg.minigame.world.Finger
  *
  * @author Gabriel Amihalachioaie.
  */
-abstract class Obstacle(type: Type, size: Float) : Cell(type, size) {
+abstract class Obstacle(parentCell: CellHolder?, type: Type, size: Float) : Cell(parentCell, type, size) {
     /**
      * @param finger finger to be checked.
      *
