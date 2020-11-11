@@ -190,6 +190,7 @@ class CellHolder(parentCell: CellHolder?, size: Float, private val worldAtlas: T
             return ((min(SelfGeneratingWorld.WORLD_SIZE.x, SelfGeneratingWorld.WORLD_SIZE.y) / size) - 1).toInt()
         }
 
+        const val APPEAR_AFTER_DIFFICULTY: Float = 0.333f
         const val WORLD_CELL_HOLDER_LEVEL: Int = 0
         const val HELD_CELLS: Int = 4
     }

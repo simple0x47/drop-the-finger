@@ -174,11 +174,13 @@ class SelfGeneratingWorld(private val stage: Stage, private val worldViewport: V
         if (started) {
             score += Gdx.graphics.deltaTime
 
-            if (score < TIME_UNTIL_MAX_DIFFICULTY) {
+            if (score <= TIME_UNTIL_MAX_DIFFICULTY) {
                 difficulty = score / TIME_UNTIL_MAX_DIFFICULTY
                 speed = MIN_SPEED + difficulty * (MAX_SPEED - MIN_SPEED)
             } else if (speed != 1f) {
                 speed = MAX_SPEED
+            } else if (difficulty != 1f) {
+                difficulty = 1f
             }
         } else {
             if (theme.isPlaying) {
@@ -415,7 +417,7 @@ class SelfGeneratingWorld(private val stage: Stage, private val worldViewport: V
         const val FINGER_RADIUS_MARGIN: Float = 1.5f // lower = harder *evil laugh*, but never lower than 1.
         const val MAX_SPEED: Float = 0.05f
         const val MIN_SPEED: Float = 0.025f
-        const val TIME_UNTIL_MAX_DIFFICULTY: Float = 20f // seconds
+        const val TIME_UNTIL_MAX_DIFFICULTY: Float = 37f // seconds
 
         val WORLD_SIZE: Vector2 = Vector2(8f, 16f)
 

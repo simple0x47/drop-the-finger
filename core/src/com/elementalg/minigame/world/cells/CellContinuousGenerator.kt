@@ -273,9 +273,8 @@ class CellContinuousGenerator(private val fingerRadius: Float) {
         if (cellHolderBeingGenerated.level > 0) {
             val parentCell: CellHolder = cellHolderBeingGenerated.getParent()
                     ?: throw IllegalStateException("Null parent, although level is not 0.")
-            val innerCellPosition: Int = parentCell.getCellPosition(cellHolderBeingGenerated)
 
-            when (innerCellPosition) {
+            when (val innerCellPosition: Int = parentCell.getCellPosition(cellHolderBeingGenerated)) {
                 parentCell.inputCellPosition -> {
                     if (parentCell.innerRoute == Route.L_SHAPE_UP) {
                         if (((innerCellPosition == 0) && (parentCell.outputCellPosition == 2)) ||
@@ -374,14 +373,15 @@ class CellContinuousGenerator(private val fingerRadius: Float) {
         val doesInnerCellHolderSizeComply: Boolean = ((fingerRadius * 2f * SelfGeneratingWorld.FINGER_RADIUS_MARGIN) <
                 hypotheticalInnerCellHolderSize)
 
-        val canBeInnerCellHolder: Int = if (doesInnerCellHolderSizeComply) 1 else 0
+        val canBeInnerCellHolder: Int = if ((doesInnerCellHolderSizeComply) &&
+                (difficulty >= CellHolder.APPEAR_AFTER_DIFFICULTY)) 1 else 0
 
         val hypotheticalSweeperObstacleMargin: Float = (hypotheticalInnerCellHolderSize -
                 (hypotheticalInnerCellHolderSize * SweeperObstacle.DEFAULT_THICKNESS) -
                 (hypotheticalInnerCellHolderSize * SweeperObstacle.REQUIRED_SPACE_MARGIN))
 
         var canBeSweeper: Int = if (hypotheticalSweeperObstacleMargin >= (fingerRadius * 2f) &&
-                (difficulty >= SweeperObstacle.APPEAR_AFTER_DIFFICULTY)) 1 else 0
+                (abs(difficulty - SweeperObstacle.APPEAR_AFTER_DIFFICULTY) < 0.01f)) 1 else 0
 
         val canBeVShapedObstacle: Int = if (Random.nextBoolean()) 0 else 1
 

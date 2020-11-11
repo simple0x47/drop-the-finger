@@ -100,7 +100,7 @@ class SweeperObstacle(parentCell: CellHolder?, size: Float, private val textureR
         const val MIN_ANGLE_INCREMENT: Float = 1.75f
         const val MAX_ANGLE_INCREMENT: Float = 2.5f
         const val MAX_ANGLE: Float = 360f
-        const val APPEAR_AFTER_DIFFICULTY: Float = 0.7f
+        const val APPEAR_AFTER_DIFFICULTY: Float = 1f
         const val DEFAULT_THICKNESS: Float = 0.025f
         const val REQUIRED_SPACE_MARGIN: Float = 0.05f
         const val TEXTURE_REGION: String = "Sweeper"

@@ -75,6 +75,8 @@ class AdMobImplementation(private val androidLauncher: AndroidLauncher) : IAdsBr
                 if (!interstitialAd.isLoading) {
                     load()
                 }
+
+                listener.runAfterAd()
             }
         }
     }

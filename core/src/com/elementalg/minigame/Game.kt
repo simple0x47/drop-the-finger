@@ -104,8 +104,6 @@ class Game(private val systemLocale: Locale, private val displayXDPI: Float,
 
         eventManager.create()
 
-        leaderboard = MockLeaderboard()
-
         dependencyManager = DependencyManager.build()
         dependencyManager.create()
         localeManager = LocaleManager.build(systemLocale)

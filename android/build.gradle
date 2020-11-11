@@ -22,8 +22,8 @@ android {
         applicationId "com.elementalg.minigame"
         minSdkVersion 17
         targetSdkVersion 30
-        versionCode 18
-        versionName "0.2.7.1"
+        versionCode 53
+        versionName "0.5.3"
         multiDexEnabled true
     }
     buildTypes {
@@ -33,7 +33,6 @@ android {
         }
     }
 }
-
 
 // called every time gradle gets executed, takes the native dependencies of
 // the natives configuration, and extracts them to the proper libs/ folders

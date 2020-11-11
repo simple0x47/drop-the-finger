@@ -47,7 +47,7 @@ class AndroidLauncher : AndroidApplication() {
     override fun onResume() {
         super.onResume()
 
-        //checkGoogleApiAvailability()
+        checkGoogleApiAvailability()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -127,7 +127,6 @@ class AndroidLauncher : AndroidApplication() {
     }
 
     private fun signIn() {
-        Toast.makeText(context, R.string.signing_in, Toast.LENGTH_SHORT).show()
         val account: GoogleSignInAccount? = GoogleSignIn.getLastSignedInAccount(context)
 
         if (account == null) {
@@ -138,6 +137,7 @@ class AndroidLauncher : AndroidApplication() {
                     retrieveLeaderboard(it.result!!)
                 }
                 else {
+                    Toast.makeText(context, R.string.signing_in, Toast.LENGTH_SHORT).show()
                     startActivityForResult(client.signInIntent, RC_SIGN_IN)
                 }
             }
