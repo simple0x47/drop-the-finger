@@ -21,35 +21,14 @@ class AdMobImplementation(private val androidLauncher: AndroidLauncher) : IAdsBr
                 object : AdListener() {
                     override fun onAdClosed() {
                         super.onAdClosed()
-                        informListener()
                         load()
+
+                        informListener()
                     }
 
                     override fun onAdFailedToLoad(p0: LoadAdError?) {
                         super.onAdFailedToLoad(p0)
                         informListener()
-                    }
-
-                    override fun onAdLeftApplication() {
-                        super.onAdLeftApplication()
-                    }
-
-                    override fun onAdOpened() {
-                        super.onAdOpened()
-
-                        beforeAd()
-                    }
-
-                    override fun onAdLoaded() {
-                        super.onAdLoaded()
-                    }
-
-                    override fun onAdClicked() {
-                        super.onAdClicked()
-                    }
-
-                    override fun onAdImpression() {
-                        super.onAdImpression()
                     }
                 }
             )
@@ -67,6 +46,8 @@ class AdMobImplementation(private val androidLauncher: AndroidLauncher) : IAdsBr
     override fun show(listener: IAdsListener) {
         this.listener = listener
 
+        listener.runBeforeAd()
+
         androidLauncher.runOnUiThread {
             if (interstitialAd.isLoaded) {
                 interstitialAd.show()
@@ -78,12 +59,6 @@ class AdMobImplementation(private val androidLauncher: AndroidLauncher) : IAdsBr
 
                 listener.runAfterAd()
             }
-        }
-    }
-
-    fun beforeAd() {
-        if (this::listener.isInitialized) {
-            listener.runBeforeAd()
         }
     }
 

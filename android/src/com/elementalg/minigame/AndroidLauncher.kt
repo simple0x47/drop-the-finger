@@ -40,7 +40,11 @@ class AndroidLauncher : AndroidApplication() {
         adMob = AdMobImplementation(this)
         adMob.onCreate(context)
         adMob.load()
-        game = Game(Locale.getDefault(), displayMetrics.xdpi, displayMetrics.ydpi, adMob)
+
+        val onScreenNotification: AndroidOnScreenNotification = AndroidOnScreenNotification(this)
+
+        game = Game(Locale.getDefault(), displayMetrics.xdpi, displayMetrics.ydpi,
+                adMob, onScreenNotification)
 
         initialize(game, config)
     }
@@ -48,7 +52,7 @@ class AndroidLauncher : AndroidApplication() {
     override fun onResume() {
         super.onResume()
 
-        //checkGoogleApiAvailability()
+        checkGoogleApiAvailability()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -98,9 +102,8 @@ class AndroidLauncher : AndroidApplication() {
 
     private fun checkGoogleApiAvailability() {
         val apiAvailability: GoogleApiAvailability = GoogleApiAvailability.getInstance()
-        val availability: Int = apiAvailability.isGooglePlayServicesAvailable(context)
 
-        when (availability) {
+        when (val availability: Int = apiAvailability.isGooglePlayServicesAvailable(context)) {
             ConnectionResult.SUCCESS -> {
                 signIn()
             }

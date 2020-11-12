@@ -14,7 +14,8 @@ class ScoreMessage(private val type: Type) {
     enum class Type {
         GOOD,
         NEUTRAL,
-        BAD
+        BAD,
+        GOAT
     }
 
     private val allIndexes: ArrayList<Int> = ArrayList()
@@ -24,6 +25,7 @@ class ScoreMessage(private val type: Type) {
             Type.GOOD -> MAX_GOOD_MESSAGE
             Type.NEUTRAL -> MAX_NEUTRAL_MESSAGE
             Type.BAD -> MAX_BAD_MESSAGE
+            Type.GOAT -> MAX_GOAT_MESSAGE
         }
 
         for (i: Int in 1..maxIndex) {
@@ -37,6 +39,7 @@ class ScoreMessage(private val type: Type) {
             Type.GOOD -> GOOD_MESSAGE_HEADER
             Type.NEUTRAL -> NEUTRAL_MESSAGE_HEADER
             Type.BAD -> BAD_MESSAGE_HEADER
+            Type.GOAT -> GOAT_MESSAGE_HEADER
         }
 
         val index: Int = retrieveUnusedIndex()
@@ -98,9 +101,11 @@ class ScoreMessage(private val type: Type) {
         private const val GOOD_MESSAGE_HEADER: String = "RESTART_MESSAGE_GOOD_"
         private const val NEUTRAL_MESSAGE_HEADER: String = "RESTART_MESSAGE_NEUTRAL_"
         private const val BAD_MESSAGE_HEADER: String = "RESTART_MESSAGE_BAD_"
+        private const val GOAT_MESSAGE_HEADER: String = "RESTART_MESSAGE_GOAT_"
 
         private const val MAX_GOOD_MESSAGE: Int = 6
         private const val MAX_NEUTRAL_MESSAGE: Int = 6
         private const val MAX_BAD_MESSAGE: Int = 6
+        private const val MAX_GOAT_MESSAGE: Int = 2
     }
 }

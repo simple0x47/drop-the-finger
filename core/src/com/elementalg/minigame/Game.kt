@@ -21,7 +21,8 @@ import kotlin.jvm.Throws
  * @param displayYDPI density of pixels per inch on the y axis.
  */
 class Game(private val systemLocale: Locale, private val displayXDPI: Float,
-           private val displayYDPI: Float, private val adsBridge: IAdsBridge)
+           private val displayYDPI: Float, private val adsBridge: IAdsBridge,
+           private val systemNotification: IOperatingSystemOnScreenNotification)
     : ApplicationAdapter() {
 
     private val eventManager: EventManager = EventManager()
@@ -33,16 +34,6 @@ class Game(private val systemLocale: Locale, private val displayXDPI: Float,
     private lateinit var leaderboard: Leaderboard
 
     private val fpsLogger: FPSLogger = FPSLogger()
-
-    /**
-     * Returns the instance of [EventManager] used for the active [Game] instance.
-     *
-     * @return instance of [EventManager].
-     */
-    fun getEventManager(): EventManager {
-
-        return eventManager
-    }
 
     /**
      * Returns the instance of [DependencyManager] used for the active [Game] instance.
@@ -87,6 +78,10 @@ class Game(private val systemLocale: Locale, private val displayXDPI: Float,
         return adsBridge
     }
 
+    fun getOnScreenNotification() : IOperatingSystemOnScreenNotification {
+        return systemNotification
+    }
+
     fun initializeLeaderboard(leaderboard: Leaderboard) {
         this.leaderboard = leaderboard
     }
@@ -103,7 +98,6 @@ class Game(private val systemLocale: Locale, private val displayXDPI: Float,
         gameInstance = this
 
         eventManager.create()
-        leaderboard = MockLeaderboard()
         dependencyManager = DependencyManager.build()
         dependencyManager.create()
         localeManager = LocaleManager.build(systemLocale)
@@ -151,6 +145,7 @@ class Game(private val systemLocale: Locale, private val displayXDPI: Float,
     }
 
     companion object {
+        const val GAME_PREFERENCES: String = "DTF_ELEMENTAL_G"
         private lateinit var gameInstance: Game
 
         @Throws(IllegalStateException::class)

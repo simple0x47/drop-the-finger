@@ -9,6 +9,10 @@ class MockLeaderboard : Leaderboard {
         return 5f
     }
 
+    override fun getWorldHighScore(): Float {
+        return 10f
+    }
+
     override fun showLeaderboard() {
 
     }

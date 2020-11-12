@@ -122,6 +122,7 @@ class RestartWindow(private val game: Game, mainScreen: MainScreen, restartListe
         backButton.addListener(backButtonListener)
 
         val previousHighScore: Float = Game.instance().getLeaderboard().getHighScore()
+        val worldHighScore: Float = Game.instance().getLeaderboard().getWorldHighScore()
         val localeManager: LocaleManager = Game.instance().getLocaleManager()
 
         if (previousHighScore < score) {
@@ -134,6 +135,7 @@ class RestartWindow(private val game: Game, mainScreen: MainScreen, restartListe
         scoreValue.setText(String.format("%.1fs", score))
 
         val messageType: ScoreMessage.Type = when {
+            score > worldHighScore -> ScoreMessage.Type.GOAT
             score > previousHighScore -> ScoreMessage.Type.GOOD
             (score <= previousHighScore) && (score > PATHETIC_SCORE)  -> ScoreMessage.Type.NEUTRAL
             else -> ScoreMessage.Type.BAD

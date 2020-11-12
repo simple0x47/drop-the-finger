@@ -14,17 +14,20 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
  * @param selfGeneratingWorld instance of world in which the finger is located.
  */
 class FingerListener(private val finger: Finger, private val selfGeneratingWorld: SelfGeneratingWorld,
-        private var isTouchedBeforeStarting: Boolean) : ClickListener() {
+        private var afterAd: Boolean) : ClickListener() {
     private val lastPosition: Vector2 = Vector2()
 
     /**
      * Proceeds to start the world, and this way, the game.
      */
     override fun touchDown(event: InputEvent?, x: Float, y: Float, pointer: Int, button: Int): Boolean {
-        if ((!isTouchedBeforeStarting) && (pointer == 0)) {
-            selfGeneratingWorld.start()
+        if (pointer == 0) {
+            if ((afterAd && (selfGeneratingWorld.getTimerAfterAd() >= SelfGeneratingWorld.WAIT_TIME_AFTER_AD)) ||
+                    (!afterAd)) {
+                selfGeneratingWorld.start()
 
-            lastPosition.set(x, y)
+                lastPosition.set(x, y)
+            }
         }
 
         return super.touchDown(event, x, y, pointer, button)
@@ -34,16 +37,11 @@ class FingerListener(private val finger: Finger, private val selfGeneratingWorld
      * If the world is started, it calls game over.
      */
     override fun touchUp(event: InputEvent?, x: Float, y: Float, pointer: Int, button: Int) {
-        /*if (pointer == 0) {
-            if (isTouchedBeforeStarting) {
-                isTouchedBeforeStarting = false
+        if (pointer == 0) {
+            if (selfGeneratingWorld.isStarted()) {
+                selfGeneratingWorld.gameOver()
             }
-            else {
-                if (selfGeneratingWorld.isStarted()) {
-                    selfGeneratingWorld.gameOver()
-                }
-            }
-        }*/
+        }
 
         super.touchUp(event, x, y, pointer, button)
     }

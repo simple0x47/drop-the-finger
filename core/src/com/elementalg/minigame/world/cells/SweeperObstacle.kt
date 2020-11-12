@@ -46,14 +46,6 @@ class SweeperObstacle(parentCell: CellHolder?, size: Float, private val textureR
         getPosition().set(x, y + heightOffset)
     }
 
-    fun setAngleIncrement(angleIncrement: Float) {
-        this.angleIncrement = angleIncrement
-    }
-
-    fun getAngleIncrement(): Float {
-        return angleIncrement
-    }
-
     override fun isFingerCollidingWithObstacle(finger: Finger): Boolean {
         val fingerPosition: Vector2 = Vector2(finger.getPosition()).rotateAround(Vector2(getPosition().x + origin.x,
                 getPosition().y + origin.y), 360f - angle)
@@ -100,7 +92,7 @@ class SweeperObstacle(parentCell: CellHolder?, size: Float, private val textureR
         const val MIN_ANGLE_INCREMENT: Float = 1.75f
         const val MAX_ANGLE_INCREMENT: Float = 2.5f
         const val MAX_ANGLE: Float = 360f
-        const val APPEAR_AFTER_DIFFICULTY: Float = 0.1f
+        const val APPEAR_AFTER_DIFFICULTY: Float = 1f
         const val DEFAULT_THICKNESS: Float = 0.025f
         const val SPACE_MARGIN_REDUCTION: Float = 1.0f
         const val TEXTURE_REGION: String = "Sweeper"

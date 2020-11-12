@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <lang id="es">
+    <string id="START_MESSAGE">
+        ¡Empieza manteniendo un dedo sobre la pantalla!
+    </string>
     <string id="SCORE_INDICATOR">
         Score:
     </string>
@@ -8,6 +11,12 @@
     </string>
     <string id="RESTART_HIGH_SCORE_TITLE">
         ¡NUEVA PUNTUACIÓN MÁXIMA!
+    </string>
+    <string id="RESTART_MESSAGE_GOAT_1">
+        ¡LOS MEJORES DEDOS DEL MUNDO!
+    </string>
+    <string id="RESTART_MESSAGE_GOAT_2">
+        ¡HAS ROTO EL RÉCORD MUNDIAL! INCREÍBLE.
     </string>
     <string id="RESTART_MESSAGE_GOOD_1">
         ¡EXCELENTE!
@@ -40,10 +49,10 @@
         ¡Tienes que practicar más!
     </string>
     <string id="RESTART_MESSAGE_NEUTRAL_5">
-        ¡Tienes un desafío!
+        ¡Sé qué puedes hacerlo mejor!
     </string>
     <string id="RESTART_MESSAGE_NEUTRAL_6">
-        ¡Tienes que mejorar esos números, Novato!
+        ¡Tienes qué mejorar esos números, Novato!
     </string>
     <string id="RESTART_MESSAGE_BAD_1">
         ¿Estás haciendo un speed run de este juego?
@@ -55,7 +64,7 @@
         Eres tan rápido... perdiendo.
     </string>
     <string id="RESTART_MESSAGE_BAD_4">
-        ¿Ya estás sudando? Ha! Principiantes...
+        ¿Ya estás sudando? ¡Ha! Principiante...
     </string>
     <string id="RESTART_MESSAGE_BAD_5">
         Velocidad de la luz hacia el planeta de los perdedores.

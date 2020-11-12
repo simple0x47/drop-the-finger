@@ -185,7 +185,7 @@ class CellHolder(parentCell: CellHolder?, size: Float, private val worldAtlas: T
     }
 
     companion object {
-        const val APPEAR_AFTER_DIFFICULTY: Float = 0.0f
+        const val APPEAR_AFTER_DIFFICULTY: Float = 0.333f
         const val HELD_CELLS: Int = 4
     }
 }
