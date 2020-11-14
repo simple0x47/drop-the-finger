@@ -225,7 +225,7 @@ class ContinuousModeScreen(private val mainScreen: MainScreen, private val displ
     }
 
     companion object {
-        private const val MAX_RETRIES_BEFORE_AD: Int = 1
+        private const val MAX_RETRIES_BEFORE_AD: Int = 5
         private const val MAX_TIME_BEFORE_AD: Float = 100f // 100 seconds
     }
 }

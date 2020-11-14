@@ -435,7 +435,7 @@ class SelfGeneratingWorld(private val stage: Stage, private val worldViewport: V
         const val WORLD_BACKGROUND_SIZE: Int = 2048
         const val WORLD_THEME_VOLUME: Float = 0.2f
 
-        const val MAX_SPEED: Float = 0.06f
+        const val MAX_SPEED: Float = 0.055f
         const val MIN_SPEED: Float = 0.025f
         const val TIME_UNTIL_MAX_DIFFICULTY: Float = 37f // seconds
         const val WAIT_TIME_AFTER_AD: Float = 0.3f

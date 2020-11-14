@@ -22,8 +22,8 @@ android {
         applicationId "com.elementalg.minigame"
         minSdkVersion 17
         targetSdkVersion 30
-        versionCode 54
-        versionName "0.5.4"
+        versionCode 100
+        versionName "1.0.0"
         multiDexEnabled true
     }
     buildTypes {

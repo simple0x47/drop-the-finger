@@ -11,7 +11,6 @@ class AdMobImplementation(private val androidLauncher: AndroidLauncher) : IAdsBr
         MobileAds.initialize(context)
 
         val configuration: RequestConfiguration = RequestConfiguration.Builder()
-                .setTestDeviceIds(listOf("ABCDEF012345"))
                 .build()
         MobileAds.setRequestConfiguration(configuration)
 
@@ -69,6 +68,6 @@ class AdMobImplementation(private val androidLauncher: AndroidLauncher) : IAdsBr
     }
 
     companion object {
-        private const val AD_UNIT_ID = "ca-app-pub-3940256099942544/1033173712"
+        private const val AD_UNIT_ID = "ca-app-pub-6150593142232811~2261712006"
     }
 }

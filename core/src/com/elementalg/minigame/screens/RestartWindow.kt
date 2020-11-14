@@ -207,7 +207,7 @@ class RestartWindow(private val game: Game, mainScreen: MainScreen, restartListe
         private const val SCORE_VALUE_FONT: String = "ScoreValue"
         private const val HIGH_SCORE_MUSIC: String = "HighScore"
 
-        private const val PATHETIC_SCORE: Float = 3f
+        private const val PATHETIC_SCORE: Float = 10f
 
         private const val MAX_FIREWORKS: Int = 30
 

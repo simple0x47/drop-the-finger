@@ -96,7 +96,6 @@ class Game(private val systemLocale: Locale, private val displayXDPI: Float,
 
     override fun create() {
         gameInstance = this
-
         eventManager.create()
         dependencyManager = DependencyManager.build()
         dependencyManager.create()
