@@ -12,6 +12,7 @@ import com.badlogic.gdx.utils.viewport.Viewport
 import com.elementalg.client.managers.DependencyManager
 import com.elementalg.minigame.Game
 import com.elementalg.minigame.Leaderboard
+import com.elementalg.minigame.screens.ContinuousModeScreen
 import com.elementalg.minigame.world.cells.*
 import kotlin.jvm.Throws
 import kotlin.math.*
@@ -28,7 +29,8 @@ import kotlin.random.Random
  * @param worldViewport actor's viewports instance used at the parent screen.
  */
 class SelfGeneratingWorld(private val stage: Stage, private val worldViewport: Viewport,
-                          private val gameOverListener: BasicListener) {
+                          private val gameOverListener: BasicListener,
+                          private val screen: ContinuousModeScreen) {
     private val cellHolders: ArrayList<CellHolder> = ArrayList(CELL_HOLDERS)
 
     private val screenBorders: ArrayList<Vector2> = ArrayList()
@@ -38,6 +40,9 @@ class SelfGeneratingWorld(private val stage: Stage, private val worldViewport: V
     private var started: Boolean = false
     private var score: Float = 0f
 
+    private var afterAd: Boolean = false
+    private var timeAfterAd: Float = 0f
+
     private lateinit var worldAtlas: TextureAtlas
     private lateinit var screenDarker: TextureRegion
 
@@ -45,20 +50,15 @@ class SelfGeneratingWorld(private val stage: Stage, private val worldViewport: V
 
     private lateinit var finger: Finger
     private lateinit var fingerListener: FingerListener
-    //private lateinit var cellGenerator: CellGenerator
     private lateinit var cellGenerator: CellContinuousGenerator
     private lateinit var theme: Music
-    private lateinit var gameover: Music
+    private lateinit var gameOverSound: Music
 
     init {
         screenBorders.add(Vector2(0f, WORLD_SIZE.y))
         screenBorders.add(Vector2(WORLD_SIZE.x, WORLD_SIZE.y))
         screenBorders.add(Vector2(WORLD_SIZE.x, 0f))
         screenBorders.add(Vector2(0f, 0f))
-    }
-
-    fun getDifficulty(): Float {
-        return difficulty
     }
 
     fun getScore(): Float {
@@ -162,7 +162,7 @@ class SelfGeneratingWorld(private val stage: Stage, private val worldViewport: V
         screenDarker = worldAtlas.findRegion("Background")
 
         theme = assets["WorldTheme"] as Music
-        gameover = assets["Hit"] as Music
+        gameOverSound = assets["Hit"] as Music
     }
 
     /**
@@ -171,16 +171,22 @@ class SelfGeneratingWorld(private val stage: Stage, private val worldViewport: V
      * @param batch batch used for drawing the world's actors.
      */
     fun render(batch: Batch) {
+        timeAfterAd += Gdx.graphics.deltaTime
+
         if (started) {
             score += Gdx.graphics.deltaTime
 
-            if (score <= TIME_UNTIL_MAX_DIFFICULTY) {
-                difficulty = score / TIME_UNTIL_MAX_DIFFICULTY
-                speed = MIN_SPEED + difficulty * (MAX_SPEED - MIN_SPEED)
-            } else if (speed != 1f) {
-                speed = MAX_SPEED
-            } else if (difficulty != 1f) {
-                difficulty = 1f
+            when {
+                (score <= TIME_UNTIL_MAX_DIFFICULTY) -> {
+                    difficulty = score / TIME_UNTIL_MAX_DIFFICULTY
+                    speed = MIN_SPEED + difficulty * (MAX_SPEED - MIN_SPEED)
+                }
+                (speed != 1f) -> {
+                    speed = MAX_SPEED
+                }
+                (difficulty != 1f) -> {
+                    difficulty = 1f
+                }
             }
         } else {
             if (theme.isPlaying) {
@@ -199,6 +205,7 @@ class SelfGeneratingWorld(private val stage: Stage, private val worldViewport: V
             gameOver()
         }
 
+        var cellHolderCount: Int = 0
         for (cellHolderIndex: Int in 0 until cellHolders.size) {
             val cellHolder: CellHolder = cellHolders[cellHolderIndex]
 
@@ -207,9 +214,13 @@ class SelfGeneratingWorld(private val stage: Stage, private val worldViewport: V
             if (started) {
                 displaceCellHolder(cellHolder)
 
-                if (cellHolder.isFingerWithinCell(finger)) {
-                    if (isCollidingFingerWithCellHoldersInnerObstacles(cellHolder, finger)) {
-                        gameOver()
+                if (cellHolderCount < 2) {
+                    if (cellHolder.isFingerWithinCell(finger)) {
+                        if (isCollidingFingerWithCellHoldersInnerObstacles(cellHolder, finger)) {
+                            gameOver()
+                        }
+
+                        cellHolderCount++
                     }
                 }
             }
@@ -279,7 +290,7 @@ class SelfGeneratingWorld(private val stage: Stage, private val worldViewport: V
         if (cellHolder.getPosition().y <= ( -1 * WORLD_SIZE.x)) { // if it's under the screen
             generateWorldCellHolder(cellHolders.indexOf(cellHolder))
 
-            cellHolder.setPosition(cellHolder.getPosition().x,  WORLD_SIZE.x * 2f)
+            cellHolder.setPosition(cellHolder.getPosition().x,  WORLD_SIZE.y)
         }
     }
 
@@ -317,7 +328,7 @@ class SelfGeneratingWorld(private val stage: Stage, private val worldViewport: V
      * Starts listening to the finger.
      */
     fun show() {
-        restart()
+        restart(false)
     }
 
     /**
@@ -358,22 +369,27 @@ class SelfGeneratingWorld(private val stage: Stage, private val worldViewport: V
         stage.removeListener(fingerListener)
         finger.setCollided(true)
 
+        theme.stop()
+
         val leaderboard: Leaderboard = Game.instance().getLeaderboard()
 
         if (leaderboard.getHighScore() >= score) {
-            gameover.position = 0f
-            gameover.volume = 0.2f
-            gameover.setPan(1f, 0.2f)
-            gameover.play()
+            gameOverSound.stop()
+            gameOverSound.volume = 0.2f
+            gameOverSound.setPan(1f, 0.2f)
+            gameOverSound.play()
         }
 
         started = false
         difficulty = 0f
-        theme.stop()
 
+        Gdx.input.inputProcessor = null
         gameOverListener.handle()
         leaderboard.addScore(score)
-        stage.removeListener(fingerListener)
+    }
+
+    fun stopGameOverSound() {
+        gameOverSound.stop()
     }
 
     fun regenerateWorld() {
@@ -384,18 +400,23 @@ class SelfGeneratingWorld(private val stage: Stage, private val worldViewport: V
     /**
      * Restarts the world's generation and displacement.
      */
-    fun restart() {
+    fun restart(afterAd: Boolean) {
         started = false
 
         finger.restart()
 
+        this.afterAd = afterAd
+        timeAfterAd = 0f
         speed = MIN_SPEED
         difficulty = 0f
         score = 0f
 
-        stage.removeListener(fingerListener)
-        fingerListener = FingerListener(finger, this, Gdx.input.isTouched)
+        fingerListener = FingerListener(finger, this, afterAd)
         stage.addListener(fingerListener)
+    }
+
+    fun getTimerAfterAd(): Float {
+        return timeAfterAd
     }
 
     fun hide() {
@@ -404,7 +425,7 @@ class SelfGeneratingWorld(private val stage: Stage, private val worldViewport: V
 
     fun dispose() {
         theme.dispose()
-        gameover.dispose()
+        gameOverSound.dispose()
     }
 
     companion object {
@@ -414,10 +435,10 @@ class SelfGeneratingWorld(private val stage: Stage, private val worldViewport: V
         const val WORLD_BACKGROUND_SIZE: Int = 2048
         const val WORLD_THEME_VOLUME: Float = 0.2f
 
-        const val FINGER_RADIUS_MARGIN: Float = 1.5f // lower = harder *evil laugh*, but never lower than 1.
-        const val MAX_SPEED: Float = 0.05f
+        const val MAX_SPEED: Float = 0.06f
         const val MIN_SPEED: Float = 0.025f
         const val TIME_UNTIL_MAX_DIFFICULTY: Float = 37f // seconds
+        const val WAIT_TIME_AFTER_AD: Float = 0.3f
 
         val WORLD_SIZE: Vector2 = Vector2(8f, 16f)
 

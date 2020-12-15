@@ -1,7 +1,7 @@
 package com.elementalg.minigame.screens
 
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.audio.Music
+import com.badlogic.gdx.Preferences
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.scenes.scene2d.InputEvent
@@ -40,6 +40,16 @@ class MainScreen(private val displayXDPI: Float, private val displayYDPI: Float)
         : ClickListener() {
         override fun clicked(event: InputEvent?, x: Float, y: Float) {
             screenManager.setActiveScreen(modeScreen)
+
+            val preferences: Preferences = Gdx.app.getPreferences(Game.GAME_PREFERENCES)
+            val firstTimePlaying: Boolean = preferences.getBoolean(FIRST_TIME_BOOL, true)
+
+            if (firstTimePlaying) {
+                val message: String = Game.instance().getLocaleManager().get(FIRST_TIME_TUTORIAL)
+                Game.instance().getOnScreenNotification().showNotification(message)
+                preferences.putBoolean(FIRST_TIME_BOOL, false)
+                preferences.flush()
+            }
 
             super.clicked(event, x, y)
         }
@@ -149,14 +159,6 @@ class MainScreen(private val displayXDPI: Float, private val displayYDPI: Float)
         super.render(delta)
     }
 
-    override fun pause() {
-        super.pause()
-    }
-
-    override fun resume() {
-        super.resume()
-    }
-
     /**
      * Hides the main menu.
      */
@@ -176,5 +178,10 @@ class MainScreen(private val displayXDPI: Float, private val displayYDPI: Float)
         stage.dispose()
 
         super.dispose()
+    }
+
+    companion object {
+        private const val FIRST_TIME_BOOL: String = "FIRST_TIME"
+        private const val FIRST_TIME_TUTORIAL: String = "START_MESSAGE"
     }
 }

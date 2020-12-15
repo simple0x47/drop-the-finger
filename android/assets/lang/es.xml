@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<lang id="es">
+    <string id="START_MESSAGE">
+        ¡Empieza manteniendo un dedo sobre la pantalla!
+    </string>
+    <string id="SCORE_INDICATOR">
+        Score:
+    </string>
+    <string id="RESTART_SCORE_TITLE">
+        PUNTUACIÓN
+    </string>
+    <string id="RESTART_HIGH_SCORE_TITLE">
+        ¡NUEVA PUNTUACIÓN MÁXIMA!
+    </string>
+    <string id="RESTART_MESSAGE_GOAT_1">
+        ¡LOS MEJORES DEDOS DEL MUNDO!
+    </string>
+    <string id="RESTART_MESSAGE_GOAT_2">
+        ¡HAS ROTO EL RÉCORD MUNDIAL! INCREÍBLE.
+    </string>
+    <string id="RESTART_MESSAGE_GOOD_1">
+        ¡EXCELENTE!
+    </string>
+    <string id="RESTART_MESSAGE_GOOD_2">
+        MODO BESTIA: ¡ENCENDIDO!
+    </string>
+    <string id="RESTART_MESSAGE_GOOD_3">
+        ¡BUENÍSIMA!
+    </string>
+    <string id="RESTART_MESSAGE_GOOD_4">
+        ¡MODO DIOS!
+    </string>
+    <string id="RESTART_MESSAGE_GOOD_5">
+        ¡BRILLANTE!
+    </string>
+    <string id="RESTART_MESSAGE_GOOD_6">
+        ¡DEDOS MÁGICOS!
+    </string>
+    <string id="RESTART_MESSAGE_NEUTRAL_1">
+        No está mal...
+    </string>
+    <string id="RESTART_MESSAGE_NEUTRAL_2">
+        ¡Puedes hacerlo mejor!
+    </string>
+    <string id="RESTART_MESSAGE_NEUTRAL_3">
+        ¡Intenta aguantar más!
+    </string>
+    <string id="RESTART_MESSAGE_NEUTRAL_4">
+        ¡Tienes que practicar más!
+    </string>
+    <string id="RESTART_MESSAGE_NEUTRAL_5">
+        ¡Sé qué puedes hacerlo mejor!
+    </string>
+    <string id="RESTART_MESSAGE_NEUTRAL_6">
+        ¡Tienes qué mejorar esos números, Novato!
+    </string>
+    <string id="RESTART_MESSAGE_BAD_1">
+        ¿Estás haciendo un speed run de este juego?
+    </string>
+    <string id="RESTART_MESSAGE_BAD_2">
+        Te chocas tan rápido como Eminem rapea.
+    </string>
+    <string id="RESTART_MESSAGE_BAD_3">
+        Eres tan rápido... perdiendo.
+    </string>
+    <string id="RESTART_MESSAGE_BAD_4">
+        ¿Ya estás sudando? ¡Ha! Principiante...
+    </string>
+    <string id="RESTART_MESSAGE_BAD_5">
+        Velocidad de la luz hacia el planeta de los perdedores.
+    </string>
+    <string id="RESTART_MESSAGE_BAD_6">
+        ¡HA! ¡HA!
+    </string>
+</lang>

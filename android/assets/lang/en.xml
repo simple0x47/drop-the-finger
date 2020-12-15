@@ -1,16 +1,23 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <lang id="en">
+    <string id="START_MESSAGE">
+        Start by holding a finger on the screen!
+    </string>
     <string id="SCORE_INDICATOR">
         Score:
     </string>
-
     <string id="RESTART_SCORE_TITLE">
         SCORE
     </string>
     <string id="RESTART_HIGH_SCORE_TITLE">
         NEW HIGH SCORE!
     </string>
-
+    <string id="RESTART_MESSAGE_GOAT_1">
+        YOU ARE THE G.O.A.T!
+    </string>
+    <string id="RESTART_MESSAGE_GOAT_2">
+        YOU'VE BROKEN THE WORLD RECORD! INCREDIBLE.
+    </string>
     <string id="RESTART_MESSAGE_GOOD_1">
         EXCELLENT!
     </string>

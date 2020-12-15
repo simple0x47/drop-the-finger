@@ -6,6 +6,7 @@ import android.content.Intent
 import com.badlogic.gdx.backends.android.AndroidApplication
 import android.os.Bundle
 import android.util.DisplayMetrics
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.multidex.MultiDex
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration
@@ -29,6 +30,7 @@ class AndroidLauncher : AndroidApplication() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         val displayMetrics: DisplayMetrics = DisplayMetrics()
         windowManager.defaultDisplay.getRealMetrics(displayMetrics)
 
@@ -39,7 +41,10 @@ class AndroidLauncher : AndroidApplication() {
         adMob.onCreate(context)
         adMob.load()
 
-        game = Game(Locale.getDefault(), displayMetrics.xdpi, displayMetrics.ydpi, adMob)
+        val onScreenNotification: AndroidOnScreenNotification = AndroidOnScreenNotification(this)
+
+        game = Game(Locale.getDefault(), displayMetrics.xdpi, displayMetrics.ydpi,
+                adMob, onScreenNotification)
 
         initialize(game, config)
     }
@@ -97,9 +102,8 @@ class AndroidLauncher : AndroidApplication() {
 
     private fun checkGoogleApiAvailability() {
         val apiAvailability: GoogleApiAvailability = GoogleApiAvailability.getInstance()
-        val availability: Int = apiAvailability.isGooglePlayServicesAvailable(context)
 
-        when (availability) {
+        when (val availability: Int = apiAvailability.isGooglePlayServicesAvailable(context)) {
             ConnectionResult.SUCCESS -> {
                 signIn()
             }

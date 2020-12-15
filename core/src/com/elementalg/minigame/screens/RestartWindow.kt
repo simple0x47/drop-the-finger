@@ -18,10 +18,8 @@ import com.elementalg.client.managers.LocaleManager
 import com.elementalg.client.managers.ScreenManager
 import com.elementalg.minigame.Game
 import com.elementalg.minigame.world.BasicListener
-import com.elementalg.minigame.world.SelfGeneratingWorld
 
-class RestartWindow(private val game: Game, selfGeneratingWorld: SelfGeneratingWorld, mainScreen: MainScreen,
-                    restartListener: BasicListener) {
+class RestartWindow(private val game: Game, mainScreen: MainScreen, restartListener: BasicListener) {
     private class RestartButtonListener(private val restartWindow: RestartWindow,
                                         private val restartListener: BasicListener) : ClickListener() {
         override fun clicked(event: InputEvent?, x: Float, y: Float) {
@@ -124,6 +122,7 @@ class RestartWindow(private val game: Game, selfGeneratingWorld: SelfGeneratingW
         backButton.addListener(backButtonListener)
 
         val previousHighScore: Float = Game.instance().getLeaderboard().getHighScore()
+        val worldHighScore: Float = Game.instance().getLeaderboard().getWorldHighScore()
         val localeManager: LocaleManager = Game.instance().getLocaleManager()
 
         if (previousHighScore < score) {
@@ -136,6 +135,7 @@ class RestartWindow(private val game: Game, selfGeneratingWorld: SelfGeneratingW
         scoreValue.setText(String.format("%.1fs", score))
 
         val messageType: ScoreMessage.Type = when {
+            score > worldHighScore -> ScoreMessage.Type.GOAT
             score > previousHighScore -> ScoreMessage.Type.GOOD
             (score <= previousHighScore) && (score > PATHETIC_SCORE)  -> ScoreMessage.Type.NEUTRAL
             else -> ScoreMessage.Type.BAD

@@ -3,7 +3,6 @@ package com.elementalg.minigame.world.cells
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.math.Vector2
-import com.elementalg.minigame.world.SelfGeneratingWorld
 import kotlin.jvm.Throws
 import kotlin.math.*
 
@@ -186,12 +185,7 @@ class CellHolder(parentCell: CellHolder?, size: Float, private val worldAtlas: T
     }
 
     companion object {
-        fun getLevelFromSize(size: Float): Int {
-            return ((min(SelfGeneratingWorld.WORLD_SIZE.x, SelfGeneratingWorld.WORLD_SIZE.y) / size) - 1).toInt()
-        }
-
         const val APPEAR_AFTER_DIFFICULTY: Float = 0.333f
-        const val WORLD_CELL_HOLDER_LEVEL: Int = 0
         const val HELD_CELLS: Int = 4
     }
 }

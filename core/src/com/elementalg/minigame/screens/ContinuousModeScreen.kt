@@ -14,6 +14,8 @@ import com.elementalg.minigame.Game
 import com.elementalg.minigame.world.Finger
 import com.elementalg.minigame.world.BasicListener
 import com.elementalg.minigame.world.SelfGeneratingWorld
+import com.elementalg.minigame.world.cells.CellContinuousGenerator
+import kotlin.math.pow
 
 /**
  * Infinite game mode based on the displacement and generation of a world.
@@ -32,7 +34,6 @@ class ContinuousModeScreen(private val mainScreen: MainScreen, private val displ
     private class GameOverListener(private val screen: ContinuousModeScreen) : BasicListener {
         override fun handle() {
             screen.showRestartWindow()
-            screen.retriesWithoutAds++
         }
     }
 
@@ -40,18 +41,19 @@ class ContinuousModeScreen(private val mainScreen: MainScreen, private val displ
         override fun handle() {
             screen.selfGeneratingWorld.regenerateWorld()
 
-            if ((screen.retriesWithoutAds >= MAX_RETRIES_BEFORE_AD) ||
-                    (screen.lastAdSince >= MAX_TIME_BEFORE_AD)) {
-                screen.retriesWithoutAds = 0
-                screen.lastAdSince = 0f
+            if (screen.goingToShowAd()) {
+                screen.selfGeneratingWorld.stopGameOverSound()
+                val adListener: RestartAdsListener = RestartAdsListener(screen,
+                        screen.selfGeneratingWorld,
+                        screen.stage)
+                adListener.runBeforeAd()
 
-                screen.hideRestartWindow()
-                Game.instance().getAdsBridge().show(RestartAdsListener(screen.selfGeneratingWorld,
-                        screen.stage))
+                Game.instance().getAdsBridge().show(adListener)
             } else {
                 screen.hideRestartWindow()
-                screen.selfGeneratingWorld.restart()
+                screen.selfGeneratingWorld.restart(false)
                 Gdx.input.inputProcessor = screen.stage
+                screen.retriesWithoutAds += 1
             }
         }
     }
@@ -77,13 +79,12 @@ class ContinuousModeScreen(private val mainScreen: MainScreen, private val displ
     override fun create(game: Game) {
         val dependencyManager: DependencyManager = game.getDependencyManager()
 
-        val fingerRadius: Float = Finger.FINGER_INCH_RADIUS * displayXDPI *
-                SelfGeneratingWorld.WORLD_SIZE.x / Gdx.graphics.width
+        val fingerRadius: Float = calculateFingerRadius()
 
-        selfGeneratingWorld = SelfGeneratingWorld(stage, actorsViewport, gameOverListener)
+        selfGeneratingWorld = SelfGeneratingWorld(stage, actorsViewport, gameOverListener, this)
         selfGeneratingWorld.create(dependencyManager, fingerRadius)
 
-        restartWindow = RestartWindow(game, selfGeneratingWorld, mainScreen, RestartListener(this))
+        restartWindow = RestartWindow(game, mainScreen, RestartListener(this))
         restartWindow.create()
 
         val assets: HashMap<String, Any> = dependencyManager.retrieveAssets("CONTINUOUS_MODE_SCREEN")
@@ -107,6 +108,7 @@ class ContinuousModeScreen(private val mainScreen: MainScreen, private val displ
         super.show()
 
         Gdx.input.inputProcessor = stage
+        selfGeneratingWorld.regenerateWorld()
         selfGeneratingWorld.show()
     }
 
@@ -127,9 +129,9 @@ class ContinuousModeScreen(private val mainScreen: MainScreen, private val displ
         selfGeneratingWorld.render(stage.batch)
         stage.batch.end()
 
-        lastAdSince += Gdx.graphics.deltaTime
-
         if (selfGeneratingWorld.isStarted()) {
+            lastAdSince += Gdx.graphics.deltaTime
+
             userInterfaceViewport.apply()
             uiStage.batch.projectionMatrix = userInterfaceViewport.camera.combined
             uiStage.batch.begin()
@@ -194,8 +196,36 @@ class ContinuousModeScreen(private val mainScreen: MainScreen, private val displ
         drawRestartWidget = false
     }
 
+    fun goingToShowAd(): Boolean {
+        return ((retriesWithoutAds >= MAX_RETRIES_BEFORE_AD) ||
+                (lastAdSince >= MAX_TIME_BEFORE_AD))
+    }
+
+    fun restartAdsStats() {
+        retriesWithoutAds = 0
+        lastAdSince = 0f
+    }
+
+    private fun calculateFingerRadius(): Float {
+        val minimumCellHolderInnerSize: Float = SelfGeneratingWorld.WORLD_SIZE.x /
+                (2f.pow(CellContinuousGenerator.CELL_HOLDER_UNTIL_LEVEL + 1))
+
+        val originalRadius = Finger.FINGER_INCH_RADIUS * displayXDPI *
+                SelfGeneratingWorld.WORLD_SIZE.x / Gdx.graphics.width
+
+        return if ((originalRadius * 2f * Finger.FINGER_RADIUS_MARGIN) < minimumCellHolderInnerSize) {
+            /*
+             * Since multiple nesting levels, decrease the overall fluidity of the game, we will increase the finger
+             * radius to the minimum cell holder inner size by the finger required margin.
+            */
+            (minimumCellHolderInnerSize * Finger.FINGER_RADIUS_MARGIN) / 2f
+        } else {
+            originalRadius
+        }
+    }
+
     companion object {
-        private const val MAX_RETRIES_BEFORE_AD: Int = 5
+        private const val MAX_RETRIES_BEFORE_AD: Int = 1
         private const val MAX_TIME_BEFORE_AD: Float = 100f // 100 seconds
     }
 }
