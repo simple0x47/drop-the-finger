@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.math.Vector2
 import com.elementalg.minigame.world.Finger
+import com.elementalg.minigame.world.cells.Cell.Type
 import kotlin.math.*
 
 /**
@@ -64,7 +65,7 @@ abstract class Cell(private val parentCell: CellHolder?, private val type: Type,
      *
      * @return whether or not [finger] is within the cell.
      */
-     fun isFingerWithinCell(finger: Finger): Boolean {
+    fun isFingerWithinCell(finger: Finger): Boolean {
         val fingerPosition: Vector2 = finger.getPosition()
         val cellPosition: Vector2 = getPosition()
 
@@ -106,16 +107,23 @@ abstract class Cell(private val parentCell: CellHolder?, private val type: Type,
      *
      * @return distance of the [point] to the segment defined by [segmentPoint1] and [segmentPoint2].
      */
-    protected fun distanceBetweenSegmentAndPoint(segmentPoint1: Vector2, segmentPoint2: Vector2,
-                                               point: Vector2): Float {
+    protected fun distanceBetweenSegmentAndPoint(
+        segmentPoint1: Vector2, segmentPoint2: Vector2,
+        point: Vector2
+    ): Float {
         if ((min(segmentPoint1.x, segmentPoint2.x) <= point.x && point.x <= max(segmentPoint1.x, segmentPoint2.x)) ||
-                (min(segmentPoint1.y, segmentPoint2.y) <= point.y && point.y <= max(segmentPoint1.y, segmentPoint2.y))) {
+            (min(segmentPoint1.y, segmentPoint2.y) <= point.y && point.y <= max(segmentPoint1.y, segmentPoint2.y))
+        ) {
 
-            return abs(((segmentPoint2.y - segmentPoint1.y) * point.x) -
-                    ((segmentPoint2.x - segmentPoint1.x) * point.y) +
-                    (segmentPoint2.x * segmentPoint1.y) - (segmentPoint2.y * segmentPoint1.x)) /
-                    sqrt((((segmentPoint2.y - segmentPoint1.y).pow(2)) +
-                            (segmentPoint2.x - segmentPoint1.x).pow(2)))
+            return abs(
+                ((segmentPoint2.y - segmentPoint1.y) * point.x) -
+                        ((segmentPoint2.x - segmentPoint1.x) * point.y) +
+                        (segmentPoint2.x * segmentPoint1.y) - (segmentPoint2.y * segmentPoint1.x)
+            ) /
+                    sqrt(
+                        (((segmentPoint2.y - segmentPoint1.y).pow(2)) +
+                                (segmentPoint2.x - segmentPoint1.x).pow(2))
+                    )
         } else if (segmentPoint1.x == segmentPoint2.x) {
             val topPoint: Vector2
             val bottomPoint: Vector2
@@ -183,8 +191,10 @@ abstract class Cell(private val parentCell: CellHolder?, private val type: Type,
                     SquareObstacle(parentCell, innerSize, worldAtlas.findRegion(SquareObstacle.TEXTURE_REGION))
                 }
                 Type.SWEEPER -> {
-                    SweeperObstacle(parentCell, innerSize, worldAtlas.findRegion(SweeperObstacle.TEXTURE_REGION),
-                            SweeperObstacle.DEFAULT_THICKNESS)
+                    SweeperObstacle(
+                        parentCell, innerSize, worldAtlas.findRegion(SweeperObstacle.TEXTURE_REGION),
+                        SweeperObstacle.DEFAULT_THICKNESS
+                    )
                 }
                 Type.V -> {
                     VShapedObstacle(parentCell, innerSize, worldAtlas.findRegion(VShapedObstacle.TEXTURE_REGION))

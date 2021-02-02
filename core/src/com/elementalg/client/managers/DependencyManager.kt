@@ -11,7 +11,6 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGeneratorLoader
 import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader
 import com.elementalg.managers.IUpdatableManager
-import kotlin.jvm.Throws
 
 /**
  * Provides an ability to load and retrieve assets blocks, called [Dependency] obtained from a [dependenciesFile], with
@@ -24,8 +23,10 @@ import kotlin.jvm.Throws
  * @param assetManager instance of [AssetManager] used for this game's instance.
  * @param dependenciesFile [FileHandle] pointed to the dependencies file (XML).
  */
-class DependencyManager private constructor(private val assetManager: AssetManager,
-                                            private val dependenciesFile: FileHandle) : IUpdatableManager {
+class DependencyManager private constructor(
+    private val assetManager: AssetManager,
+    private val dependenciesFile: FileHandle
+) : IUpdatableManager {
 
     private val dependenciesLoadingCache: ArrayList<Dependency> = ArrayList()
 
@@ -71,7 +72,7 @@ class DependencyManager private constructor(private val assetManager: AssetManag
      */
     @Throws(IllegalArgumentException::class)
     fun loadDependencyID(dependencyID: String) {
-        require(dependencyID.isNotEmpty()) {"'dependencyID' is empty."}
+        require(dependencyID.isNotEmpty()) { "'dependencyID' is empty." }
 
         val dependency: Dependency = Dependency.getByID(dependencyID)
 
@@ -106,7 +107,7 @@ class DependencyManager private constructor(private val assetManager: AssetManag
      */
     @Throws(IllegalArgumentException::class)
     fun isDependencyAvailable(dependencyID: String): Boolean {
-        require(dependencyID.isNotEmpty()) {"'dependencyID' is empty."}
+        require(dependencyID.isNotEmpty()) { "'dependencyID' is empty." }
 
         return (Dependency.getByID(dependencyID).getState() == Dependency.State.AVAILABLE)
     }
@@ -120,7 +121,7 @@ class DependencyManager private constructor(private val assetManager: AssetManag
      */
     @Throws(IllegalArgumentException::class)
     fun unloadDependencyID(dependencyID: String) {
-        require(dependencyID.isNotEmpty()) {"'dependencyID' is empty."}
+        require(dependencyID.isNotEmpty()) { "'dependencyID' is empty." }
 
         val dependency: Dependency = Dependency.getByID(dependencyID)
 
@@ -149,7 +150,7 @@ class DependencyManager private constructor(private val assetManager: AssetManag
      */
     @Throws(IllegalArgumentException::class, IllegalStateException::class)
     fun retrieveAssets(dependencyID: String): HashMap<String, Any> {
-        require(dependencyID.isNotEmpty()) {"'dependencyID' is empty."}
+        require(dependencyID.isNotEmpty()) { "'dependencyID' is empty." }
 
         val dependency: Dependency = Dependency.getByID(dependencyID)
 
@@ -180,7 +181,7 @@ class DependencyManager private constructor(private val assetManager: AssetManag
          */
         @Throws(IllegalStateException::class)
         fun build(): DependencyManager {
-            checkNotNull(Gdx.files){"'Gdx' has not been initialized yet, and 'DependencyManager' depends on it."}
+            checkNotNull(Gdx.files) { "'Gdx' has not been initialized yet, and 'DependencyManager' depends on it." }
 
             val assetManager: AssetManager = AssetManager()
             val dependenciesXML: FileHandle = Gdx.files.internal("dependencies.xml")

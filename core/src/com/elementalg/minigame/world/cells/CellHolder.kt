@@ -3,8 +3,7 @@ package com.elementalg.minigame.world.cells
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.math.Vector2
-import kotlin.jvm.Throws
-import kotlin.math.*
+import kotlin.math.floor
 
 /**
  * Holds 4 different instances of [Cell].
@@ -16,7 +15,7 @@ import kotlin.math.*
  * @param worldAtlas atlas containing the texture coordinates for the world related textures.
  */
 class CellHolder(parentCell: CellHolder?, size: Float, private val worldAtlas: TextureAtlas) :
-        Cell(parentCell, Type.HOLDER, size) {
+    Cell(parentCell, Type.HOLDER, size) {
     private val cells: ArrayList<Cell> = ArrayList(HELD_CELLS)
 
     var outputCellPosition: Int = -1
@@ -28,7 +27,7 @@ class CellHolder(parentCell: CellHolder?, size: Float, private val worldAtlas: T
             field = value
         }
     var inputCellPosition: Int = -1
-        set (value) {
+        set(value) {
             if ((value < 0) || (value > HELD_CELLS)) {
                 throw IllegalArgumentException("Tried to assign to 'inputCell' an invalid value.")
             }
@@ -54,7 +53,7 @@ class CellHolder(parentCell: CellHolder?, size: Float, private val worldAtlas: T
      */
     @Throws(IllegalArgumentException::class)
     fun getCell(position: Int): Cell {
-        require(position in 0 until HELD_CELLS) {"'position' is out of the limits."}
+        require(position in 0 until HELD_CELLS) { "'position' is out of the limits." }
 
         return cells[position]
     }
@@ -117,8 +116,10 @@ class CellHolder(parentCell: CellHolder?, size: Float, private val worldAtlas: T
             val multiplierY: Int = if (floor(index / 2f) > 0) 1 else 0
 
 
-            cell.setPosition(holderPosition.x + (multiplierX * cell.getSize()),
-                    holderPosition.y + (multiplierY * cell.getSize()))
+            cell.setPosition(
+                holderPosition.x + (multiplierX * cell.getSize()),
+                holderPosition.y + (multiplierY * cell.getSize())
+            )
         }
     }
 
@@ -132,7 +133,7 @@ class CellHolder(parentCell: CellHolder?, size: Float, private val worldAtlas: T
      */
     @Throws(IllegalStateException::class)
     fun addCell(cellType: Type): Cell {
-        check(cells.size < HELD_CELLS) {"'cells' is full."}
+        check(cells.size < HELD_CELLS) { "'cells' is full." }
         val innerSize: Float = getSize() / 2f
         val cell: Cell = createCell(this, cellType, innerSize, worldAtlas)
 
@@ -156,7 +157,7 @@ class CellHolder(parentCell: CellHolder?, size: Float, private val worldAtlas: T
      */
     @Throws(IllegalArgumentException::class, IllegalStateException::class)
     fun addCell(cellType: Type, position: Int): Cell {
-        require(position in 0 until HELD_CELLS) {"'position' is out of the limits."}
+        require(position in 0 until HELD_CELLS) { "'position' is out of the limits." }
 
         val innerSize: Float = getSize() / 2f
         val cell: Cell = createCell(this, cellType, innerSize, worldAtlas)
@@ -186,6 +187,7 @@ class CellHolder(parentCell: CellHolder?, size: Float, private val worldAtlas: T
 
     companion object {
         const val APPEAR_AFTER_DIFFICULTY: Float = 0.333f
+        const val LEVEL_2_DIFFICULTY: Float = 0.666f
         const val HELD_CELLS: Int = 4
     }
 }

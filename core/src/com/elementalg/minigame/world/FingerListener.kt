@@ -13,8 +13,10 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
  * @param finger instance of finger which will be updated as input events are listened.
  * @param selfGeneratingWorld instance of world in which the finger is located.
  */
-class FingerListener(private val finger: Finger, private val selfGeneratingWorld: SelfGeneratingWorld,
-        private var afterAd: Boolean) : ClickListener() {
+class FingerListener(
+    private val finger: Finger, private val selfGeneratingWorld: SelfGeneratingWorld,
+    private var afterAd: Boolean
+) : ClickListener() {
     private val lastPosition: Vector2 = Vector2()
 
     /**
@@ -23,7 +25,8 @@ class FingerListener(private val finger: Finger, private val selfGeneratingWorld
     override fun touchDown(event: InputEvent?, x: Float, y: Float, pointer: Int, button: Int): Boolean {
         if (pointer == 0) {
             if ((afterAd && (selfGeneratingWorld.getTimerAfterAd() >= SelfGeneratingWorld.WAIT_TIME_AFTER_AD)) ||
-                    (!afterAd)) {
+                (!afterAd)
+            ) {
                 selfGeneratingWorld.start()
 
                 lastPosition.set(x, y)

@@ -11,8 +11,8 @@ import com.elementalg.client.managers.DependencyManager
 import com.elementalg.client.managers.Screen
 import com.elementalg.client.managers.ScreenManager
 import com.elementalg.minigame.Game
-import com.elementalg.minigame.world.Finger
 import com.elementalg.minigame.world.BasicListener
+import com.elementalg.minigame.world.Finger
 import com.elementalg.minigame.world.SelfGeneratingWorld
 import com.elementalg.minigame.world.cells.CellContinuousGenerator
 import kotlin.math.pow
@@ -26,8 +26,10 @@ import kotlin.math.pow
  * @param displayXDPI density of pixels per inch on the x axis.
  * @param displayYDPI density of pixels per inch on the y axis.
  */
-class ContinuousModeScreen(private val mainScreen: MainScreen, private val displayXDPI: Float,
-                           private val displayYDPI: Float) : Screen() {
+class ContinuousModeScreen(
+    private val mainScreen: MainScreen, private val displayXDPI: Float,
+    private val displayYDPI: Float
+) : Screen() {
     private var retriesWithoutAds: Int = 0
     private var lastAdSince: Float = 0f
 
@@ -43,9 +45,11 @@ class ContinuousModeScreen(private val mainScreen: MainScreen, private val displ
 
             if (screen.goingToShowAd()) {
                 screen.selfGeneratingWorld.stopGameOverSound()
-                val adListener: RestartAdsListener = RestartAdsListener(screen,
-                        screen.selfGeneratingWorld,
-                        screen.stage)
+                val adListener: RestartAdsListener = RestartAdsListener(
+                    screen,
+                    screen.selfGeneratingWorld,
+                    screen.stage
+                )
                 adListener.runBeforeAd()
 
                 Game.instance().getAdsBridge().show(adListener)
@@ -58,10 +62,14 @@ class ContinuousModeScreen(private val mainScreen: MainScreen, private val displ
         }
     }
 
-    private val backgroundViewport: FillViewport = FillViewport(SelfGeneratingWorld.WORLD_SIZE.x,
-            SelfGeneratingWorld.WORLD_SIZE.y)
-    private val actorsViewport: StretchViewport = StretchViewport(SelfGeneratingWorld.WORLD_SIZE.x,
-            SelfGeneratingWorld.WORLD_SIZE.y)
+    private val backgroundViewport: FillViewport = FillViewport(
+        SelfGeneratingWorld.WORLD_SIZE.x,
+        SelfGeneratingWorld.WORLD_SIZE.y
+    )
+    private val actorsViewport: StretchViewport = StretchViewport(
+        SelfGeneratingWorld.WORLD_SIZE.x,
+        SelfGeneratingWorld.WORLD_SIZE.y
+    )
     private val userInterfaceViewport: ScreenViewport = ScreenViewport()
     private val stage: Stage = Stage(actorsViewport)
     private val uiStage: Stage = Stage(userInterfaceViewport)
@@ -81,7 +89,7 @@ class ContinuousModeScreen(private val mainScreen: MainScreen, private val displ
 
         val fingerRadius: Float = calculateFingerRadius()
 
-        selfGeneratingWorld = SelfGeneratingWorld(stage, actorsViewport, gameOverListener, this)
+        selfGeneratingWorld = SelfGeneratingWorld(stage, actorsViewport, gameOverListener)
         selfGeneratingWorld.create(dependencyManager, fingerRadius)
 
         restartWindow = RestartWindow(game, mainScreen, RestartListener(this))
@@ -89,8 +97,8 @@ class ContinuousModeScreen(private val mainScreen: MainScreen, private val displ
 
         val assets: HashMap<String, Any> = dependencyManager.retrieveAssets("CONTINUOUS_MODE_SCREEN")
 
-        check(assets.containsKey("Text")) {"ContinuousModeScreen dependency 'Text' is not solved."}
-        check(assets.containsKey("Value")) {"ContinuousModeScreen dependency 'Value' is not solved."}
+        check(assets.containsKey("Text")) { "ContinuousModeScreen dependency 'Text' is not solved." }
+        check(assets.containsKey("Value")) { "ContinuousModeScreen dependency 'Value' is not solved." }
 
         val textFont: BitmapFont = assets["Text"] as BitmapFont
         val valueFont: BitmapFont = assets["Value"] as BitmapFont

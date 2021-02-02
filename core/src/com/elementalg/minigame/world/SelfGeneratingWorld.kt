@@ -11,10 +11,11 @@ import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.elementalg.client.managers.DependencyManager
 import com.elementalg.minigame.Game
-import com.elementalg.minigame.Leaderboard
-import com.elementalg.minigame.screens.ContinuousModeScreen
-import com.elementalg.minigame.world.cells.*
-import kotlin.jvm.Throws
+import com.elementalg.minigame.ILeaderboard
+import com.elementalg.minigame.world.cells.Cell
+import com.elementalg.minigame.world.cells.CellContinuousGenerator
+import com.elementalg.minigame.world.cells.CellHolder
+import com.elementalg.minigame.world.cells.Obstacle
 import kotlin.math.*
 import kotlin.random.Random
 
@@ -28,9 +29,10 @@ import kotlin.random.Random
  * @param stage LibGDX's stage instance instance used at the parent screen.
  * @param worldViewport actor's viewports instance used at the parent screen.
  */
-class SelfGeneratingWorld(private val stage: Stage, private val worldViewport: Viewport,
-                          private val gameOverListener: BasicListener,
-                          private val screen: ContinuousModeScreen) {
+class SelfGeneratingWorld(
+    private val stage: Stage, private val worldViewport: Viewport,
+    private val gameOverListener: BasicListener
+) {
     private val cellHolders: ArrayList<CellHolder> = ArrayList(CELL_HOLDERS)
 
     private val screenBorders: ArrayList<Vector2> = ArrayList()
@@ -39,6 +41,7 @@ class SelfGeneratingWorld(private val stage: Stage, private val worldViewport: V
     private var difficulty: Float = 0f
     private var started: Boolean = false
     private var score: Float = 0f
+    private var backgroundDisplacement: Int = 0
 
     private var afterAd: Boolean = false
     private var timeAfterAd: Float = 0f
@@ -75,7 +78,7 @@ class SelfGeneratingWorld(private val stage: Stage, private val worldViewport: V
      */
     @Throws(IllegalStateException::class)
     private fun initializeFinger(worldAtlas: TextureAtlas, fingerRadius: Float) {
-        check(!this::finger.isInitialized) {"'finger' has already been initialized once."}
+        check(!this::finger.isInitialized) { "'finger' has already been initialized once." }
 
         finger = Finger(worldAtlas, this, worldViewport, fingerRadius)
         finger.updatePosition(WORLD_SIZE.x / 2f, WORLD_SIZE.x / 2f)
@@ -115,16 +118,16 @@ class SelfGeneratingWorld(private val stage: Stage, private val worldViewport: V
      */
     @Throws(IllegalArgumentException::class, IllegalStateException::class)
     private fun generateWorldCellHolder(cellHolderIndex: Int) {
-        require(cellHolderIndex in 0 until CELL_HOLDERS) {"'cellHolderIndex' is out of limits."}
-        check(this::cellGenerator.isInitialized) {"'cellGenerator' has not been initialized yet."}
+        require(cellHolderIndex in 0 until CELL_HOLDERS) { "'cellHolderIndex' is out of limits." }
+        check(this::cellGenerator.isInitialized) { "'cellGenerator' has not been initialized yet." }
 
         val inputCellHolder: CellHolder = if (cellHolderIndex > 0) cellHolders[cellHolderIndex - 1]
-            else cellHolders[CELL_HOLDERS - 1]
+        else cellHolders[CELL_HOLDERS - 1]
 
         val inputPosition: Int = abs(inputCellHolder.outputCellPosition - 3)
         val outputPosition: Int = if (Random.nextBoolean()) 2 else 3
 
-        check(inputPosition in 0..1){"'inputPosition' is not a bottom cell."}
+        check(inputPosition in 0..1) { "'inputPosition' is not a bottom cell." }
 
         cellHolders[cellHolderIndex].outputCellPosition = outputPosition
 
@@ -141,7 +144,7 @@ class SelfGeneratingWorld(private val stage: Stage, private val worldViewport: V
     fun create(dependencyManager: DependencyManager, fingerRadius: Float) {
         val assets: HashMap<String, Any> = dependencyManager.retrieveAssets("WORLD")
 
-        check (assets.containsKey("WorldAtlas")) {"World dependency 'CellsAtlas' is not solved."}
+        check(assets.containsKey("WorldAtlas")) { "World dependency 'CellsAtlas' is not solved." }
 
         worldAtlas = assets["WorldAtlas"] as TextureAtlas
 
@@ -171,10 +174,11 @@ class SelfGeneratingWorld(private val stage: Stage, private val worldViewport: V
      * @param batch batch used for drawing the world's actors.
      */
     fun render(batch: Batch) {
-        timeAfterAd += Gdx.graphics.deltaTime
+        val deltaTime: Float = Gdx.graphics.deltaTime
+        timeAfterAd += deltaTime
 
         if (started) {
-            score += Gdx.graphics.deltaTime
+            score += deltaTime
 
             when {
                 (score <= TIME_UNTIL_MAX_DIFFICULTY) -> {
@@ -194,12 +198,13 @@ class SelfGeneratingWorld(private val stage: Stage, private val worldViewport: V
             }
         }
 
-        val distance: Float = (speed * score) * UNIT_TO_PIXELS * 10
-        val location: Int = if (distance >= Int.MAX_VALUE) (distance - floor(distance / Int.MAX_VALUE)).toInt()
-        else distance.toInt()
+        val deltaSpeed: Float = speed * FPS_60
+        backgroundDisplacement = (backgroundDisplacement + ceil(deltaSpeed).toInt()) % WORLD_BACKGROUND_SIZE
 
-        batch.draw(worldBackground, 0f, 0f, WORLD_SIZE.x, WORLD_SIZE.y, 0, location,
-                WORLD_BACKGROUND_SIZE, WORLD_BACKGROUND_SIZE, false, false)
+        batch.draw(
+            worldBackground, 0f, 0f, WORLD_SIZE.x, WORLD_SIZE.y, 0, backgroundDisplacement,
+            WORLD_BACKGROUND_SIZE, WORLD_BACKGROUND_SIZE, false, false
+        )
 
         if (started && isCollidingFingerWithScreenBorders(finger)) {
             gameOver()
@@ -212,7 +217,7 @@ class SelfGeneratingWorld(private val stage: Stage, private val worldViewport: V
             cellHolder.draw(batch)
 
             if (started) {
-                displaceCellHolder(cellHolder)
+                displaceCellHolder(cellHolder, deltaSpeed)
 
                 if (cellHolderCount < 2) {
                     if (cellHolder.isFingerWithinCell(finger)) {
@@ -238,11 +243,13 @@ class SelfGeneratingWorld(private val stage: Stage, private val worldViewport: V
 
         for (line: Int in 0..3) {
             val firstPoint: Vector2 = screenBorders[line]
-            val secondPoint: Vector2 = screenBorders[if ((line + 1 ) > 3) 0 else (line + 1)]
+            val secondPoint: Vector2 = screenBorders[if ((line + 1) > 3) 0 else (line + 1)]
 
-            val distance: Float = abs((secondPoint.y - firstPoint.y) * fingerPosition.x -
-                    (secondPoint.x - firstPoint.x) * fingerPosition.y +
-                    secondPoint.x * firstPoint.y - secondPoint.y * firstPoint.x) /
+            val distance: Float = abs(
+                (secondPoint.y - firstPoint.y) * fingerPosition.x -
+                        (secondPoint.x - firstPoint.x) * fingerPosition.y +
+                        secondPoint.x * firstPoint.y - secondPoint.y * firstPoint.x
+            ) /
                     sqrt((secondPoint.y - firstPoint.y).pow(2) + (secondPoint.x - firstPoint.x).pow(2))
 
             if (distance <= finger.getRadius()) {
@@ -283,14 +290,15 @@ class SelfGeneratingWorld(private val stage: Stage, private val worldViewport: V
      * Displaces a world cell holder accordingly to the current [speed].
      *
      * @param cellHolder instance of world's cell holder to be displaced.
+     * @param deltaSpeed speed of the frame.
      */
-    private fun displaceCellHolder(cellHolder: CellHolder) {
-        cellHolder.setPosition(cellHolder.getPosition().sub(0f, speed))
+    private fun displaceCellHolder(cellHolder: CellHolder, deltaSpeed: Float) {
+        cellHolder.setPosition(cellHolder.getPosition().sub(0f, deltaSpeed))
 
-        if (cellHolder.getPosition().y <= ( -1 * WORLD_SIZE.x)) { // if it's under the screen
+        if (cellHolder.getPosition().y <= (-1 * WORLD_SIZE.x)) { // if it's under the screen
             generateWorldCellHolder(cellHolders.indexOf(cellHolder))
 
-            cellHolder.setPosition(cellHolder.getPosition().x,  WORLD_SIZE.y)
+            cellHolder.setPosition(cellHolder.getPosition().x, WORLD_SIZE.y)
         }
     }
 
@@ -371,7 +379,7 @@ class SelfGeneratingWorld(private val stage: Stage, private val worldViewport: V
 
         theme.stop()
 
-        val leaderboard: Leaderboard = Game.instance().getLeaderboard()
+        val leaderboard: ILeaderboard = Game.instance().getLeaderboard()
 
         if (leaderboard.getHighScore() >= score) {
             gameOverSound.stop()
@@ -430,17 +438,18 @@ class SelfGeneratingWorld(private val stage: Stage, private val worldViewport: V
 
     companion object {
         const val CELL_HOLDERS: Int = 3
-        const val UNIT_TO_PIXELS: Int = 100
 
         const val WORLD_BACKGROUND_SIZE: Int = 2048
         const val WORLD_THEME_VOLUME: Float = 0.2f
 
-        const val MAX_SPEED: Float = 0.055f
-        const val MIN_SPEED: Float = 0.025f
+        const val MAX_SPEED: Float = 3.3f
+        const val MIN_SPEED: Float = 1.5f
         const val TIME_UNTIL_MAX_DIFFICULTY: Float = 37f // seconds
         const val WAIT_TIME_AFTER_AD: Float = 0.3f
 
+        const val FPS_60: Float = 1/60f
         val WORLD_SIZE: Vector2 = Vector2(8f, 16f)
+
 
         // Powered to the square in order to increase fast movement detection's efficiency.
         val FAST_MOVEMENT_DISTANCE_SQUARED: Float = WORLD_SIZE.x.pow(2)

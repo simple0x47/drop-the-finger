@@ -10,4 +10,6 @@
     <string name="retrying_sign_in">Retrying to sign in…</string>
     <string name="failed_sign_in">Failed to sign in with Google Play Services.</string>
     <string name="updating_gps">Updating Google Play Services…</string>
+    <string name="goodbye">Goodbye!</string>
+    <string name="loading">Loading…</string>
 </resources>

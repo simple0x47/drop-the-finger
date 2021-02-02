@@ -64,7 +64,7 @@ class ScreenManager private constructor() : IUpdatableManager {
          * @return instance of [ScreenManager].
          */
         fun build(): ScreenManager {
-            checkNotNull(Gdx.graphics){"'Gdx' has not been initalized yet, and 'ScreenManager' depends on it."}
+            checkNotNull(Gdx.graphics) { "'Gdx' has not been initalized yet, and 'ScreenManager' depends on it." }
 
             return ScreenManager()
         }

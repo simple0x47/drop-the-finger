@@ -1,6 +1,6 @@
 package com.elementalg.minigame
 
-interface Leaderboard {
+interface ILeaderboard {
     fun addScore(score: Float)
     fun getHighScore(): Float
     fun getWorldHighScore(): Float

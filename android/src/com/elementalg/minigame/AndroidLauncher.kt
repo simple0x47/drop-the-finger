@@ -1,14 +1,19 @@
+/*
+Code not removed because it may provide to be helpful for those looking for an implementation of Google's Leaderboard
+and AdMob into a LibGDX game.
+
 package com.elementalg.minigame
+
 
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
-import com.badlogic.gdx.backends.android.AndroidApplication
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.multidex.MultiDex
+import com.badlogic.gdx.backends.android.AndroidApplication
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration
 import com.google.android.gms.auth.api.Auth
 import com.google.android.gms.auth.api.signin.*
@@ -18,9 +23,15 @@ import com.google.android.gms.games.Games
 import com.google.android.gms.games.LeaderboardsClient
 import java.util.*
 
+/**
+ * Launcher used for release versions.
+ *
+ * @author Gabriel Amihalachioaie.
+ */
 class AndroidLauncher : AndroidApplication() {
     private lateinit var game: Game
     private lateinit var adMob: AdMobImplementation
+    private lateinit var leaderboard: GoogleLeaderboard
 
     override fun attachBaseContext(newBase: Context?) {
         super.attachBaseContext(newBase)
@@ -35,7 +46,10 @@ class AndroidLauncher : AndroidApplication() {
         windowManager.defaultDisplay.getRealMetrics(displayMetrics)
 
         val config = AndroidApplicationConfiguration()
-        config.numSamples = 4
+        config.numSamples = 2
+        config.useImmersiveMode = true
+
+        Toast.makeText(context, R.string.loading, Toast.LENGTH_SHORT).show()
 
         adMob = AdMobImplementation(this)
         adMob.onCreate(context)
@@ -43,8 +57,10 @@ class AndroidLauncher : AndroidApplication() {
 
         val onScreenNotification: AndroidOnScreenNotification = AndroidOnScreenNotification(this)
 
-        game = Game(Locale.getDefault(), displayMetrics.xdpi, displayMetrics.ydpi,
-                adMob, onScreenNotification)
+        game = Game(
+            Locale.getDefault(), displayMetrics.xdpi, displayMetrics.ydpi,
+            adMob, onScreenNotification
+        )
 
         initialize(game, config)
     }
@@ -64,14 +80,11 @@ class AndroidLauncher : AndroidApplication() {
             if (result != null) {
                 if (result.isSuccess && (result.signInAccount != null)) {
                     retrieveLeaderboard(result.signInAccount!!)
-                }
-                else {
+                } else {
                     if (result.status.hasResolution()) {
-
                         Toast.makeText(context, R.string.retrying_sign_in, Toast.LENGTH_LONG).show()
                         signIn()
-                    }
-                    else {
+                    } else {
                         Toast.makeText(context, R.string.failed_sign_in, Toast.LENGTH_SHORT).show()
                         finishAffinity()
                     }
@@ -91,8 +104,7 @@ class AndroidLauncher : AndroidApplication() {
 
                 retryDialogBuilder.show()
             }
-        }
-        else if (requestCode == RC_GOOGLE_API_FIX) {
+        } else if (requestCode == RC_GOOGLE_API_FIX) {
             Thread {
                 Thread.sleep(GOOGLE_API_WAIT)
                 checkGoogleApiAvailability()
@@ -139,14 +151,12 @@ class AndroidLauncher : AndroidApplication() {
             client.silentSignIn().addOnCompleteListener {
                 if (it.isSuccessful && (it.result != null)) {
                     retrieveLeaderboard(it.result!!)
-                }
-                else {
+                } else {
                     Toast.makeText(context, R.string.signing_in, Toast.LENGTH_SHORT).show()
                     startActivityForResult(client.signInIntent, RC_SIGN_IN)
                 }
             }
-        }
-        else {
+        } else {
             retrieveLeaderboard(account)
         }
     }
@@ -154,7 +164,7 @@ class AndroidLauncher : AndroidApplication() {
     private fun retrieveLeaderboard(account: GoogleSignInAccount) {
         val leaderboardClient: LeaderboardsClient = Games.getLeaderboardsClient(context, account)
 
-        val leaderboard: GoogleLeaderboard = GoogleLeaderboard(this, leaderboardClient)
+        leaderboard = GoogleLeaderboard(this, leaderboardClient)
 
         game.initializeLeaderboard(leaderboard)
     }
@@ -162,8 +172,9 @@ class AndroidLauncher : AndroidApplication() {
     companion object {
         private const val RC_SIGN_IN: Int = 0x1010
         private const val RC_GOOGLE_API_FIX: Int = 0x1100
-        
+
         private const val GOOGLE_API_WAIT: Long = 500L
         private const val GOOGLE_API_UPDATING_WAIT: Long = 2000L
     }
 }
+*/

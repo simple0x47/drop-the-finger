@@ -8,7 +8,6 @@ import com.elementalg.client.managers.ScreenManager
 import com.elementalg.managers.EventManager
 import com.elementalg.minigame.screens.MainScreen
 import java.util.*
-import kotlin.jvm.Throws
 
 /**
  * Main class which implements all the required essential methods.
@@ -20,10 +19,11 @@ import kotlin.jvm.Throws
  * @param displayXDPI density of pixels per inch on the x axis.
  * @param displayYDPI density of pixels per inch on the y axis.
  */
-class Game(private val systemLocale: Locale, private val displayXDPI: Float,
-           private val displayYDPI: Float, private val adsBridge: IAdsBridge,
-           private val systemNotification: IOperatingSystemOnScreenNotification)
-    : ApplicationAdapter() {
+class Game(
+    private val systemLocale: Locale, private val displayXDPI: Float,
+    private val displayYDPI: Float, private val adsBridge: IAdsBridge,
+    private val systemNotification: IOperatingSystemOnScreenNotification
+) : ApplicationAdapter() {
 
     private val eventManager: EventManager = EventManager()
 
@@ -31,7 +31,7 @@ class Game(private val systemLocale: Locale, private val displayXDPI: Float,
     private lateinit var localeManager: LocaleManager
     private lateinit var screenManager: ScreenManager
 
-    private lateinit var leaderboard: Leaderboard
+    private lateinit var leaderboard: ILeaderboard
 
     private val fpsLogger: FPSLogger = FPSLogger()
 
@@ -43,7 +43,7 @@ class Game(private val systemLocale: Locale, private val displayXDPI: Float,
      * @return instance of [DependencyManager].
      */
     fun getDependencyManager(): DependencyManager {
-        check(this::dependencyManager.isInitialized){"'dependencyManager' has not been initialized yet."}
+        check(this::dependencyManager.isInitialized) { "'dependencyManager' has not been initialized yet." }
 
         return dependencyManager
     }
@@ -56,7 +56,7 @@ class Game(private val systemLocale: Locale, private val displayXDPI: Float,
      * @return instance of [LocaleManager].
      */
     fun getLocaleManager(): LocaleManager {
-        check(this::localeManager.isInitialized){"'localeManager' has not been initialized yet."}
+        check(this::localeManager.isInitialized) { "'localeManager' has not been initialized yet." }
 
         return localeManager
     }
@@ -69,24 +69,24 @@ class Game(private val systemLocale: Locale, private val displayXDPI: Float,
      * @return instance of [ScreenManager].
      */
     fun getScreenManager(): ScreenManager {
-        check(this::screenManager.isInitialized){"'screenManager' has not been initialized yet."}
+        check(this::screenManager.isInitialized) { "'screenManager' has not been initialized yet." }
 
         return screenManager
     }
 
-    fun getAdsBridge() : IAdsBridge {
+    fun getAdsBridge(): IAdsBridge {
         return adsBridge
     }
 
-    fun getOnScreenNotification() : IOperatingSystemOnScreenNotification {
+    fun getOnScreenNotification(): IOperatingSystemOnScreenNotification {
         return systemNotification
     }
 
-    fun initializeLeaderboard(leaderboard: Leaderboard) {
+    fun initializeLeaderboard(leaderboard: ILeaderboard) {
         this.leaderboard = leaderboard
     }
 
-    fun getLeaderboard(): Leaderboard {
+    fun getLeaderboard(): ILeaderboard {
         if (!this::leaderboard.isInitialized) {
             throw IllegalStateException("'leaderboard' has not been initialized yet.")
         }
@@ -149,7 +149,7 @@ class Game(private val systemLocale: Locale, private val displayXDPI: Float,
 
         @Throws(IllegalStateException::class)
         fun instance(): Game {
-            check(this::gameInstance.isInitialized){"'gameInstance' has not been initialized yet."}
+            check(this::gameInstance.isInitialized) { "'gameInstance' has not been initialized yet." }
 
             return gameInstance
         }
