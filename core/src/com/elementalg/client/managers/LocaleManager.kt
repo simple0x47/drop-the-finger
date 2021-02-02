@@ -6,7 +6,6 @@ import com.badlogic.gdx.utils.Array
 import com.badlogic.gdx.utils.XmlReader
 import com.elementalg.managers.IManager
 import java.util.*
-import kotlin.jvm.Throws
 
 /**
  * Simplifies the implementation of different languages into a game, by making usage of a language file (XML).
@@ -20,7 +19,7 @@ class LocaleManager @Throws(IllegalArgumentException::class) private constructor
     IManager {
 
     init {
-        require(dataXML.length() > 0L) {"'dataXML' is empty."}
+        require(dataXML.length() > 0L) { "'dataXML' is empty." }
     }
 
     override fun create() {
@@ -39,7 +38,7 @@ class LocaleManager @Throws(IllegalArgumentException::class) private constructor
      */
     @Throws(IllegalArgumentException::class)
     fun set(dataXML: FileHandle) {
-        require(dataXML.length() > 0L) {"'dataXML' is empty."}
+        require(dataXML.length() > 0L) { "'dataXML' is empty." }
 
         this.dataXML = dataXML
     }
@@ -52,7 +51,7 @@ class LocaleManager @Throws(IllegalArgumentException::class) private constructor
      */
     @Throws(IllegalArgumentException::class)
     fun get(stringID: String): String {
-        require(stringID.isNotEmpty()) {"'stringID' is empty."}
+        require(stringID.isNotEmpty()) { "'stringID' is empty." }
 
         val xmlRoot: XmlReader.Element = XmlReader().parse(dataXML)
         val xmlChildren: Array<XmlReader.Element> = xmlRoot.getChildrenByName("string")
@@ -74,7 +73,7 @@ class LocaleManager @Throws(IllegalArgumentException::class) private constructor
      */
     @Throws(IllegalArgumentException::class)
     fun getByCode(code: String): String {
-        require(code.isNotEmpty()) {"'code' is empty."}
+        require(code.isNotEmpty()) { "'code' is empty." }
 
         val xmlRoot: XmlReader.Element = XmlReader().parse(code)
         val xmlChildren: Array<XmlReader.Element> = xmlRoot.getChildrenByName("string")
@@ -103,7 +102,7 @@ class LocaleManager @Throws(IllegalArgumentException::class) private constructor
          * @return instance of [LocaleManager].
          */
         fun build(locale: Locale): LocaleManager {
-            checkNotNull(Gdx.files){"'Gdx' has not been initialized yet, and 'LocaleManager' depends on it."}
+            checkNotNull(Gdx.files) { "'Gdx' has not been initialized yet, and 'LocaleManager' depends on it." }
 
             var dataXML: FileHandle = Gdx.files.internal("$LANG_DIRECTORY/${locale.language}.xml")
 

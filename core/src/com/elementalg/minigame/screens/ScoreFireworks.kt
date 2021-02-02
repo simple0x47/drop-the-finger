@@ -9,8 +9,10 @@ import kotlin.math.max
 import kotlin.math.min
 import kotlin.random.Random
 
-class ScoreFireworks(private val position: Vector2, private val size: Vector2,
-                     private val totalFireworks: Int, scoreAtlas: TextureAtlas) {
+class ScoreFireworks(
+    private val position: Vector2, private val size: Vector2,
+    private val totalFireworks: Int, scoreAtlas: TextureAtlas
+) {
     private val scoreFireworkAnimation02: Animation<TextureRegion>
     private val scoreFireworkAnimation03: Animation<TextureRegion>
 
@@ -22,14 +24,18 @@ class ScoreFireworks(private val position: Vector2, private val size: Vector2,
     private var latestFireworkType: Int = 0
 
     init {
-        scoreFireworkAnimation02 = Animation(ANIMATION_FRAME_DURATION,
-                scoreAtlas.findRegions(ANIMATION_02_BASE_KEY))
-        scoreFireworkAnimation03 = Animation(ANIMATION_FRAME_DURATION,
-                scoreAtlas.findRegions(ANIMATION_03_BASE_KEY))
+        scoreFireworkAnimation02 = Animation(
+            ANIMATION_FRAME_DURATION,
+            scoreAtlas.findRegions(ANIMATION_02_BASE_KEY)
+        )
+        scoreFireworkAnimation03 = Animation(
+            ANIMATION_FRAME_DURATION,
+            scoreAtlas.findRegions(ANIMATION_03_BASE_KEY)
+        )
     }
 
     private fun generateFirework() {
-        val nextAnimationId: Int =  if (latestFireworkType == 0) {
+        val nextAnimationId: Int = if (latestFireworkType == 0) {
             Random.nextInt(2, 4)
         } else {
             if (latestFireworkType == 2) 3 else 2
@@ -38,8 +44,10 @@ class ScoreFireworks(private val position: Vector2, private val size: Vector2,
         val nextAnimation: Animation<TextureRegion> = if (nextAnimationId == 2)
             scoreFireworkAnimation02 else scoreFireworkAnimation03
 
-        val nextAnimationSize: Float = max(ANIMATION_MINIMUM_SIZE,
-               min(size.x, size.y) * Random.nextFloat())
+        val nextAnimationSize: Float = max(
+            ANIMATION_MINIMUM_SIZE,
+            min(size.x, size.y) * Random.nextFloat()
+        )
 
         val nextAnimationPosition: Vector2 = Vector2()
 
@@ -90,7 +98,7 @@ class ScoreFireworks(private val position: Vector2, private val size: Vector2,
     }
 
     companion object {
-        private const val ANIMATION_02_BASE_KEY= "Fireworks02"
+        private const val ANIMATION_02_BASE_KEY = "Fireworks02"
         private const val ANIMATION_03_BASE_KEY = "Fireworks03"
         private const val ANIMATION_FRAME_DURATION = 0.02f
 

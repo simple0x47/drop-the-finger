@@ -16,7 +16,6 @@ import com.elementalg.client.managers.DependencyManager
 import com.elementalg.client.managers.Screen
 import com.elementalg.client.managers.ScreenManager
 import com.elementalg.minigame.Game
-import kotlin.jvm.Throws
 
 /**
  * Screen containing the main menu of the game.
@@ -35,9 +34,10 @@ class MainScreen(private val displayXDPI: Float, private val displayYDPI: Float)
      * the passed instance of [ContinuousModeScreen].
      * @param modeScreen instance of [ContinuousModeScreen] to be shown when the button is clicked.
      */
-    private class PlayButtonListener(private val screenManager: ScreenManager,
-                                     private val modeScreen: ContinuousModeScreen)
-        : ClickListener() {
+    private class PlayButtonListener(
+        private val screenManager: ScreenManager,
+        private val modeScreen: ContinuousModeScreen
+    ) : ClickListener() {
         override fun clicked(event: InputEvent?, x: Float, y: Float) {
             screenManager.setActiveScreen(modeScreen)
 
@@ -74,7 +74,7 @@ class MainScreen(private val displayXDPI: Float, private val displayYDPI: Float)
     private lateinit var playButton: Button
     private lateinit var highScoreButton: Button
     private lateinit var logo: Button
-    
+
     private lateinit var modeScreen: ContinuousModeScreen
 
     /**

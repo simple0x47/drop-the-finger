@@ -21,7 +21,7 @@ class ScoreMessage(private val type: Type) {
     private val allIndexes: ArrayList<Int> = ArrayList()
 
     init {
-        val maxIndex: Int = when(type) {
+        val maxIndex: Int = when (type) {
             Type.GOOD -> MAX_GOOD_MESSAGE
             Type.NEUTRAL -> MAX_NEUTRAL_MESSAGE
             Type.BAD -> MAX_BAD_MESSAGE
@@ -65,19 +65,19 @@ class ScoreMessage(private val type: Type) {
             val availableIndexes: Set<Int> = allIndexes.subtract(usedIndexes)
 
             if (availableIndexes.isEmpty()) {
-                val dropIndex: Int = usedIndexes[Random.nextInt(0,
-                        max(usedIndexes.size - 1, 1))]
+                val dropIndex: Int = usedIndexes[Random.nextInt(
+                    0,
+                    max(usedIndexes.size - 1, 1)
+                )]
                 usedIndexes.remove(dropIndex)
 
                 dropIndex
-            }
-            else {
+            } else {
                 val randomSelection: Int = Random.nextInt(0, availableIndexes.size)
 
                 availableIndexes.elementAt(randomSelection)
             }
-        }
-        else {
+        } else {
             Random.nextInt(1, allIndexes.last() + 1)
         }
 

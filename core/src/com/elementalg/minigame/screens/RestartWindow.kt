@@ -20,8 +20,10 @@ import com.elementalg.minigame.Game
 import com.elementalg.minigame.world.BasicListener
 
 class RestartWindow(private val game: Game, mainScreen: MainScreen, restartListener: BasicListener) {
-    private class RestartButtonListener(private val restartWindow: RestartWindow,
-                                        private val restartListener: BasicListener) : ClickListener() {
+    private class RestartButtonListener(
+        private val restartWindow: RestartWindow,
+        private val restartListener: BasicListener
+    ) : ClickListener() {
         override fun clicked(event: InputEvent?, x: Float, y: Float) {
             restartWindow.hide()
 
@@ -31,9 +33,11 @@ class RestartWindow(private val game: Game, mainScreen: MainScreen, restartListe
         }
     }
 
-    private class BackButtonListener(private val restartWindow: RestartWindow, private val screenManager: ScreenManager,
-                                     private val mainScreen: MainScreen) :
-            ClickListener() {
+    private class BackButtonListener(
+        private val restartWindow: RestartWindow, private val screenManager: ScreenManager,
+        private val mainScreen: MainScreen
+    ) :
+        ClickListener() {
         override fun clicked(event: InputEvent?, x: Float, y: Float) {
             restartWindow.hide()
             screenManager.setActiveScreen(mainScreen)
@@ -45,10 +49,14 @@ class RestartWindow(private val game: Game, mainScreen: MainScreen, restartListe
     private val actorsViewport: FitViewport = FitViewport(1024f, 1024f)
     private val stage: Stage = Stage(actorsViewport)
 
-    private val restartButtonListener: RestartButtonListener = RestartButtonListener(this,
-            restartListener)
-    private val backButtonListener: BackButtonListener = BackButtonListener(this, game.getScreenManager(),
-            mainScreen)
+    private val restartButtonListener: RestartButtonListener = RestartButtonListener(
+        this,
+        restartListener
+    )
+    private val backButtonListener: BackButtonListener = BackButtonListener(
+        this, game.getScreenManager(),
+        mainScreen
+    )
 
     private lateinit var restartButton: Button
     private lateinit var backButton: Button
@@ -66,7 +74,7 @@ class RestartWindow(private val game: Game, mainScreen: MainScreen, restartListe
     fun create() {
         val dependencyManager = game.getDependencyManager()
 
-        check(dependencyManager.isDependencyAvailable(DEPENDENCY_NAME)){"'$DEPENDENCY_NAME' is not loaded yet."}
+        check(dependencyManager.isDependencyAvailable(DEPENDENCY_NAME)) { "'$DEPENDENCY_NAME' is not loaded yet." }
 
         val assets: HashMap<String, Any> = dependencyManager.retrieveAssets(DEPENDENCY_NAME)
 
@@ -108,8 +116,10 @@ class RestartWindow(private val game: Game, mainScreen: MainScreen, restartListe
 
         val fireworksPosition: Vector2 = Vector2(100f, 766f)
         val fireworksSize: Vector2 = Vector2(824f, 212f)
-        scoreFireworks = ScoreFireworks(fireworksPosition, fireworksSize,
-                MAX_FIREWORKS, atlas)
+        scoreFireworks = ScoreFireworks(
+            fireworksPosition, fireworksSize,
+            MAX_FIREWORKS, atlas
+        )
 
         highScoreMusic = assets[HIGH_SCORE_MUSIC] as Music
     }
@@ -127,8 +137,7 @@ class RestartWindow(private val game: Game, mainScreen: MainScreen, restartListe
 
         if (previousHighScore < score) {
             scoreTitle.setText(localeManager.get("RESTART_HIGH_SCORE_TITLE"))
-        }
-        else {
+        } else {
             scoreTitle.setText(localeManager.get("RESTART_SCORE_TITLE"))
         }
 
@@ -137,7 +146,7 @@ class RestartWindow(private val game: Game, mainScreen: MainScreen, restartListe
         val messageType: ScoreMessage.Type = when {
             score > worldHighScore -> ScoreMessage.Type.GOAT
             score > previousHighScore -> ScoreMessage.Type.GOOD
-            (score <= previousHighScore) && (score > PATHETIC_SCORE)  -> ScoreMessage.Type.NEUTRAL
+            (score <= previousHighScore) && (score > PATHETIC_SCORE) -> ScoreMessage.Type.NEUTRAL
             else -> ScoreMessage.Type.BAD
         }
 
@@ -207,7 +216,7 @@ class RestartWindow(private val game: Game, mainScreen: MainScreen, restartListe
         private const val SCORE_VALUE_FONT: String = "ScoreValue"
         private const val HIGH_SCORE_MUSIC: String = "HighScore"
 
-        private const val PATHETIC_SCORE: Float = 3f
+        private const val PATHETIC_SCORE: Float = 10f
 
         private const val MAX_FIREWORKS: Int = 30
 

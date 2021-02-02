@@ -20,12 +20,12 @@
         <asset id="WorldBackground" class="com.badlogic.gdx.graphics.Texture">
             WorldBackground.png
         </asset>
-		<asset id="WorldTheme" class="com.badlogic.gdx.audio.Music">
+        <asset id="WorldTheme" class="com.badlogic.gdx.audio.Music">
             WorldTheme.mp3
         </asset>
-		<asset id="Hit" class="com.badlogic.gdx.audio.Music">
-			Hit.mp3
-		</asset>
+        <asset id="Hit" class="com.badlogic.gdx.audio.Music">
+            Hit.mp3
+        </asset>
     </dependency>
     <dependency id="RESTART_WIDGET" path="widgets/restart/" forceLoad="true">
         <asset id="RestartWidgetAtlas" class="com.badlogic.gdx.graphics.g2d.TextureAtlas">

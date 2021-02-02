@@ -2,7 +2,6 @@ package com.elementalg.minigame.world.cells
 
 import com.elementalg.minigame.world.Finger
 import com.elementalg.minigame.world.SelfGeneratingWorld
-import kotlin.jvm.Throws
 import kotlin.math.abs
 import kotlin.math.min
 import kotlin.math.pow
@@ -25,7 +24,7 @@ class CellContinuousGenerator(fingerRadius: Float) {
     private val innerSizesByLevel: ArrayList<Float> = ArrayList(CELL_HOLDER_UNTIL_LEVEL + 1)
 
     init {
-        for (i: Int in 0 .. CELL_HOLDER_UNTIL_LEVEL) {
+        for (i: Int in 0..CELL_HOLDER_UNTIL_LEVEL) {
             innerSizesByLevel.add(SelfGeneratingWorld.WORLD_SIZE.x / (2f.pow(i + 1)))
         }
     }
@@ -115,10 +114,13 @@ class CellContinuousGenerator(fingerRadius: Float) {
      *
      * @return whether or not the cell must be passable.
      */
-    private fun canBeCellPositionAnObstacle(cellHolderBeingGenerated: CellHolder, cellPosition: Int,
-                                            route: Route): Boolean {
+    private fun canBeCellPositionAnObstacle(
+        cellHolderBeingGenerated: CellHolder, cellPosition: Int,
+        route: Route
+    ): Boolean {
         return if ((cellPosition == cellHolderBeingGenerated.inputCellPosition) ||
-                (cellPosition == cellHolderBeingGenerated.outputCellPosition)) {
+            (cellPosition == cellHolderBeingGenerated.outputCellPosition)
+        ) {
             false
         } else { // Bridge cells.
             when (route) {
@@ -158,11 +160,15 @@ class CellContinuousGenerator(fingerRadius: Float) {
         }
     }
 
-    private fun retrieveInputCellPosition(cellHolderBeingGenerated: CellHolder,
-                                          previousCell: Cell): Int {
+    private fun retrieveInputCellPosition(
+        cellHolderBeingGenerated: CellHolder,
+        previousCell: Cell
+    ): Int {
         if ((cellHolderBeingGenerated.level != previousCell.level) && (previousCell is CellHolder)) {
-            throw IllegalArgumentException("Cell holders must have the same level at " +
-                    "'retrieveInputCellPosition'.")
+            throw IllegalArgumentException(
+                "Cell holders must have the same level at " +
+                        "'retrieveInputCellPosition'."
+            )
         }
 
         if ((cellHolderBeingGenerated.level == 0) && (previousCell.level == 0)) {
@@ -182,7 +188,8 @@ class CellContinuousGenerator(fingerRadius: Float) {
 
                     if (previousCell is CellHolder) {
                         if (((cellPosition == 0) && (previousPosition == 1)) ||
-                                ((cellPosition == 3) && (previousPosition == 2))) {
+                            ((cellPosition == 3) && (previousPosition == 2))
+                        ) {
                             return when {
                                 (previousCell.outputCellPosition == 0) -> {
                                     1
@@ -195,7 +202,8 @@ class CellContinuousGenerator(fingerRadius: Float) {
                                 }
                             }
                         } else if (((cellPosition == 1) && (previousPosition == 0)) ||
-                                ((cellPosition == 2) && (previousPosition == 3))) {
+                            ((cellPosition == 2) && (previousPosition == 3))
+                        ) {
                             return when {
                                 (previousCell.outputCellPosition == 1) -> {
                                     0
@@ -208,7 +216,8 @@ class CellContinuousGenerator(fingerRadius: Float) {
                                 }
                             }
                         } else if (((cellPosition == 3) && (previousPosition == 0)) ||
-                                ((cellPosition == 2) && (previousPosition == 1))) {
+                            ((cellPosition == 2) && (previousPosition == 1))
+                        ) {
                             return when {
                                 (previousCell.outputCellPosition == 3) -> {
                                     0
@@ -225,13 +234,16 @@ class CellContinuousGenerator(fingerRadius: Float) {
                         }
                     } else {
                         return if (((cellPosition == 0) && (previousPosition == 1)) ||
-                                ((cellPosition == 3) && (previousPosition == 2))) {
+                            ((cellPosition == 3) && (previousPosition == 2))
+                        ) {
                             if (Random.nextBoolean()) 1 else 2
                         } else if (((cellPosition == 1) && (previousPosition == 0)) ||
-                                ((cellPosition == 2) && (previousPosition == 3))) {
+                            ((cellPosition == 2) && (previousPosition == 3))
+                        ) {
                             if (Random.nextBoolean()) 0 else 3
                         } else if (((cellPosition == 3) && (previousPosition == 0)) ||
-                                ((cellPosition == 2) && (previousPosition == 1))) {
+                            ((cellPosition == 2) && (previousPosition == 1))
+                        ) {
                             if (Random.nextBoolean()) 0 else 1
                         } else {
                             throw IllegalStateException("Movement cannot go downwards.")
@@ -250,7 +262,8 @@ class CellContinuousGenerator(fingerRadius: Float) {
 
                         if (previousCell is CellHolder) {
                             if (((cellPosition == 0) && (previousPosition == 1)) ||
-                                    ((cellPosition == 3) && (previousPosition == 2))) {
+                                ((cellPosition == 3) && (previousPosition == 2))
+                            ) {
                                 return when {
                                     (previousCell.outputCellPosition == 2) -> {
                                         3
@@ -263,7 +276,8 @@ class CellContinuousGenerator(fingerRadius: Float) {
                                     }
                                 }
                             } else if (((cellPosition == 1) && (previousPosition == 0)) ||
-                                    ((cellPosition == 2) && (previousPosition == 3))) {
+                                ((cellPosition == 2) && (previousPosition == 3))
+                            ) {
                                 return when {
                                     (previousCell.outputCellPosition == 3) -> {
                                         2
@@ -279,7 +293,8 @@ class CellContinuousGenerator(fingerRadius: Float) {
                                     }
                                 }
                             } else if (((cellPosition == 0) && (previousPosition == 3)) ||
-                                    ((cellPosition == 1) && (previousPosition == 2))) {
+                                ((cellPosition == 1) && (previousPosition == 2))
+                            ) {
                                 return when {
                                     (previousCell.outputCellPosition == 3) -> {
                                         0
@@ -297,13 +312,16 @@ class CellContinuousGenerator(fingerRadius: Float) {
                         } else {
                             if (cellHolderBeingGenerated.level == previousCell.level) {
                                 return if (((cellPosition == 0) && (previousPosition == 1)) ||
-                                        ((cellPosition == 3) && (previousPosition == 2))) {
+                                    ((cellPosition == 3) && (previousPosition == 2))
+                                ) {
                                     if (Random.nextBoolean()) 3 else 0
                                 } else if (((cellPosition == 1) && (previousPosition == 0)) ||
-                                        ((cellPosition == 2) && (previousPosition == 3))) {
+                                    ((cellPosition == 2) && (previousPosition == 3))
+                                ) {
                                     if (Random.nextBoolean()) 2 else 1
                                 } else if (((cellPosition == 0) && (previousPosition == 3)) ||
-                                        ((cellPosition == 1) && (previousPosition == 2))) {
+                                    ((cellPosition == 1) && (previousPosition == 2))
+                                ) {
                                     if (Random.nextBoolean()) 0 else 1
                                 } else {
                                     throw IllegalStateException("Movement cannot go downwards.")
@@ -338,13 +356,14 @@ class CellContinuousGenerator(fingerRadius: Float) {
     private fun generateOutputCellPosition(cellHolderBeingGenerated: CellHolder): Int {
         if (cellHolderBeingGenerated.level > 0) {
             val parentCell: CellHolder = cellHolderBeingGenerated.getParent()
-                    ?: throw IllegalStateException("Null parent, although level is not 0.")
+                ?: throw IllegalStateException("Null parent, although level is not 0.")
 
             when (val innerCellPosition: Int = parentCell.getCellPosition(cellHolderBeingGenerated)) {
                 parentCell.inputCellPosition -> {
                     if (parentCell.innerRoute == Route.L_SHAPE_UP) {
                         if (((innerCellPosition == 0) && (parentCell.outputCellPosition == 2)) ||
-                                ((innerCellPosition == 1) && (parentCell.outputCellPosition == 3))) {
+                            ((innerCellPosition == 1) && (parentCell.outputCellPosition == 3))
+                        ) {
                             return if (Random.nextBoolean()) 2 else 3
                         } else {
                             throw IllegalStateException("Invalid values for 'L_SHAPE_UP' route.")
@@ -359,13 +378,16 @@ class CellContinuousGenerator(fingerRadius: Float) {
                         }
                     } else if (parentCell.innerRoute == Route.STRAIGHT) {
                         return if (((innerCellPosition == 3) && (parentCell.outputCellPosition == 2)) ||
-                                ((innerCellPosition == 0) && (parentCell.outputCellPosition == 1))) {
+                            ((innerCellPosition == 0) && (parentCell.outputCellPosition == 1))
+                        ) {
                             2
                         } else if (((innerCellPosition == 2) && (parentCell.outputCellPosition == 3)) ||
-                                ((innerCellPosition == 1) && (parentCell.outputCellPosition == 0))) {
+                            ((innerCellPosition == 1) && (parentCell.outputCellPosition == 0))
+                        ) {
                             3
                         } else if (((innerCellPosition == 1) && (parentCell.outputCellPosition == 2)) ||
-                                ((innerCellPosition == 0) && (parentCell.outputCellPosition == 3))) {
+                            ((innerCellPosition == 0) && (parentCell.outputCellPosition == 3))
+                        ) {
                             if (Random.nextBoolean()) 2 else 3
                         } else {
                             throw IllegalStateException("Invalid values for 'STRAIGHT' route.")
@@ -379,7 +401,8 @@ class CellContinuousGenerator(fingerRadius: Float) {
                 }
                 else -> {
                     return if (((innerCellPosition == 0) && (parentCell.outputCellPosition == 3)) ||
-                            (((innerCellPosition == 1) && (parentCell.outputCellPosition == 2)))) {
+                        (((innerCellPosition == 1) && (parentCell.outputCellPosition == 2)))
+                    ) {
                         if (Random.nextBoolean()) 2 else 3
                     } else if ((innerCellPosition == 2) && (parentCell.outputCellPosition == 3)) {
                         3
@@ -397,27 +420,30 @@ class CellContinuousGenerator(fingerRadius: Float) {
 
     private fun generateRouteType(cellHolderBeingGenerated: CellHolder): Route {
         return if (((cellHolderBeingGenerated.inputCellPosition == 0) &&
-                        (cellHolderBeingGenerated.outputCellPosition == 1)) ||
-                ((cellHolderBeingGenerated.inputCellPosition == 1) &&
-                        (cellHolderBeingGenerated.outputCellPosition == 0)) ||
-                ((cellHolderBeingGenerated.inputCellPosition == 0) &&
-                        (cellHolderBeingGenerated.outputCellPosition == 3)) ||
-                ((cellHolderBeingGenerated.inputCellPosition == 1) &&
-                        (cellHolderBeingGenerated.outputCellPosition == 2)) ||
-                ((cellHolderBeingGenerated.inputCellPosition == 2) &&
-                        (cellHolderBeingGenerated.outputCellPosition == 3)) ||
-                ((cellHolderBeingGenerated.inputCellPosition == 3) &&
-                        (cellHolderBeingGenerated.outputCellPosition == 2))) {
+                    (cellHolderBeingGenerated.outputCellPosition == 1)) ||
+            ((cellHolderBeingGenerated.inputCellPosition == 1) &&
+                    (cellHolderBeingGenerated.outputCellPosition == 0)) ||
+            ((cellHolderBeingGenerated.inputCellPosition == 0) &&
+                    (cellHolderBeingGenerated.outputCellPosition == 3)) ||
+            ((cellHolderBeingGenerated.inputCellPosition == 1) &&
+                    (cellHolderBeingGenerated.outputCellPosition == 2)) ||
+            ((cellHolderBeingGenerated.inputCellPosition == 2) &&
+                    (cellHolderBeingGenerated.outputCellPosition == 3)) ||
+            ((cellHolderBeingGenerated.inputCellPosition == 3) &&
+                    (cellHolderBeingGenerated.outputCellPosition == 2))
+        ) {
             Route.STRAIGHT
         } else if (((cellHolderBeingGenerated.inputCellPosition == 0) &&
-                        (cellHolderBeingGenerated.outputCellPosition == 2)) ||
-                ((cellHolderBeingGenerated.inputCellPosition == 1) &&
-                        (cellHolderBeingGenerated.outputCellPosition == 3))) {
+                    (cellHolderBeingGenerated.outputCellPosition == 2)) ||
+            ((cellHolderBeingGenerated.inputCellPosition == 1) &&
+                    (cellHolderBeingGenerated.outputCellPosition == 3))
+        ) {
             if (Random.nextBoolean()) Route.L_SHAPE_DOWN else Route.L_SHAPE_UP
         } else if (((cellHolderBeingGenerated.inputCellPosition == 2) &&
-                        ((cellHolderBeingGenerated.outputCellPosition == 2))) ||
-                ((cellHolderBeingGenerated.inputCellPosition == 3) &&
-                        ((cellHolderBeingGenerated.outputCellPosition == 3)))) {
+                    ((cellHolderBeingGenerated.outputCellPosition == 2))) ||
+            ((cellHolderBeingGenerated.inputCellPosition == 3) &&
+                    ((cellHolderBeingGenerated.outputCellPosition == 3)))
+        ) {
             Route.POINT
         } else {
             throw IllegalStateException("Movement cannot go downwards.")
@@ -434,15 +460,19 @@ class CellContinuousGenerator(fingerRadius: Float) {
     @Throws(IllegalArgumentException::class)
     fun generateRoute(cellHolderBeingGenerated: CellHolder, previousCell: Cell, difficulty: Float) {
         if ((cellHolderBeingGenerated.level != previousCell.level) && (previousCell is CellHolder)) {
-            throw IllegalArgumentException("'cellHolderBeingGenerated' is has not the same nesting level as " +
-                    "'previousCell': ${cellHolderBeingGenerated.level} - ${previousCell.level}")
+            throw IllegalArgumentException(
+                "'cellHolderBeingGenerated' is has not the same nesting level as " +
+                        "'previousCell': ${cellHolderBeingGenerated.level} - ${previousCell.level}"
+            )
         }
 
         cellHolderBeingGenerated.clear()
         cellHolderBeingGenerated.fill()
 
-        cellHolderBeingGenerated.inputCellPosition = retrieveInputCellPosition(cellHolderBeingGenerated,
-                previousCell)
+        cellHolderBeingGenerated.inputCellPosition = retrieveInputCellPosition(
+            cellHolderBeingGenerated,
+            previousCell
+        )
         cellHolderBeingGenerated.outputCellPosition = generateOutputCellPosition(cellHolderBeingGenerated)
 
         val route: Route = generateRouteType(cellHolderBeingGenerated)
@@ -461,8 +491,10 @@ class CellContinuousGenerator(fingerRadius: Float) {
         // Input cell creation.
 
         var lastCellType: Cell.Type = randomPassableCellType(canBeInnerCellHolder, canBeSweeper, difficulty)
-        val inputCell: Cell = cellHolderBeingGenerated.addCell(lastCellType,
-                cellHolderBeingGenerated.inputCellPosition)
+        val inputCell: Cell = cellHolderBeingGenerated.addCell(
+            lastCellType,
+            cellHolderBeingGenerated.inputCellPosition
+        )
 
         if (lastCellType == Cell.Type.HOLDER) {
             generateRoute(inputCell as CellHolder, innerPreviousPassableCell, difficulty)
@@ -475,7 +507,8 @@ class CellContinuousGenerator(fingerRadius: Float) {
         // Middle cell creation.
         for (i: Int in 0 until CellHolder.HELD_CELLS) {
             if ((i != cellHolderBeingGenerated.inputCellPosition) &&
-                    (i != cellHolderBeingGenerated.outputCellPosition)) {
+                (i != cellHolderBeingGenerated.outputCellPosition)
+            ) {
                 if (canBeCellPositionAnObstacle(cellHolderBeingGenerated, i, route)) {
                     lastCellType = randomObstacleCellType(canBeVShapedObstacle, difficulty)
                     cellHolderBeingGenerated.addCell(lastCellType, i)
@@ -495,8 +528,10 @@ class CellContinuousGenerator(fingerRadius: Float) {
         // Avoid replacing a cell which has been already assigned.
         if (cellHolderBeingGenerated.inputCellPosition != cellHolderBeingGenerated.outputCellPosition) {
             lastCellType = randomPassableCellType(canBeInnerCellHolder, canBeSweeper, difficulty)
-            val outputCell: Cell = cellHolderBeingGenerated.addCell(lastCellType,
-                    cellHolderBeingGenerated.outputCellPosition)
+            val outputCell: Cell = cellHolderBeingGenerated.addCell(
+                lastCellType,
+                cellHolderBeingGenerated.outputCellPosition
+            )
 
             if (lastCellType == Cell.Type.HOLDER) {
                 generateRoute(outputCell as CellHolder, innerPreviousPassableCell, difficulty)
@@ -508,7 +543,19 @@ class CellContinuousGenerator(fingerRadius: Float) {
         return if (cellHolderBeingGenerated.level < (CELL_HOLDER_UNTIL_LEVEL - 1)) {
             val innerSize: Float = innerSizesByLevel[cellHolderBeingGenerated.level + 1]
 
-            if ((innerSize >= requiredMinimumSpace) && (difficulty >= CellHolder.APPEAR_AFTER_DIFFICULTY)) 1 else 0
+            if ((innerSize >= requiredMinimumSpace) && (difficulty >= CellHolder.APPEAR_AFTER_DIFFICULTY)) {
+                if (cellHolderBeingGenerated.level == 1) {
+                    if (difficulty >= CellHolder.LEVEL_2_DIFFICULTY) {
+                        1
+                    } else {
+                        0
+                    }
+                } else {
+                    1
+                }
+            } else {
+                0
+            }
         } else {
             0
         }
@@ -521,8 +568,9 @@ class CellContinuousGenerator(fingerRadius: Float) {
                 (innerCellSideSize * SweeperObstacle.SPACE_MARGIN_REDUCTION))
 
         return if (hypotheticalSweeperObstacleMargin >= requiredMinimumSpace &&
-                ((difficulty >= SweeperObstacle.APPEAR_AFTER_DIFFICULTY) ||
-                        (abs(difficulty - SweeperObstacle.APPEAR_AFTER_DIFFICULTY) < 0.01f))) 1 else 0
+            ((difficulty >= SweeperObstacle.APPEAR_AFTER_DIFFICULTY) ||
+                    (abs(difficulty - SweeperObstacle.APPEAR_AFTER_DIFFICULTY) < 0.01f))
+        ) 1 else 0
     }
 
     companion object {

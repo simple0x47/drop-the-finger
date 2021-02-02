@@ -1,7 +1,6 @@
 package com.elementalg.client.managers
 
 import com.badlogic.gdx.assets.AssetDescriptor
-import kotlin.jvm.Throws
 
 /**
  * Represents the dependencies of a game in an abstract way in order to allow the aggregation of assets by the
@@ -15,9 +14,11 @@ import kotlin.jvm.Throws
  * @param forceLoad whether or not the assets required by this Dependency should be loaded synchronously, therefore
  * freezing the main thread until all those assets are loaded.
  */
-internal class Dependency private constructor(private val ID: String,
-                                              private val assets: HashMap<String, AssetDescriptor<*>>,
-                                              private val forceLoad: Boolean) {
+internal class Dependency private constructor(
+    private val ID: String,
+    private val assets: HashMap<String, AssetDescriptor<*>>,
+    private val forceLoad: Boolean
+) {
     enum class State {
         UNAVAILABLE,
         LOADING,
@@ -60,7 +61,7 @@ internal class Dependency private constructor(private val ID: String,
          */
         @Throws(IllegalArgumentException::class)
         internal fun getByID(ID: String): Dependency {
-            require(ID.isNotEmpty()) {"'ID' is empty."}
+            require(ID.isNotEmpty()) { "'ID' is empty." }
             require(dependencies.containsKey(ID)) { "Dependency with 'ID' ($ID) has not been built yet." }
 
             return dependencies[ID]!!
@@ -88,9 +89,9 @@ internal class Dependency private constructor(private val ID: String,
          */
         @Throws(IllegalArgumentException::class)
         internal fun build(ID: String, assets: HashMap<String, AssetDescriptor<*>>, forceLoad: Boolean): Dependency {
-            require(ID.isNotEmpty()) {"'ID' is empty."}
-            require(!dependencies.containsKey(ID)) {"Dependency with 'ID' ($ID) has been built already."}
-            require(assets.isNotEmpty()) {"'assets' is empty."}
+            require(ID.isNotEmpty()) { "'ID' is empty." }
+            require(!dependencies.containsKey(ID)) { "Dependency with 'ID' ($ID) has been built already." }
+            require(assets.isNotEmpty()) { "'assets' is empty." }
 
             val dependency: Dependency = Dependency(ID, assets, forceLoad)
             dependencies[ID] = dependency

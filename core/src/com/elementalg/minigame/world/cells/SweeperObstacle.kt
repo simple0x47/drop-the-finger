@@ -17,8 +17,10 @@ import kotlin.random.Random
  * @param textureRegion region where the sweeper's texture data is located.
  * @param thickness percentage (0.0, 1.0) of the size of the cell.
  */
-class SweeperObstacle(parentCell: CellHolder?, size: Float, private val textureRegion: TextureRegion,
-                      private val thickness: Float) : Obstacle(parentCell, Type.SWEEPER, size) {
+class SweeperObstacle(
+    parentCell: CellHolder?, size: Float, private val textureRegion: TextureRegion,
+    private val thickness: Float
+) : Obstacle(parentCell, Type.SWEEPER, size) {
     private val origin: Vector2 = Vector2(getSize() / 2f, getSize() * thickness / 2f)
     private val heightOffset: Float = (getSize() / 2f) - (getSize() * thickness / 2f)
 
@@ -47,8 +49,12 @@ class SweeperObstacle(parentCell: CellHolder?, size: Float, private val textureR
     }
 
     override fun isFingerCollidingWithObstacle(finger: Finger): Boolean {
-        val fingerPosition: Vector2 = Vector2(finger.getPosition()).rotateAround(Vector2(getPosition().x + origin.x,
-                getPosition().y + origin.y), 360f - angle)
+        val fingerPosition: Vector2 = Vector2(finger.getPosition()).rotateAround(
+            Vector2(
+                getPosition().x + origin.x,
+                getPosition().y + origin.y
+            ), 360f - angle
+        )
         val cellPosition: Vector2 = getPosition()
 
         val firstPoint: Vector2 = Vector2()
@@ -84,8 +90,10 @@ class SweeperObstacle(parentCell: CellHolder?, size: Float, private val textureR
     override fun draw(batch: Batch) {
         angle = if (angle + angleIncrement > 360f) ((angle + angleIncrement) - 360f) else (angle + angleIncrement)
 
-        batch.draw(textureRegion, getPosition().x, getPosition().y, origin.x, origin.y, getSize(),
-                getSize() * thickness, 1f, 1f, angle, false)
+        batch.draw(
+            textureRegion, getPosition().x, getPosition().y, origin.x, origin.y, getSize(),
+            getSize() * thickness, 1f, 1f, angle, false
+        )
     }
 
     companion object {

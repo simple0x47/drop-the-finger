@@ -9,7 +9,7 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:4.0.2'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.4.10"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.4.21"
     }
 }
 
@@ -71,12 +71,16 @@ project(":android") {
         natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-x86"
         natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-x86_64"
 
-        implementation "com.google.android.gms:play-services-auth:18.1.0"
-        implementation "com.google.android.gms:play-services-games:20.0.1"
-        implementation "com.google.android.gms:play-services-ads:19.5.0"
+        // Release version related dependencies.
+        //implementation "com.google.android.gms:play-services-auth:19.0.0"
+        //implementation "com.google.android.gms:play-services-games:21.0.0"
+        //implementation "com.google.android.gms:play-services-ads:19.7.0"
 
         def multidex_version = "2.0.1"
         implementation "androidx.multidex:multidex:$multidex_version"
+        implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.1'
+        implementation 'com.google.android.play:core:1.9.1'
+        implementation 'com.google.android.play:core-ktx:1.8.1'
     }
 }
 

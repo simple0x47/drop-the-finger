@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader
 import com.badlogic.gdx.utils.XmlReader
-import kotlin.jvm.Throws
 
 /**
  * Extracts dependencies from XML files.
@@ -25,8 +24,8 @@ internal class DependencyExtractor private constructor() {
      */
     @Throws(IllegalArgumentException::class, IllegalStateException::class)
     internal fun extractAll(dependenciesFile: FileHandle) {
-        require(dependenciesFile.exists()) {"'dependenciesFile' does not exist."}
-        require(dependenciesFile.length() > 0L) {"'dependenciesFile' is empty."}
+        require(dependenciesFile.exists()) { "'dependenciesFile' does not exist." }
+        require(dependenciesFile.length() > 0L) { "'dependenciesFile' is empty." }
 
         val xmlRoot: XmlReader.Element = XmlReader().parse(dependenciesFile)
 
@@ -35,14 +34,14 @@ internal class DependencyExtractor private constructor() {
 
             val assetsMap: HashMap<String, AssetDescriptor<*>> = HashMap()
             for (xmlAsset: XmlReader.Element in xmlDependency.getChildrenByName(ASSET_TAG)) {
-                checkNotNull(xmlAsset.text) {"'dependenciesFile' contains an empty asset."}
+                checkNotNull(xmlAsset.text) { "'dependenciesFile' contains an empty asset." }
                 check(xmlAsset.getAttribute("class").isNotEmpty()) {
                     "'dependenciesFile' contains an asset with a empty 'class' attribute."
                 }
 
                 val assetID: String = xmlAsset.getAttribute("id")
 
-                check(!assetsMap.containsKey(assetID)) {"'dependenciesFile' contains duplicated asset ids."}
+                check(!assetsMap.containsKey(assetID)) { "'dependenciesFile' contains duplicated asset ids." }
 
                 val assetPath: String = dependencyPath + xmlAsset.text
                 val assetClass: Class<*> = Class.forName(xmlAsset.getAttribute("class"))
@@ -70,8 +69,7 @@ internal class DependencyExtractor private constructor() {
 
             try {
                 Dependency.build(xmlDependency.getAttribute(DEPENDENCY_ID_ATTRIBUTE), assetsMap, forceLoad)
-            }
-            catch (e: IllegalArgumentException) {
+            } catch (e: IllegalArgumentException) {
                 throw IllegalStateException("'dependenciesFile' contains invalid data.")
             }
         }
@@ -89,9 +87,9 @@ internal class DependencyExtractor private constructor() {
      */
     @Throws(IllegalArgumentException::class, IllegalStateException::class)
     internal fun extractSingle(dependenciesFile: FileHandle, dependencyID: String): Dependency {
-        require(dependenciesFile.exists()) {"'dependenciesFile' does not exist."}
-        require(dependenciesFile.length() > 0L) {"'dependenciesFile' is empty."}
-        require(dependencyID.isNotEmpty()) {"'dependenciesFile' is empty."}
+        require(dependenciesFile.exists()) { "'dependenciesFile' does not exist." }
+        require(dependenciesFile.length() > 0L) { "'dependenciesFile' is empty." }
+        require(dependencyID.isNotEmpty()) { "'dependenciesFile' is empty." }
 
         val assetsMap: HashMap<String, AssetDescriptor<*>> = HashMap()
         var forceLoad: Boolean = false
@@ -105,14 +103,14 @@ internal class DependencyExtractor private constructor() {
                 forceLoad = xmlDependency.getBooleanAttribute("forceLoad", false)
 
                 for (xmlAsset: XmlReader.Element in xmlDependency.getChildrenByName(ASSET_TAG)) {
-                    checkNotNull(xmlAsset.text) {"'dependenciesFile' contains an empty asset."}
+                    checkNotNull(xmlAsset.text) { "'dependenciesFile' contains an empty asset." }
                     check(xmlAsset.getAttribute("class").isNotEmpty()) {
                         "'dependenciesFile' contains an asset with a empty 'class' attribute."
                     }
 
                     val assetID: String = xmlAsset.getAttribute("id")
 
-                    check(!assetsMap.containsKey(assetID)) {"'dependenciesFile' contains duplicated asset ids."}
+                    check(!assetsMap.containsKey(assetID)) { "'dependenciesFile' contains duplicated asset ids." }
 
                     val assetPath: String = dependencyPath + xmlAsset.text
                     val assetClass: Class<*> = Class.forName(xmlAsset.getAttribute("class"))
@@ -140,7 +138,7 @@ internal class DependencyExtractor private constructor() {
             }
         }
 
-        check(assetsMap.isNotEmpty()) {"'assetsMap' is empty for 'dependencyID' ($dependencyID)"}
+        check(assetsMap.isNotEmpty()) { "'assetsMap' is empty for 'dependencyID' ($dependencyID)" }
 
         return Dependency.build(dependencyID, assetsMap, forceLoad)
     }

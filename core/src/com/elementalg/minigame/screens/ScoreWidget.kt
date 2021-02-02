@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.utils.Align
 import com.elementalg.minigame.Game
-import kotlin.jvm.Throws
 
 class ScoreWidget(indicatorFont: BitmapFont, valueFont: BitmapFont, color: Color) {
     private val scoreIndicator: Label
