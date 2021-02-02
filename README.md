@@ -8,7 +8,7 @@ Developed with LibGDX & Kotlin.
 ## Dependencies
 
 * Android SDK : API 30
-* [elementalg_api](https://github.com/elementalg/elementalg-api)
+* [elementalg_api](https://github.com/elementalg/elementalg-api) - must be located in the same root directory as the parent folder of this project.
 
 ## Latest release version
 
