@@ -8,7 +8,7 @@ Developed with LibGDX & Kotlin.
 ## Dependencies
 
 * Android SDK : API 30
-* [elementalg_api](https://github.com/simple0x47/mini-game)
+* [elementalg_api](https://github.com/elementalg/elementalg-api)
 
 ## Latest release version
 
