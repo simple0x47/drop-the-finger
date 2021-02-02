@@ -3,6 +3,8 @@
 Keep your finger on the screen, meanwhile avoiding speedy obstacles coming to get you!
 Oh, yeah, there's no end!
 
+Developed with LibGDX & Kotlin.
+
 ## Dependencies
 
 * Android SDK : API 30
